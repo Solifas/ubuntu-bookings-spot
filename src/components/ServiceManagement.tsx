@@ -1,10 +1,10 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Edit, Trash2, Clock, DollarSign } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
+import AddServiceForm from './AddServiceForm';
 
 interface Service {
   id: string;
@@ -16,6 +16,7 @@ interface Service {
 }
 
 const ServiceManagement = () => {
+  const [isAddFormOpen, setIsAddFormOpen] = useState(false);
   const [services, setServices] = useState<Service[]>([
     {
       id: '1',
@@ -51,6 +52,10 @@ const ServiceManagement = () => {
     }
   ]);
 
+  const handleAddService = (newService: Service) => {
+    setServices(prev => [...prev, newService]);
+  };
+
   const handleToggleService = (serviceId: string) => {
     setServices(prev => prev.map(service => 
       service.id === serviceId 
@@ -84,7 +89,10 @@ const ServiceManagement = () => {
           <h2 className="text-2xl font-bold text-slate-900">Service Management</h2>
           <p className="text-slate-600">Manage your services, pricing, and availability</p>
         </div>
-        <Button className="bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600">
+        <Button 
+          onClick={() => setIsAddFormOpen(true)}
+          className="bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
+        >
           <Plus className="h-4 w-4 mr-2" />
           Add New Service
         </Button>
@@ -175,6 +183,13 @@ const ServiceManagement = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Add Service Form */}
+      <AddServiceForm 
+        open={isAddFormOpen}
+        onOpenChange={setIsAddFormOpen}
+        onAddService={handleAddService}
+      />
     </div>
   );
 };
