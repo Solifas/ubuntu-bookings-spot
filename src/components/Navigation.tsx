@@ -3,12 +3,9 @@ import React, { useState } from 'react';
 import { Calendar, Menu, X, Settings, Home, LogIn, LogOut, User } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import AuthModal from './AuthModal';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [showAuth, setShowAuth] = useState(false);
-  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
   const location = useLocation();
   const { user, logout, isLoggedIn } = useAuth();
 
@@ -16,18 +13,6 @@ const Navigation = () => {
 
   const handleLogout = () => {
     logout();
-    setIsOpen(false);
-  };
-
-  const handleLoginClick = () => {
-    setAuthMode('login');
-    setShowAuth(true);
-    setIsOpen(false);
-  };
-
-  const handleSignupClick = () => {
-    setAuthMode('signup');
-    setShowAuth(true);
     setIsOpen(false);
   };
 
@@ -100,19 +85,19 @@ const Navigation = () => {
                 </div>
               ) : (
                 <div className="flex items-center space-x-4">
-                  <button 
-                    onClick={handleLoginClick}
+                  <Link 
+                    to="/login"
                     className="flex items-center space-x-2 text-slate-700 hover:text-blue-600 px-3 py-2 rounded-lg hover:bg-blue-50 transition-colors"
                   >
                     <LogIn className="h-4 w-4" />
                     <span>Login</span>
-                  </button>
-                  <button 
-                    onClick={handleSignupClick}
+                  </Link>
+                  <Link 
+                    to="/register"
                     className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-6 py-2 rounded-full font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl"
                   >
                     Get Started
-                  </button>
+                  </Link>
                 </div>
               )}
             </div>
@@ -189,32 +174,27 @@ const Navigation = () => {
                 </div>
               ) : (
                 <div className="pt-2 space-y-2">
-                  <button 
-                    onClick={handleLoginClick}
+                  <Link 
+                    to="/login"
+                    onClick={() => setIsOpen(false)}
                     className="w-full flex items-center space-x-2 px-3 py-3 rounded-lg text-slate-700 hover:text-blue-600 hover:bg-blue-50 transition-colors"
                   >
                     <LogIn className="h-5 w-5" />
                     <span>Login</span>
-                  </button>
-                  <button 
-                    onClick={handleSignupClick}
-                    className="w-full bg-gradient-to-r from-blue-500 to-green-500 text-white px-6 py-3 rounded-full font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg"
+                  </Link>
+                  <Link 
+                    to="/register"
+                    onClick={() => setIsOpen(false)}
+                    className="w-full bg-gradient-to-r from-blue-500 to-green-500 text-white px-6 py-3 rounded-full font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg text-center"
                   >
                     Get Started
-                  </button>
+                  </Link>
                 </div>
               )}
             </div>
           </div>
         )}
       </nav>
-
-      <AuthModal
-        isOpen={showAuth}
-        onClose={() => setShowAuth(false)}
-        mode={authMode}
-        onModeChange={setAuthMode}
-      />
     </>
   );
 };
