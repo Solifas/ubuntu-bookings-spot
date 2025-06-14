@@ -1,34 +1,46 @@
 
 import React, { useState } from 'react';
-import { X, Mail, Lock, User, Phone } from 'lucide-react';
+import { X, Mail, Lock, User, Phone, UserCheck, Building } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   mode: 'login' | 'signup';
   onModeChange: (mode: 'login' | 'signup') => void;
+  defaultUserType?: 'client' | 'provider';
 }
 
-const AuthModal = ({ isOpen, onClose, mode, onModeChange }: AuthModalProps) => {
+const AuthModal = ({ isOpen, onClose, mode, onModeChange, defaultUserType = 'client' }: AuthModalProps) => {
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    userType: defaultUserType
   });
+  const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement actual authentication logic
-    console.log('Auth form submitted:', formData);
-    // Simulate successful login/signup
-    onClose();
+    setLoading(true);
+    
+    try {
+      await login(formData.email, formData.password, formData.userType as 'client' | 'provider');
+      console.log('Login successful');
+      onClose();
+    } catch (error) {
+      console.error('Login failed:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value
@@ -51,6 +63,39 @@ const AuthModal = ({ isOpen, onClose, mode, onModeChange }: AuthModalProps) => {
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {/* User Type Selection */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">
+              I am a...
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setFormData(prev => ({ ...prev, userType: 'client' }))}
+                className={`p-3 rounded-xl border-2 transition-all duration-200 flex items-center justify-center space-x-2 ${
+                  formData.userType === 'client'
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-slate-200 hover:border-blue-300'
+                }`}
+              >
+                <UserCheck className="h-4 w-4" />
+                <span className="font-medium">Client</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setFormData(prev => ({ ...prev, userType: 'provider' }))}
+                className={`p-3 rounded-xl border-2 transition-all duration-200 flex items-center justify-center space-x-2 ${
+                  formData.userType === 'provider'
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-slate-200 hover:border-blue-300'
+                }`}
+              >
+                <Building className="h-4 w-4" />
+                <span className="font-medium">Provider</span>
+              </button>
+            </div>
+          </div>
+
           {mode === 'signup' && (
             <>
               <div>
@@ -149,9 +194,10 @@ const AuthModal = ({ isOpen, onClose, mode, onModeChange }: AuthModalProps) => {
 
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-blue-500 to-green-500 text-white py-3 rounded-xl font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl"
+            disabled={loading}
+            className="w-full bg-gradient-to-r from-blue-500 to-green-500 text-white py-3 rounded-xl font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50"
           >
-            {mode === 'login' ? 'Sign In' : 'Create Account'}
+            {loading ? 'Please wait...' : (mode === 'login' ? 'Sign In' : 'Create Account')}
           </button>
         </form>
 

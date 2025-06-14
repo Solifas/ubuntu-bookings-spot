@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Calendar, Clock, MapPin, User, Phone, Mail, Star, LogIn } from 'lucide-react';
+import { Calendar, Clock, MapPin, User, Star, LogIn } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 import AuthModal from '../components/AuthModal';
 import LocationSearch from '../components/LocationSearch';
 
 const BookingPage = () => {
+  const { user, isLoggedIn } = useAuth();
   const [selectedService, setSelectedService] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
@@ -11,7 +13,6 @@ const BookingPage = () => {
   const [step, setStep] = useState(1);
   const [showAuth, setShowAuth] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const services = [
     { id: 'haircut', name: 'Classic Haircut', duration: '30 min', price: 'R120', description: 'Professional cut and styling' },
@@ -58,12 +59,22 @@ const BookingPage = () => {
             
             {!isLoggedIn && (
               <button
-                onClick={() => setShowAuth(true)}
+                onClick={() => {
+                  setAuthMode('login');
+                  setShowAuth(true);
+                }}
                 className="flex items-center space-x-2 bg-gradient-to-r from-blue-500 to-green-500 text-white px-6 py-2 rounded-full font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 <LogIn className="h-4 w-4" />
                 <span>Login</span>
               </button>
+            )}
+
+            {isLoggedIn && (
+              <div className="flex items-center space-x-2 text-slate-700">
+                <User className="h-4 w-4" />
+                <span className="font-medium">Welcome, {user?.name}</span>
+              </div>
             )}
           </div>
         </div>
@@ -305,6 +316,7 @@ const BookingPage = () => {
         onClose={() => setShowAuth(false)}
         mode={authMode}
         onModeChange={setAuthMode}
+        defaultUserType="client"
       />
     </div>
   );
