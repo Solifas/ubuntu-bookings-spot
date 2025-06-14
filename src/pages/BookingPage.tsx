@@ -1,12 +1,17 @@
-
 import React, { useState } from 'react';
-import { Calendar, Clock, MapPin, User, Phone, Mail, Star } from 'lucide-react';
+import { Calendar, Clock, MapPin, User, Phone, Mail, Star, LogIn } from 'lucide-react';
+import AuthModal from '../components/AuthModal';
+import LocationSearch from '../components/LocationSearch';
 
 const BookingPage = () => {
   const [selectedService, setSelectedService] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState('');
   const [step, setStep] = useState(1);
+  const [showAuth, setShowAuth] = useState(false);
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const services = [
     { id: 'haircut', name: 'Classic Haircut', duration: '30 min', price: 'R120', description: 'Professional cut and styling' },
@@ -21,28 +26,45 @@ const BookingPage = () => {
     '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'
   ];
 
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+    setShowAuth(false);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       {/* Header */}
       <div className="bg-white shadow-sm">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-green-400 rounded-2xl flex items-center justify-center">
-              <User className="h-8 w-8 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-slate-900">Jabu's Barbershop</h1>
-              <div className="flex items-center space-x-4 text-slate-600 mt-1">
-                <div className="flex items-center space-x-1">
-                  <MapPin className="h-4 w-4" />
-                  <span>Sandton City, Johannesburg</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  <span className="font-medium">4.9 (127 reviews)</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-green-400 rounded-2xl flex items-center justify-center">
+                <User className="h-8 w-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-slate-900">Jabu's Barbershop</h1>
+                <div className="flex items-center space-x-4 text-slate-600 mt-1">
+                  <div className="flex items-center space-x-1">
+                    <MapPin className="h-4 w-4" />
+                    <span>Sandton City, Johannesburg</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    <span className="font-medium">4.9 (127 reviews)</span>
+                  </div>
                 </div>
               </div>
             </div>
+            
+            {!isLoggedIn && (
+              <button
+                onClick={() => setShowAuth(true)}
+                className="flex items-center space-x-2 bg-gradient-to-r from-blue-500 to-green-500 text-white px-6 py-2 rounded-full font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl"
+              >
+                <LogIn className="h-4 w-4" />
+                <span>Login</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -61,6 +83,10 @@ const BookingPage = () => {
             <div className={`w-16 h-1 ${step >= 3 ? 'bg-blue-500' : 'bg-slate-200'}`}></div>
             <div className={`w-8 h-8 rounded-full flex items-center justify-center font-medium ${step >= 3 ? 'bg-blue-500 text-white' : 'bg-slate-200 text-slate-600'}`}>
               3
+            </div>
+            <div className={`w-16 h-1 ${step >= 4 ? 'bg-blue-500' : 'bg-slate-200'}`}></div>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-medium ${step >= 4 ? 'bg-blue-500 text-white' : 'bg-slate-200 text-slate-600'}`}>
+              4
             </div>
           </div>
         </div>
@@ -99,7 +125,7 @@ const BookingPage = () => {
                     onClick={() => setStep(2)}
                     className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-3 rounded-xl font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl"
                   >
-                    Continue to Date & Time
+                    Continue to Location
                   </button>
                 </div>
               )}
@@ -107,6 +133,41 @@ const BookingPage = () => {
           )}
 
           {step === 2 && (
+            <div>
+              <h2 className="text-2xl font-bold text-slate-900 mb-6">Choose Location</h2>
+              
+              <div className="mb-8">
+                <h3 className="text-lg font-semibold text-slate-900 mb-4">Where would you like the service?</h3>
+                <LocationSearch
+                  value={selectedLocation}
+                  onChange={setSelectedLocation}
+                  placeholder="Enter your preferred location..."
+                />
+                <p className="text-sm text-slate-600 mt-2">
+                  We provide services at your location within Johannesburg and Cape Town areas.
+                </p>
+              </div>
+
+              <div className="flex justify-between">
+                <button
+                  onClick={() => setStep(1)}
+                  className="px-8 py-3 rounded-xl font-medium text-slate-700 border-2 border-slate-200 hover:bg-slate-50 transition-all duration-200"
+                >
+                  Back
+                </button>
+                {selectedLocation && (
+                  <button
+                    onClick={() => setStep(3)}
+                    className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-3 rounded-xl font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl"
+                  >
+                    Continue to Date & Time
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {step === 3 && (
             <div>
               <h2 className="text-2xl font-bold text-slate-900 mb-6">Select Date & Time</h2>
               
@@ -163,62 +224,27 @@ const BookingPage = () => {
 
               <div className="flex justify-between">
                 <button
-                  onClick={() => setStep(1)}
+                  onClick={() => setStep(2)}
                   className="px-8 py-3 rounded-xl font-medium text-slate-700 border-2 border-slate-200 hover:bg-slate-50 transition-all duration-200"
                 >
                   Back
                 </button>
                 {selectedDate && selectedTime && (
                   <button
-                    onClick={() => setStep(3)}
+                    onClick={() => isLoggedIn ? setStep(4) : setShowAuth(true)}
                     className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-3 rounded-xl font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl"
                   >
-                    Continue to Details
+                    {isLoggedIn ? 'Continue to Details' : 'Login to Continue'}
                   </button>
                 )}
               </div>
             </div>
           )}
 
-          {step === 3 && (
+          {step === 4 && isLoggedIn && (
             <div>
-              <h2 className="text-2xl font-bold text-slate-900 mb-6">Your Details</h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-6">Confirm Booking</h2>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Full Name</label>
-                  <input
-                    type="text"
-                    className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter your full name"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Phone Number</label>
-                  <input
-                    type="tel"
-                    className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="+27 XX XXX XXXX"
-                  />
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Email Address</label>
-                  <input
-                    type="email"
-                    className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="your.email@example.com"
-                  />
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Special Requests (Optional)</label>
-                  <textarea
-                    rows={3}
-                    className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Any special requests or notes..."
-                  />
-                </div>
-              </div>
-
               {/* Booking Summary */}
               <div className="bg-slate-50 rounded-2xl p-6 mb-8">
                 <h3 className="text-lg font-semibold text-slate-900 mb-4">Booking Summary</h3>
@@ -228,6 +254,10 @@ const BookingPage = () => {
                     <span className="font-medium text-slate-900">
                       {services.find(s => s.id === selectedService)?.name}
                     </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-600">Location:</span>
+                    <span className="font-medium text-slate-900">{selectedLocation}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-600">Date:</span>
@@ -256,7 +286,7 @@ const BookingPage = () => {
 
               <div className="flex justify-between">
                 <button
-                  onClick={() => setStep(2)}
+                  onClick={() => setStep(3)}
                   className="px-8 py-3 rounded-xl font-medium text-slate-700 border-2 border-slate-200 hover:bg-slate-50 transition-all duration-200"
                 >
                   Back
@@ -269,6 +299,13 @@ const BookingPage = () => {
           )}
         </div>
       </div>
+
+      <AuthModal
+        isOpen={showAuth}
+        onClose={() => setShowAuth(false)}
+        mode={authMode}
+        onModeChange={setAuthMode}
+      />
     </div>
   );
 };
