@@ -27,10 +27,7 @@ const BookingPage = () => {
     '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'
   ];
 
-  const handleLoginSuccess = () => {
-    setIsLoggedIn(true);
-    setShowAuth(false);
-  };
+  
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
