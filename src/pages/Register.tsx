@@ -1,21 +1,30 @@
-
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Calendar, ArrowLeft, User, Building, Mail, Lock, Phone } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Calendar, ArrowLeft, Mail, Lock, User, Building, Phone } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const Register = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { login } = useAuth();
   const [userType, setUserType] = useState<'client' | 'provider'>('client');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    phone: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    phone: '',
+    businessName: ''
   });
   const [loading, setLoading] = useState(false);
+
+  // Check URL parameters for pre-selected user type
+  useEffect(() => {
+    const typeParam = searchParams.get('type');
+    if (typeParam === 'provider' || typeParam === 'client') {
+      setUserType(typeParam);
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,38 +81,32 @@ const Register = () => {
             {/* User Type Selection */}
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-3">
-                I want to...
+                Join as...
               </label>
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => setUserType('client')}
-                  className={`p-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center space-y-2 ${
+                  className={`p-3 rounded-xl border-2 transition-all duration-200 flex items-center justify-center space-x-2 ${
                     userType === 'client'
                       ? 'border-blue-500 bg-blue-50'
                       : 'border-slate-200 hover:border-blue-300'
                   }`}
                 >
-                  <User className="h-6 w-6" />
-                  <div className="text-center">
-                    <div className="font-medium">Book Services</div>
-                    <div className="text-xs text-slate-500">As a Client</div>
-                  </div>
+                  <User className="h-4 w-4" />
+                  <span className="font-medium">Client</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setUserType('provider')}
-                  className={`p-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center space-y-2 ${
+                  className={`p-3 rounded-xl border-2 transition-all duration-200 flex items-center justify-center space-x-2 ${
                     userType === 'provider'
                       ? 'border-blue-500 bg-blue-50'
                       : 'border-slate-200 hover:border-blue-300'
                   }`}
                 >
-                  <Building className="h-6 w-6" />
-                  <div className="text-center">
-                    <div className="font-medium">Offer Services</div>
-                    <div className="text-xs text-slate-500">As a Provider</div>
-                  </div>
+                  <Building className="h-4 w-4" />
+                  <span className="font-medium">Provider</span>
                 </button>
               </div>
             </div>
@@ -209,7 +212,7 @@ const Register = () => {
               disabled={loading}
               className="w-full bg-gradient-to-r from-blue-500 to-green-500 text-white py-3 rounded-xl font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50"
             >
-              {loading ? 'Creating Account...' : 'Create Account'}
+              {loading ? 'Creating Account...' : `Create ${userType === 'client' ? 'Client' : 'Provider'} Account`}
             </button>
           </form>
 

@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
 import { Calendar, Users, Clock, MapPin, Star, Smartphone, BarChart3, Search } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import Navigation from '../components/Navigation';
 import FeatureCard from '../components/FeatureCard';
 import PricingCard from '../components/PricingCard';
 import LocationSearch from '../components/LocationSearch';
 import SearchResults from '../components/SearchResults';
+import DemoModal from '../components/DemoModal';
 import { searchServices, Service } from '../data/servicesData';
 
 const Homepage = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
   const [searchResults, setSearchResults] = useState<Service[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [showDemoModal, setShowDemoModal] = useState(false);
 
   const serviceTypes = [
     'Barber', 'Hair Salon', 'Beauty Therapist', 'Massage Therapist', 
@@ -30,6 +34,14 @@ const Homepage = () => {
     const results = searchServices(serviceType, selectedLocation);
     setSearchResults(results);
     setShowResults(true);
+  };
+
+  const handleJoinAsProvider = () => {
+    navigate('/register?type=provider');
+  };
+
+  const handleWatchDemo = () => {
+    setShowDemoModal(true);
   };
 
   const features = [
@@ -191,10 +203,16 @@ const Homepage = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-              <button className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
+              <button 
+                onClick={handleJoinAsProvider}
+                className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+              >
                 Join as Service Provider
               </button>
-              <button className="text-slate-700 px-8 py-4 rounded-full text-lg font-semibold hover:bg-slate-100 transition-all duration-200 border-2 border-slate-200 hover:border-slate-300">
+              <button 
+                onClick={handleWatchDemo}
+                className="text-slate-700 px-8 py-4 rounded-full text-lg font-semibold hover:bg-slate-100 transition-all duration-200 border-2 border-slate-200 hover:border-slate-300"
+              >
                 Watch Demo
               </button>
             </div>
@@ -216,6 +234,12 @@ const Homepage = () => {
         services={searchResults}
         isVisible={showResults}
         onClose={() => setShowResults(false)}
+      />
+
+      {/* Demo Modal */}
+      <DemoModal 
+        isOpen={showDemoModal}
+        onClose={() => setShowDemoModal(false)}
       />
 
       {/* Features Section */}
@@ -267,7 +291,10 @@ const Homepage = () => {
           <p className="text-xl text-blue-100 mb-8">
             Join thousands of service providers worldwide who've already made the switch to smarter booking.
           </p>
-          <button className="bg-white text-blue-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-slate-100 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
+          <button 
+            onClick={handleJoinAsProvider}
+            className="bg-white text-blue-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-slate-100 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+          >
             Start Your Free Trial Today
           </button>
           <p className="text-blue-200 mt-4">No credit card required • 14-day free trial • Cancel anytime</p>
