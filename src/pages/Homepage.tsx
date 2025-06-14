@@ -4,10 +4,14 @@ import Navigation from '../components/Navigation';
 import FeatureCard from '../components/FeatureCard';
 import PricingCard from '../components/PricingCard';
 import LocationSearch from '../components/LocationSearch';
+import SearchResults from '../components/SearchResults';
+import { searchServices, Service } from '../data/servicesData';
 
 const Homepage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
+  const [searchResults, setSearchResults] = useState<Service[]>([]);
+  const [showResults, setShowResults] = useState(false);
 
   const serviceTypes = [
     'Barber', 'Hair Salon', 'Beauty Therapist', 'Massage Therapist', 
@@ -16,7 +20,16 @@ const Homepage = () => {
 
   const handleSearch = () => {
     console.log('Searching for:', searchQuery, 'in location:', selectedLocation);
-    // TODO: Implement actual search functionality
+    const results = searchServices(searchQuery, selectedLocation);
+    setSearchResults(results);
+    setShowResults(true);
+  };
+
+  const handleServiceTypeClick = (serviceType: string) => {
+    setSearchQuery(serviceType);
+    const results = searchServices(serviceType, selectedLocation);
+    setSearchResults(results);
+    setShowResults(true);
   };
 
   const features = [
@@ -133,6 +146,7 @@ const Homepage = () => {
                     placeholder="What service do you need?"
                     className="w-full pl-10 pr-4 py-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
                     list="services"
+                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                   />
                   <datalist id="services">
                     {serviceTypes.map((service) => (
@@ -166,8 +180,8 @@ const Homepage = () => {
                   {serviceTypes.slice(0, 6).map((service) => (
                     <button
                       key={service}
-                      onClick={() => setSearchQuery(service)}
-                      className="px-4 py-2 bg-slate-100 hover:bg-blue-100 text-slate-700 rounded-full text-sm transition-colors duration-200"
+                      onClick={() => handleServiceTypeClick(service)}
+                      className="px-4 py-2 bg-slate-100 hover:bg-blue-100 text-slate-700 rounded-full text-sm transition-colors duration-200 hover:scale-105"
                     >
                       {service}
                     </button>
@@ -196,6 +210,13 @@ const Homepage = () => {
           </div>
         </div>
       </section>
+
+      {/* Search Results Modal */}
+      <SearchResults
+        services={searchResults}
+        isVisible={showResults}
+        onClose={() => setShowResults(false)}
+      />
 
       {/* Features Section */}
       <section className="py-16 md:py-24 bg-white">
