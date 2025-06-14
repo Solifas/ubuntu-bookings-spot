@@ -42,7 +42,7 @@ const Homepage = () => {
     {
       icon: Smartphone,
       title: "Mobile-First Design",
-      description: "Built for South African businesses on the go. Manage bookings from your phone anywhere, anytime.",
+      description: "Built for businesses on the go. Manage bookings from your phone anywhere, anytime.",
       color: "bg-gradient-to-br from-green-400 to-green-600"
     },
     {
@@ -54,7 +54,7 @@ const Homepage = () => {
     {
       icon: MapPin,
       title: "Location Integration",
-      description: "Show clients exactly where you are with integrated Google Maps. Perfect for mobile services.",
+      description: "Show clients exactly where you are with integrated maps. Perfect for mobile services.",
       color: "bg-gradient-to-br from-red-400 to-red-600"
     },
     {
@@ -74,12 +74,12 @@ const Homepage = () => {
   const pricingPlans = [
     {
       title: "Starter",
-      price: "99",
+      price: "29",
       period: "month",
       features: [
         "Up to 100 bookings/month",
         "Custom booking page",
-        "SMS notifications",
+        "Email notifications",
         "Basic client management",
         "Mobile app access"
       ],
@@ -87,7 +87,7 @@ const Homepage = () => {
     },
     {
       title: "Professional",
-      price: "199",
+      price: "59",
       period: "month",
       features: [
         "Unlimited bookings",
@@ -102,7 +102,7 @@ const Homepage = () => {
     },
     {
       title: "Enterprise",
-      price: "399",
+      price: "99",
       period: "month",
       features: [
         "Multiple locations",
@@ -125,8 +125,8 @@ const Homepage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
           <div className="text-center max-w-4xl mx-auto">
             <h1 className="text-4xl md:text-6xl font-bold text-slate-900 mb-6 leading-tight">
-              Find & Book Local Services in
-              <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent"> South Africa</span>
+              Find & Book Local Services
+              <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent"> Anywhere</span>
             </h1>
             <p className="text-xl md:text-2xl text-slate-600 mb-8 leading-relaxed">
               Discover and book appointments with trusted service providers near you. 
@@ -205,7 +205,7 @@ const Homepage = () => {
                   <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
                 ))}
               </div>
-              <span className="font-medium">4.9/5 from 200+ South African businesses</span>
+              <span className="font-medium">4.9/5 from 500+ businesses worldwide</span>
             </div>
           </div>
         </div>
@@ -226,7 +226,7 @@ const Homepage = () => {
               Everything You Need to Find & Book Services
             </h2>
             <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-              Designed specifically for South African clients and service providers who want a seamless booking experience.
+              Designed for clients and service providers who want a seamless booking experience anywhere in the world.
             </p>
           </div>
 
@@ -265,7 +265,7 @@ const Homepage = () => {
             Ready to Transform Your Business?
           </h2>
           <p className="text-xl text-blue-100 mb-8">
-            Join hundreds of South African service providers who've already made the switch to smarter booking.
+            Join thousands of service providers worldwide who've already made the switch to smarter booking.
           </p>
           <button className="bg-white text-blue-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-slate-100 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
             Start Your Free Trial Today
@@ -282,10 +282,10 @@ const Homepage = () => {
               <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-green-400 rounded-full flex items-center justify-center">
                 <Calendar className="h-5 w-5 text-white" />
               </div>
-              <span className="text-xl font-bold">BookMzansi</span>
+              <span className="text-xl font-bold">BookSpot</span>
             </div>
             <div className="text-slate-400">
-              © 2024 BookMzansi. Made with ❤️ for South African businesses.
+              © 2024 BookSpot. Connecting service providers and clients worldwide.
             </div>
           </div>
         </div>
