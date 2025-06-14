@@ -1,11 +1,24 @@
-
-import React from 'react';
-import { Calendar, Users, Clock, MapPin, Star, Smartphone, BarChart3 } from 'lucide-react';
+import React, { useState } from 'react';
+import { Calendar, Users, Clock, MapPin, Star, Smartphone, BarChart3, Search } from 'lucide-react';
 import Navigation from '../components/Navigation';
 import FeatureCard from '../components/FeatureCard';
 import PricingCard from '../components/PricingCard';
+import LocationSearch from '../components/LocationSearch';
 
 const Homepage = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState('');
+
+  const serviceTypes = [
+    'Barber', 'Hair Salon', 'Beauty Therapist', 'Massage Therapist', 
+    'Personal Trainer', 'Tutor', 'Plumber', 'Electrician'
+  ];
+
+  const handleSearch = () => {
+    console.log('Searching for:', searchQuery, 'in location:', selectedLocation);
+    // TODO: Implement actual search functionality
+  };
+
   const features = [
     {
       icon: Calendar,
@@ -99,17 +112,73 @@ const Homepage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
           <div className="text-center max-w-4xl mx-auto">
             <h1 className="text-4xl md:text-6xl font-bold text-slate-900 mb-6 leading-tight">
-              Grow Your Local Business with
-              <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent"> Smart Booking</span>
+              Find & Book Local Services in
+              <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent"> South Africa</span>
             </h1>
             <p className="text-xl md:text-2xl text-slate-600 mb-8 leading-relaxed">
-              The easiest way for South African service providers to manage appointments, 
-              delight clients, and boost revenue. Built for barbers, hairdressers, tutors, and more.
+              Discover and book appointments with trusted service providers near you. 
+              From barbers to tutors, find the perfect professional for your needs.
             </p>
             
+            {/* Search Section */}
+            <div className="bg-white rounded-2xl shadow-xl p-6 mb-8 max-w-4xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Service Search */}
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="What service do you need?"
+                    className="w-full pl-10 pr-4 py-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
+                    list="services"
+                  />
+                  <datalist id="services">
+                    {serviceTypes.map((service) => (
+                      <option key={service} value={service} />
+                    ))}
+                  </datalist>
+                </div>
+
+                {/* Location Search */}
+                <div>
+                  <LocationSearch
+                    value={selectedLocation}
+                    onChange={setSelectedLocation}
+                    placeholder="Where do you need it?"
+                  />
+                </div>
+
+                {/* Search Button */}
+                <button
+                  onClick={handleSearch}
+                  className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                >
+                  Search Services
+                </button>
+              </div>
+
+              {/* Popular Services */}
+              <div className="mt-6">
+                <p className="text-sm text-slate-600 mb-3">Popular services:</p>
+                <div className="flex flex-wrap gap-2">
+                  {serviceTypes.slice(0, 6).map((service) => (
+                    <button
+                      key={service}
+                      onClick={() => setSearchQuery(service)}
+                      className="px-4 py-2 bg-slate-100 hover:bg-blue-100 text-slate-700 rounded-full text-sm transition-colors duration-200"
+                    >
+                      {service}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
               <button className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
-                Start Your Free Trial
+                Join as Service Provider
               </button>
               <button className="text-slate-700 px-8 py-4 rounded-full text-lg font-semibold hover:bg-slate-100 transition-all duration-200 border-2 border-slate-200 hover:border-slate-300">
                 Watch Demo
@@ -133,10 +202,10 @@ const Homepage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-              Everything You Need to Run Your Business
+              Everything You Need to Find & Book Services
             </h2>
             <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-              Designed specifically for South African service providers who want to spend less time managing and more time serving clients.
+              Designed specifically for South African clients and service providers who want a seamless booking experience.
             </p>
           </div>
 
