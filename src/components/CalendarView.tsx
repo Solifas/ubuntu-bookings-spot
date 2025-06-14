@@ -44,27 +44,27 @@ const CalendarView = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
       {/* Calendar */}
-      <Card>
+      <Card className="w-full">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calendar className="h-5 w-5" />
             Calendar
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex justify-center">
           <Calendar
             mode="single"
             selected={selectedDate}
             onSelect={(date) => date && setSelectedDate(date)}
-            className="rounded-md border"
+            className="rounded-md border w-fit"
           />
         </CardContent>
       </Card>
 
       {/* Day's Bookings */}
-      <Card>
+      <Card className="w-full">
         <CardHeader>
           <CardTitle>
             Bookings for {format(selectedDate, 'MMMM d, yyyy')}
