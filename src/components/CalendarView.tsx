@@ -44,59 +44,62 @@ const CalendarView = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-      {/* Calendar */}
-      <Card className="w-full">
+    <div className="space-y-6">
+      {/* Calendar Section */}
+      <Card className="bg-white rounded-2xl shadow-lg border border-slate-100">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5" />
-            Calendar
-          </CardTitle>
+          <CardTitle className="text-xl font-bold text-slate-900">Calendar</CardTitle>
         </CardHeader>
-        <CardContent className="flex justify-center">
-          <Calendar
-            mode="single"
-            selected={selectedDate}
-            onSelect={(date) => date && setSelectedDate(date)}
-            className="rounded-md border w-fit"
-          />
+        <CardContent className="p-6">
+          <div className="flex justify-center">
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={(date) => date && setSelectedDate(date)}
+              className="rounded-lg border border-slate-200 bg-white shadow-sm"
+            />
+          </div>
         </CardContent>
       </Card>
 
-      {/* Day's Bookings */}
-      <Card className="w-full">
+      {/* Selected Day's Bookings */}
+      <Card className="bg-white rounded-2xl shadow-lg border border-slate-100">
         <CardHeader>
-          <CardTitle>
+          <CardTitle className="text-xl font-bold text-slate-900">
             Bookings for {format(selectedDate, 'MMMM d, yyyy')}
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
           {dayBookings.length === 0 ? (
-            <div className="text-center py-8">
-              <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">No bookings for this date</p>
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Clock className="h-8 w-8 text-slate-400" />
+              </div>
+              <h3 className="text-lg font-medium text-slate-900 mb-2">No bookings scheduled</h3>
+              <p className="text-slate-600">No appointments are scheduled for this date.</p>
             </div>
           ) : (
             <div className="space-y-4">
               {dayBookings.map((booking) => (
-                <div key={booking.id} className="bg-slate-50 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <User className="h-4 w-4 text-gray-600" />
-                      <span className="font-semibold">{booking.clientName}</span>
+                <div key={booking.id} className="bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl p-5 border border-slate-100 hover:shadow-md transition-all duration-200">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <User className="h-5 w-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-slate-900">{booking.clientName}</h4>
+                        <p className="text-sm text-slate-600">{booking.service}</p>
+                      </div>
                     </div>
-                    <Badge className={getStatusColor(booking.status)}>
+                    <Badge className={`${getStatusColor(booking.status)} font-medium`}>
                       {booking.status}
                     </Badge>
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-gray-600">
-                    <div className="flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
-                      {booking.time}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <MapPin className="h-3 w-3" />
-                      {booking.service}
+                  <div className="flex items-center gap-4 text-sm text-slate-600 ml-13">
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4" />
+                      <span className="font-medium">{booking.time}</span>
                     </div>
                   </div>
                 </div>
