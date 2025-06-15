@@ -1,6 +1,6 @@
-
 import React, { useState } from 'react';
-import { User, Phone, Mail, Calendar, MoreVertical, MessageCircle } from 'lucide-react';
+import { User, Phone, Mail, Calendar, MoreVertical, MessageCircle, Edit, Trash2, UserCheck } from 'lucide-react';
+import { toast } from '@/components/ui/use-toast';
 
 interface Client {
   id: string;
@@ -13,7 +13,7 @@ interface Client {
 }
 
 const ClientList = () => {
-  const [clients] = useState<Client[]>([
+  const [clients, setClients] = useState<Client[]>([
     {
       id: '1',
       name: 'Thabo Mthembu',
@@ -48,6 +48,56 @@ const ClientList = () => {
     }
   ]);
 
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
+  const handleMessage = (client: Client) => {
+    toast({
+      title: "Message Client",
+      description: `Opening message thread with ${client.name}`,
+    });
+    console.log('Messaging client:', client);
+  };
+
+  const handleBooking = (client: Client) => {
+    toast({
+      title: "Book Appointment",
+      description: `Creating new booking for ${client.name}`,
+    });
+    console.log('Booking appointment for client:', client);
+  };
+
+  const handleEditClient = (client: Client) => {
+    toast({
+      title: "Edit Client",
+      description: `Opening edit form for ${client.name}`,
+    });
+    console.log('Editing client:', client);
+    setOpenDropdown(null);
+  };
+
+  const handleDeleteClient = (client: Client) => {
+    toast({
+      title: "Delete Client",
+      description: `Are you sure you want to delete ${client.name}?`,
+      variant: "destructive",
+    });
+    console.log('Deleting client:', client);
+    setOpenDropdown(null);
+  };
+
+  const handleViewProfile = (client: Client) => {
+    toast({
+      title: "View Profile",
+      description: `Opening profile for ${client.name}`,
+    });
+    console.log('Viewing client profile:', client);
+    setOpenDropdown(null);
+  };
+
+  const toggleDropdown = (clientId: string) => {
+    setOpenDropdown(openDropdown === clientId ? null : clientId);
+  };
+
   return (
     <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-6">
       <div className="flex items-center justify-between mb-6">
@@ -80,16 +130,58 @@ const ClientList = () => {
                 </div>
               </div>
               
-              <div className="flex items-center space-x-2">
-                <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+              <div className="flex items-center space-x-2 relative">
+                <button 
+                  onClick={() => handleMessage(client)}
+                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                  title="Send Message"
+                >
                   <MessageCircle className="h-4 w-4" />
                 </button>
-                <button className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors">
+                <button 
+                  onClick={() => handleBooking(client)}
+                  className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                  title="Book Appointment"
+                >
                   <Calendar className="h-4 w-4" />
                 </button>
-                <button className="p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
-                  <MoreVertical className="h-4 w-4" />
-                </button>
+                <div className="relative">
+                  <button 
+                    onClick={() => toggleDropdown(client.id)}
+                    className="p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                    title="More Options"
+                  >
+                    <MoreVertical className="h-4 w-4" />
+                  </button>
+                  
+                  {openDropdown === client.id && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-slate-200 z-10">
+                      <div className="py-1">
+                        <button
+                          onClick={() => handleViewProfile(client)}
+                          className="flex items-center space-x-2 w-full px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                        >
+                          <UserCheck className="h-4 w-4" />
+                          <span>View Profile</span>
+                        </button>
+                        <button
+                          onClick={() => handleEditClient(client)}
+                          className="flex items-center space-x-2 w-full px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                        >
+                          <Edit className="h-4 w-4" />
+                          <span>Edit Client</span>
+                        </button>
+                        <button
+                          onClick={() => handleDeleteClient(client)}
+                          className="flex items-center space-x-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                          <span>Delete Client</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
             
