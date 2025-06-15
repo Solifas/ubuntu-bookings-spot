@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Calendar, Clock, MapPin, User, Star, LogIn } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
@@ -27,28 +28,26 @@ const BookingPage = () => {
     '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'
   ];
 
-  
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       {/* Header */}
       <div className="bg-white shadow-sm">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-green-400 rounded-2xl flex items-center justify-center">
-                <User className="h-8 w-8 text-white" />
+        <div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center space-x-3 sm:space-x-4 w-full sm:w-auto">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-400 to-green-400 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0">
+                <User className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
               </div>
-              <div>
-                <h1 className="text-2xl font-bold text-slate-900">Jabu's Barbershop</h1>
-                <div className="flex items-center space-x-4 text-slate-600 mt-1">
+              <div className="min-w-0 flex-1">
+                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 truncate">Jabu's Barbershop</h1>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 text-slate-600 mt-1 gap-1 sm:gap-0">
                   <div className="flex items-center space-x-1">
-                    <MapPin className="h-4 w-4" />
-                    <span>Sandton City, Johannesburg</span>
+                    <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                    <span className="text-xs sm:text-sm truncate">Sandton City, Johannesburg</span>
                   </div>
                   <div className="flex items-center space-x-1">
-                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    <span className="font-medium">4.9 (127 reviews)</span>
+                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-yellow-400 text-yellow-400 flex-shrink-0" />
+                    <span className="font-medium text-xs sm:text-sm">4.9 (127 reviews)</span>
                   </div>
                 </div>
               </div>
@@ -60,7 +59,7 @@ const BookingPage = () => {
                   setAuthMode('login');
                   setShowAuth(true);
                 }}
-                className="flex items-center space-x-2 bg-gradient-to-r from-blue-500 to-green-500 text-white px-6 py-2 rounded-full font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="w-full sm:w-auto flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-500 to-green-500 text-white px-4 sm:px-6 py-2 sm:py-2 rounded-full font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl text-sm"
               >
                 <LogIn className="h-4 w-4" />
                 <span>Login</span>
@@ -68,7 +67,7 @@ const BookingPage = () => {
             )}
 
             {isLoggedIn && (
-              <div className="flex items-center space-x-2 text-slate-700">
+              <div className="flex items-center space-x-2 text-slate-700 text-sm">
                 <User className="h-4 w-4" />
                 <span className="font-medium">Welcome, {user?.name}</span>
               </div>
@@ -77,45 +76,45 @@ const BookingPage = () => {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6 py-6 sm:py-8">
         {/* Progress Steps */}
-        <div className="flex items-center justify-center mb-8">
-          <div className="flex items-center space-x-4">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-medium ${step >= 1 ? 'bg-blue-500 text-white' : 'bg-slate-200 text-slate-600'}`}>
+        <div className="flex items-center justify-center mb-6 sm:mb-8 overflow-x-auto">
+          <div className="flex items-center space-x-2 sm:space-x-4 min-w-max px-4">
+            <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-medium text-sm ${step >= 1 ? 'bg-blue-500 text-white' : 'bg-slate-200 text-slate-600'}`}>
               1
             </div>
-            <div className={`w-16 h-1 ${step >= 2 ? 'bg-blue-500' : 'bg-slate-200'}`}></div>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-medium ${step >= 2 ? 'bg-blue-500 text-white' : 'bg-slate-200 text-slate-600'}`}>
+            <div className={`w-8 sm:w-16 h-1 ${step >= 2 ? 'bg-blue-500' : 'bg-slate-200'}`}></div>
+            <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-medium text-sm ${step >= 2 ? 'bg-blue-500 text-white' : 'bg-slate-200 text-slate-600'}`}>
               2
             </div>
-            <div className={`w-16 h-1 ${step >= 3 ? 'bg-blue-500' : 'bg-slate-200'}`}></div>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-medium ${step >= 3 ? 'bg-blue-500 text-white' : 'bg-slate-200 text-slate-600'}`}>
+            <div className={`w-8 sm:w-16 h-1 ${step >= 3 ? 'bg-blue-500' : 'bg-slate-200'}`}></div>
+            <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-medium text-sm ${step >= 3 ? 'bg-blue-500 text-white' : 'bg-slate-200 text-slate-600'}`}>
               3
             </div>
-            <div className={`w-16 h-1 ${step >= 4 ? 'bg-blue-500' : 'bg-slate-200'}`}></div>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-medium ${step >= 4 ? 'bg-blue-500 text-white' : 'bg-slate-200 text-slate-600'}`}>
+            <div className={`w-8 sm:w-16 h-1 ${step >= 4 ? 'bg-blue-500' : 'bg-slate-200'}`}></div>
+            <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-medium text-sm ${step >= 4 ? 'bg-blue-500 text-white' : 'bg-slate-200 text-slate-600'}`}>
               4
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-6 md:p-8">
+        <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-100 p-4 sm:p-6 md:p-8">
           {step === 1 && (
             <div>
-              <h2 className="text-2xl font-bold text-slate-900 mb-6">Choose Your Service</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 sm:mb-6">Choose Your Service</h2>
+              <div className="grid grid-cols-1 gap-3 sm:gap-4">
                 {services.map((service) => (
                   <div
                     key={service.id}
                     onClick={() => setSelectedService(service.id)}
-                    className={`p-6 rounded-2xl border-2 cursor-pointer transition-all duration-200 hover:shadow-lg ${
+                    className={`p-4 sm:p-6 rounded-xl sm:rounded-2xl border-2 cursor-pointer transition-all duration-200 hover:shadow-lg ${
                       selectedService === service.id
                         ? 'border-blue-500 bg-blue-50'
                         : 'border-slate-200 hover:border-blue-300'
                     }`}
                   >
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="text-lg font-semibold text-slate-900">{service.name}</h3>
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2">
+                      <h3 className="text-base sm:text-lg font-semibold text-slate-900">{service.name}</h3>
                       <span className="text-lg font-bold text-blue-600">{service.price}</span>
                     </div>
                     <p className="text-slate-600 text-sm mb-2">{service.description}</p>
@@ -128,10 +127,10 @@ const BookingPage = () => {
               </div>
               
               {selectedService && (
-                <div className="mt-8 flex justify-end">
+                <div className="mt-6 sm:mt-8 flex justify-end">
                   <button
                     onClick={() => setStep(2)}
-                    className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-3 rounded-xl font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl"
+                    className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-green-500 text-white px-6 sm:px-8 py-3 rounded-xl font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl"
                   >
                     Continue to Location
                   </button>
@@ -142,10 +141,10 @@ const BookingPage = () => {
 
           {step === 2 && (
             <div>
-              <h2 className="text-2xl font-bold text-slate-900 mb-6">Choose Location</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 sm:mb-6">Choose Location</h2>
               
-              <div className="mb-8">
-                <h3 className="text-lg font-semibold text-slate-900 mb-4">Where would you like the service?</h3>
+              <div className="mb-6 sm:mb-8">
+                <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-3 sm:mb-4">Where would you like the service?</h3>
                 <LocationSearch
                   value={selectedLocation}
                   onChange={setSelectedLocation}
@@ -156,17 +155,17 @@ const BookingPage = () => {
                 </p>
               </div>
 
-              <div className="flex justify-between">
+              <div className="flex flex-col sm:flex-row justify-between gap-3">
                 <button
                   onClick={() => setStep(1)}
-                  className="px-8 py-3 rounded-xl font-medium text-slate-700 border-2 border-slate-200 hover:bg-slate-50 transition-all duration-200"
+                  className="w-full sm:w-auto px-6 sm:px-8 py-3 rounded-xl font-medium text-slate-700 border-2 border-slate-200 hover:bg-slate-50 transition-all duration-200"
                 >
                   Back
                 </button>
                 {selectedLocation && (
                   <button
                     onClick={() => setStep(3)}
-                    className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-3 rounded-xl font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl"
+                    className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-green-500 text-white px-6 sm:px-8 py-3 rounded-xl font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl"
                   >
                     Continue to Date & Time
                   </button>
@@ -177,12 +176,12 @@ const BookingPage = () => {
 
           {step === 3 && (
             <div>
-              <h2 className="text-2xl font-bold text-slate-900 mb-6">Select Date & Time</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 sm:mb-6">Select Date & Time</h2>
               
               {/* Date Selection */}
-              <div className="mb-8">
-                <h3 className="text-lg font-semibold text-slate-900 mb-4">Choose Date</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+              <div className="mb-6 sm:mb-8">
+                <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-3 sm:mb-4">Choose Date</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-3">
                   {Array.from({ length: 14 }, (_, i) => {
                     const date = new Date();
                     date.setDate(date.getDate() + i);
@@ -194,14 +193,14 @@ const BookingPage = () => {
                       <div
                         key={dateStr}
                         onClick={() => setSelectedDate(dateStr)}
-                        className={`p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 text-center ${
+                        className={`p-3 sm:p-4 rounded-lg sm:rounded-xl border-2 cursor-pointer transition-all duration-200 text-center ${
                           selectedDate === dateStr
                             ? 'border-blue-500 bg-blue-50'
                             : 'border-slate-200 hover:border-blue-300'
                         }`}
                       >
-                        <div className="text-sm text-slate-600">{dayName}</div>
-                        <div className="text-lg font-semibold text-slate-900">{dayNum}</div>
+                        <div className="text-xs sm:text-sm text-slate-600">{dayName}</div>
+                        <div className="text-sm sm:text-lg font-semibold text-slate-900">{dayNum}</div>
                       </div>
                     );
                   })}
@@ -210,14 +209,14 @@ const BookingPage = () => {
 
               {/* Time Selection */}
               {selectedDate && (
-                <div className="mb-8">
-                  <h3 className="text-lg font-semibold text-slate-900 mb-4">Choose Time</h3>
-                  <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+                <div className="mb-6 sm:mb-8">
+                  <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-3 sm:mb-4">Choose Time</h3>
+                  <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
                     {timeSlots.map((time) => (
                       <button
                         key={time}
                         onClick={() => setSelectedTime(time)}
-                        className={`p-3 rounded-xl border-2 font-medium transition-all duration-200 ${
+                        className={`p-2 sm:p-3 rounded-lg sm:rounded-xl border-2 font-medium transition-all duration-200 text-sm ${
                           selectedTime === time
                             ? 'border-blue-500 bg-blue-50 text-blue-700'
                             : 'border-slate-200 text-slate-700 hover:border-blue-300'
@@ -230,17 +229,17 @@ const BookingPage = () => {
                 </div>
               )}
 
-              <div className="flex justify-between">
+              <div className="flex flex-col sm:flex-row justify-between gap-3">
                 <button
                   onClick={() => setStep(2)}
-                  className="px-8 py-3 rounded-xl font-medium text-slate-700 border-2 border-slate-200 hover:bg-slate-50 transition-all duration-200"
+                  className="w-full sm:w-auto px-6 sm:px-8 py-3 rounded-xl font-medium text-slate-700 border-2 border-slate-200 hover:bg-slate-50 transition-all duration-200"
                 >
                   Back
                 </button>
                 {selectedDate && selectedTime && (
                   <button
                     onClick={() => isLoggedIn ? setStep(4) : setShowAuth(true)}
-                    className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-3 rounded-xl font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl"
+                    className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-green-500 text-white px-6 sm:px-8 py-3 rounded-xl font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl"
                   >
                     {isLoggedIn ? 'Continue to Details' : 'Login to Continue'}
                   </button>
@@ -251,55 +250,55 @@ const BookingPage = () => {
 
           {step === 4 && isLoggedIn && (
             <div>
-              <h2 className="text-2xl font-bold text-slate-900 mb-6">Confirm Booking</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 sm:mb-6">Confirm Booking</h2>
               
               {/* Booking Summary */}
-              <div className="bg-slate-50 rounded-2xl p-6 mb-8">
-                <h3 className="text-lg font-semibold text-slate-900 mb-4">Booking Summary</h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-slate-600">Service:</span>
-                    <span className="font-medium text-slate-900">
+              <div className="bg-slate-50 rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8">
+                <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-3 sm:mb-4">Booking Summary</h3>
+                <div className="space-y-2 sm:space-y-3">
+                  <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
+                    <span className="text-slate-600 text-sm">Service:</span>
+                    <span className="font-medium text-slate-900 text-sm">
                       {services.find(s => s.id === selectedService)?.name}
                     </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-600">Location:</span>
-                    <span className="font-medium text-slate-900">{selectedLocation}</span>
+                  <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
+                    <span className="text-slate-600 text-sm">Location:</span>
+                    <span className="font-medium text-slate-900 text-sm break-words">{selectedLocation}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-600">Date:</span>
-                    <span className="font-medium text-slate-900">
+                  <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
+                    <span className="text-slate-600 text-sm">Date:</span>
+                    <span className="font-medium text-slate-900 text-sm">
                       {new Date(selectedDate).toLocaleDateString('en-ZA')}
                     </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-600">Time:</span>
-                    <span className="font-medium text-slate-900">{selectedTime}</span>
+                  <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
+                    <span className="text-slate-600 text-sm">Time:</span>
+                    <span className="font-medium text-slate-900 text-sm">{selectedTime}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-600">Duration:</span>
-                    <span className="font-medium text-slate-900">
+                  <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
+                    <span className="text-slate-600 text-sm">Duration:</span>
+                    <span className="font-medium text-slate-900 text-sm">
                       {services.find(s => s.id === selectedService)?.duration}
                     </span>
                   </div>
-                  <div className="border-t border-slate-200 pt-3 flex justify-between">
-                    <span className="font-semibold text-slate-900">Total:</span>
-                    <span className="font-bold text-lg text-blue-600">
+                  <div className="border-t border-slate-200 pt-2 sm:pt-3 flex flex-col sm:flex-row sm:justify-between gap-1">
+                    <span className="font-semibold text-slate-900 text-sm">Total:</span>
+                    <span className="font-bold text-base sm:text-lg text-blue-600">
                       {services.find(s => s.id === selectedService)?.price}
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="flex justify-between">
+              <div className="flex flex-col sm:flex-row justify-between gap-3">
                 <button
                   onClick={() => setStep(3)}
-                  className="px-8 py-3 rounded-xl font-medium text-slate-700 border-2 border-slate-200 hover:bg-slate-50 transition-all duration-200"
+                  className="w-full sm:w-auto px-6 sm:px-8 py-3 rounded-xl font-medium text-slate-700 border-2 border-slate-200 hover:bg-slate-50 transition-all duration-200"
                 >
                   Back
                 </button>
-                <button className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-3 rounded-xl font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl">
+                <button className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-green-500 text-white px-6 sm:px-8 py-3 rounded-xl font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl">
                   Confirm Booking
                 </button>
               </div>
