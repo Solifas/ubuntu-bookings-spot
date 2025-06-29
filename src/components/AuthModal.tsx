@@ -1,7 +1,7 @@
-
 import React, { useState } from 'react';
 import { X, Mail, Lock, User, Phone, UserCheck, Building } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -13,6 +13,7 @@ interface AuthModalProps {
 
 const AuthModal = ({ isOpen, onClose, mode, onModeChange, defaultUserType = 'client' }: AuthModalProps) => {
   const { login } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -33,6 +34,12 @@ const AuthModal = ({ isOpen, onClose, mode, onModeChange, defaultUserType = 'cli
       await login(formData.email, formData.password, formData.userType as 'client' | 'provider');
       console.log('Login successful');
       onClose();
+      // Redirect based on user type
+      if (formData.userType === 'provider') {
+        navigate('/dashboard');
+      } else {
+        navigate('/'); // Clients stay on homepage to find services
+      }
     } catch (error) {
       console.error('Login failed:', error);
     } finally {

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Calendar, ArrowLeft, Mail, Lock, User, Building } from 'lucide-react';
@@ -21,7 +20,12 @@ const Login = () => {
     try {
       await login(formData.email, formData.password, userType);
       console.log('Login successful');
-      navigate('/dashboard');
+      // Redirect based on user type
+      if (userType === 'provider') {
+        navigate('/dashboard');
+      } else {
+        navigate('/'); // Clients go to homepage to find services
+      }
     } catch (error) {
       console.error('Login failed:', error);
     } finally {
