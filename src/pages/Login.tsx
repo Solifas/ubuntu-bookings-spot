@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Calendar, ArrowLeft, Mail, Lock, User, Building } from 'lucide-react';
@@ -8,7 +9,7 @@ const Login = () => {
   const { login } = useAuth();
   const [userType, setUserType] = useState<'client' | 'provider'>('client');
   const [formData, setFormData] = useState({
-    email: '',
+    emailOrUsername: '',
     password: ''
   });
   const [loading, setLoading] = useState(false);
@@ -18,7 +19,7 @@ const Login = () => {
     setLoading(true);
     
     try {
-      await login(formData.email, formData.password, userType);
+      await login(formData.emailOrUsername, formData.password, userType);
       console.log('Login successful');
       // Redirect based on user type
       if (userType === 'provider') {
@@ -97,20 +98,20 @@ const Login = () => {
               </div>
             </div>
 
-            {/* Email */}
+            {/* Email or Username */}
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">
-                Email Address
+                Email or Username
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
+                  type="text"
+                  name="emailOrUsername"
+                  value={formData.emailOrUsername}
                   onChange={handleInputChange}
                   className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="your.email@example.com"
+                  placeholder="Email or username"
                   required
                 />
               </div>
