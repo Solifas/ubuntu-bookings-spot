@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { User, Phone, Mail, Calendar, MoreVertical, MessageCircle, Edit, Trash2, UserCheck } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
@@ -109,38 +110,38 @@ const ClientList = () => {
 
       <div className="space-y-4">
         {clients.map((client) => (
-          <div key={client.id} className="p-4 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-green-400 rounded-full flex items-center justify-center text-white font-semibold">
+          <div key={client.id} className="p-4 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors relative">
+            <div className="flex items-start justify-between">
+              <div className="flex items-center space-x-4 flex-1">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-green-400 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
                   {client.name.split(' ').map(n => n[0]).join('')}
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-slate-900">{client.name}</h3>
-                  <div className="flex items-center space-x-4 text-sm text-slate-600 mt-1">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 text-sm text-slate-600 mt-1 space-y-1 sm:space-y-0">
                     <div className="flex items-center space-x-1">
-                      <Mail className="h-3 w-3" />
-                      <span>{client.email}</span>
+                      <Mail className="h-3 w-3 flex-shrink-0" />
+                      <span className="truncate">{client.email}</span>
                     </div>
                     <div className="flex items-center space-x-1">
-                      <Phone className="h-3 w-3" />
+                      <Phone className="h-3 w-3 flex-shrink-0" />
                       <span>{client.phone}</span>
                     </div>
                   </div>
                 </div>
               </div>
               
-              <div className="flex items-center space-x-2 relative">
+              <div className="flex items-center space-x-2 ml-4">
                 <button 
                   onClick={() => handleMessage(client)}
-                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors flex-shrink-0"
                   title="Send Message"
                 >
                   <MessageCircle className="h-4 w-4" />
                 </button>
                 <button 
                   onClick={() => handleBooking(client)}
-                  className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                  className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors flex-shrink-0"
                   title="Book Appointment"
                 >
                   <Calendar className="h-4 w-4" />
@@ -148,7 +149,7 @@ const ClientList = () => {
                 <div className="relative">
                   <button 
                     onClick={() => toggleDropdown(client.id)}
-                    className="p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                    className="p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors flex-shrink-0"
                     title="More Options"
                   >
                     <MoreVertical className="h-4 w-4" />
