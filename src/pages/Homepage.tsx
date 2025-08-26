@@ -7,7 +7,7 @@ import PricingCard from '../components/PricingCard';
 import LocationSearch from '../components/LocationSearch';
 import SearchResults from '../components/SearchResults';
 import DemoModal from '../components/DemoModal';
-import { searchServices, Service } from '../data/servicesData';
+import { searchServices, Service, mockServices } from '../data/servicesData';
 
 const Homepage = () => {
   const navigate = useNavigate();
@@ -241,6 +241,69 @@ const Homepage = () => {
         isOpen={showDemoModal}
         onClose={() => setShowDemoModal(false)}
       />
+
+      {/* Popular Services Section */}
+      <section className="py-16 md:py-24 bg-gradient-to-b from-blue-50 to-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+              Popular Services
+            </h2>
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+              Discover top-rated service providers in your area. From beauty treatments to home repairs, find exactly what you need.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {mockServices.slice(0, 8).map((service) => (
+              <div key={service.id} className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group hover:scale-105">
+                <div className="aspect-w-16 aspect-h-9 bg-gradient-to-br from-slate-200 to-slate-300">
+                  <div className="w-full h-48 bg-gradient-to-br from-blue-400 to-green-400 flex items-center justify-center">
+                    <span className="text-white font-semibold text-lg">{service.type}</span>
+                  </div>
+                </div>
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-semibold text-slate-900 text-lg group-hover:text-blue-600 transition-colors">
+                      {service.name}
+                    </h3>
+                    <span className="text-blue-600 font-bold text-lg">{service.price}</span>
+                  </div>
+                  
+                  <p className="text-slate-600 text-sm mb-3 line-clamp-2">{service.description}</p>
+                  
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center space-x-1">
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <span className="text-sm font-medium text-slate-700">{service.rating}</span>
+                      <span className="text-sm text-slate-500">({service.reviewCount})</span>
+                    </div>
+                    <span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full">
+                      {service.availability}
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center text-slate-500 text-sm mb-4">
+                    <MapPin className="h-4 w-4 mr-1" />
+                    <span className="truncate">{service.location}</span>
+                  </div>
+                  
+                  <button 
+                    onClick={() => {
+                      setSearchQuery(service.type);
+                      setSearchResults([service]);
+                      setShowResults(true);
+                    }}
+                    className="w-full bg-gradient-to-r from-blue-500 to-green-500 text-white py-2 px-4 rounded-xl font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 transform hover:scale-105"
+                  >
+                    View Details
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Features Section */}
       <section className="py-16 md:py-24 bg-white">
