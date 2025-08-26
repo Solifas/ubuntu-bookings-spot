@@ -258,7 +258,7 @@ const Homepage = () => {
             {mockServices.slice(0, 8).map((service) => (
               <div key={service.id} className="bg-white rounded-xl md:rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group hover:scale-105">
                 <div className="aspect-w-16 aspect-h-9 bg-gradient-to-br from-slate-200 to-slate-300">
-                  <div className="w-full h-24 md:h-48 bg-gradient-to-br from-blue-400 to-green-400 flex items-center justify-center">
+                  <div className="w-full h-32 md:h-40 bg-gradient-to-br from-blue-400 to-green-400 flex items-center justify-center">
                     <span className="text-white font-medium md:font-semibold text-xs md:text-lg">{service.type}</span>
                   </div>
                 </div>
