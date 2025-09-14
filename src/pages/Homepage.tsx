@@ -254,37 +254,32 @@ const Homepage = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
             {mockServices.slice(0, 8).map((service) => (
-              <div key={service.id} className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group hover:scale-105">
-                <div className="aspect-w-16 aspect-h-9 bg-gradient-to-br from-slate-200 to-slate-300">
-                  <div className="w-full h-48 bg-gradient-to-br from-blue-400 to-green-400 flex items-center justify-center">
-                    <span className="text-white font-semibold text-lg">{service.type}</span>
-                  </div>
+              <div key={service.id} className="bg-white rounded-lg md:rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden group hover:scale-102">
+                <div className="w-full h-20 md:h-32 bg-gradient-to-br from-blue-400 to-green-400 flex items-center justify-center">
+                  <span className="text-white font-medium text-xs md:text-sm">{service.type}</span>
                 </div>
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-semibold text-slate-900 text-lg group-hover:text-blue-600 transition-colors">
+                <div className="p-2 md:p-4">
+                  <div className="flex items-start justify-between mb-1">
+                    <h3 className="font-medium text-slate-900 text-xs md:text-sm leading-tight flex-1 pr-1">
                       {service.name}
                     </h3>
-                    <span className="text-blue-600 font-bold text-lg">{service.price}</span>
+                    <span className="text-blue-600 font-bold text-xs md:text-sm">{service.price}</span>
                   </div>
                   
-                  <p className="text-slate-600 text-sm mb-3 line-clamp-2">{service.description}</p>
-                  
-                  <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center space-x-1">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span className="text-sm font-medium text-slate-700">{service.rating}</span>
-                      <span className="text-sm text-slate-500">({service.reviewCount})</span>
+                      <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                      <span className="text-xs font-medium text-slate-700">{service.rating}</span>
                     </div>
-                    <span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full">
-                      {service.availability}
+                    <span className="text-xs text-green-600 bg-green-100 px-1 py-0.5 rounded">
+                      Available
                     </span>
                   </div>
                   
-                  <div className="flex items-center text-slate-500 text-sm mb-4">
-                    <MapPin className="h-4 w-4 mr-1" />
+                  <div className="flex items-center text-slate-500 text-xs mb-2">
+                    <MapPin className="h-3 w-3 mr-1" />
                     <span className="truncate">{service.location}</span>
                   </div>
                   
@@ -294,9 +289,9 @@ const Homepage = () => {
                       setSearchResults([service]);
                       setShowResults(true);
                     }}
-                    className="w-full bg-gradient-to-r from-blue-500 to-green-500 text-white py-2 px-4 rounded-xl font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 transform hover:scale-105"
+                    className="w-full bg-gradient-to-r from-blue-500 to-green-500 text-white py-1 md:py-1.5 px-2 rounded-md font-medium text-xs hover:from-blue-600 hover:to-green-600 transition-all duration-200"
                   >
-                    View Details
+                    Book Now
                   </button>
                 </div>
               </div>
