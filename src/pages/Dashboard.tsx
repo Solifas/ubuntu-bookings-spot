@@ -103,7 +103,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
       <Navigation />
-      
+
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8">
         {/* Header */}
         <div className="mb-6 sm:mb-8">
@@ -126,11 +126,10 @@ const Dashboard = () => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 rounded-lg font-medium transition-all duration-200 whitespace-nowrap text-sm sm:text-base ${
-                    activeTab === tab.id
-                      ? 'bg-white text-blue-600 shadow-sm'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
+                  className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 rounded-lg font-medium transition-all duration-200 whitespace-nowrap text-sm sm:text-base ${activeTab === tab.id
+                    ? 'bg-white text-blue-600 shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900'
+                    }`}
                 >
                   {tab.icon && <tab.icon className="h-3 w-3 sm:h-4 sm:w-4" />}
                   <span className="hidden xs:inline sm:inline">{tab.label}</span>
@@ -176,7 +175,7 @@ const Dashboard = () => {
                       View All
                     </button>
                   </div>
-                  
+
                   <div className="space-y-3 sm:space-y-4">
                     {upcomingBookings.map((booking, index) => (
                       <BookingCard key={index} {...booking} />
@@ -193,13 +192,13 @@ const Dashboard = () => {
                     <button className="w-full bg-gradient-to-r from-blue-500 to-green-500 text-white p-3 sm:p-4 rounded-lg sm:rounded-xl font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl text-sm sm:text-base">
                       + New Booking
                     </button>
-                    <button 
+                    <button
                       onClick={() => setActiveTab('calendar')}
                       className="w-full bg-slate-100 text-slate-700 p-3 sm:p-4 rounded-lg sm:rounded-xl font-medium hover:bg-slate-200 transition-all duration-200 text-sm sm:text-base"
                     >
                       View Calendar
                     </button>
-                    <button 
+                    <button
                       onClick={() => setActiveTab('services')}
                       className="w-full bg-slate-100 text-slate-700 p-3 sm:p-4 rounded-lg sm:rounded-xl font-medium hover:bg-slate-200 transition-all duration-200 text-sm sm:text-base"
                     >
@@ -216,7 +215,7 @@ const Dashboard = () => {
           <div className="max-w-6xl">
             <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-100 p-4 sm:p-6">
               <h2 className="text-lg sm:text-xl font-bold text-slate-900 mb-4 sm:mb-6">Booking Requests</h2>
-              
+
               {bookingRequests.length === 0 ? (
                 <div className="text-center py-8 sm:py-12">
                   <Calendar className="h-8 w-8 sm:h-12 sm:w-12 text-slate-400 mx-auto mb-3 sm:mb-4" />
@@ -237,7 +236,7 @@ const Dashboard = () => {
                               <p className="text-slate-600 text-xs sm:text-sm">{booking.clientEmail}</p>
                             </div>
                           </div>
-                          
+
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
                             <div>
                               <p className="text-slate-500 font-medium">Service</p>
@@ -257,7 +256,7 @@ const Dashboard = () => {
                             </div>
                           </div>
                         </div>
-                        
+
                         <div className="flex gap-2 sm:gap-3">
                           <button
                             onClick={() => handleBookingAction(booking.id, 'decline')}
