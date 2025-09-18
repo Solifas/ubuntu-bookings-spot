@@ -37,7 +37,7 @@ export class BusinessService {
     }
 
     // Update business information
-    static async updateBusiness(businessId: string, updates: Partial<UpdateBusinessCommand>): Promise<Business> {
+    static async updateBusiness(businessId: string, updates: Partial<UpdateBusinessCommand>): Promise<Business | null> {
         try {
             const command: UpdateBusinessCommand = {
                 id: businessId,
@@ -50,11 +50,8 @@ export class BusinessService {
                 throw new Error(response.error);
             }
 
-            if (!response.data) {
-                throw new Error('No business data returned');
-            }
-
-            return response.data;
+            // Return null if business not found instead of throwing error
+            return response.data || null;
         } catch (error) {
             console.error('Update business failed:', error);
             throw error;
@@ -62,7 +59,7 @@ export class BusinessService {
     }
 
     // Get business details
-    static async getBusiness(businessId: string): Promise<Business> {
+    static async getBusiness(businessId: string): Promise<Business | null> {
         try {
             const response = await DataSourceAdapter.getBusiness(businessId);
 
@@ -70,11 +67,8 @@ export class BusinessService {
                 throw new Error(response.error);
             }
 
-            if (!response.data) {
-                throw new Error('Business not found');
-            }
-
-            return response.data;
+            // Return null if business not found instead of throwing error
+            return response.data || null;
         } catch (error) {
             console.error('Get business failed:', error);
             throw error;
@@ -107,7 +101,7 @@ export class BusinessService {
     }
 
     // Update a service
-    static async updateService(serviceId: string, updates: Partial<UpdateServiceCommand>): Promise<Service> {
+    static async updateService(serviceId: string, updates: Partial<UpdateServiceCommand>): Promise<Service | null> {
         try {
             const command: UpdateServiceCommand = {
                 id: serviceId,
@@ -120,11 +114,8 @@ export class BusinessService {
                 throw new Error(response.error);
             }
 
-            if (!response.data) {
-                throw new Error('No service data returned');
-            }
-
-            return response.data;
+            // Return null if service not found instead of throwing error
+            return response.data || null;
         } catch (error) {
             console.error('Update service failed:', error);
             throw error;

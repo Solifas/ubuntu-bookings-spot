@@ -97,9 +97,12 @@ export const useUpdateBookingStatus = () => {
         mutationFn: ({ bookingId, status }: { bookingId: string; status: BookingStatus }) =>
             updateBookingStatus(bookingId, status),
         onSuccess: (updatedBooking) => {
-            // Update the specific booking in cache
-            queryClient.setQueryData(bookingKeys.detail(updatedBooking.id), updatedBooking);
-            // Invalidate all booking lists
+            // Only update cache if booking was found and updated
+            if (updatedBooking) {
+                // Update the specific booking in cache
+                queryClient.setQueryData(bookingKeys.detail(updatedBooking.id), updatedBooking);
+            }
+            // Always invalidate all booking lists to refresh data
             queryClient.invalidateQueries({ queryKey: bookingKeys.all });
         },
     });

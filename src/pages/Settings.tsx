@@ -1,10 +1,80 @@
 
-import React, { useState } from 'react';
-import { Clock, MapPin, DollarSign, User, Bell, Calendar } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Clock, MapPin, DollarSign, User, Bell, Calendar, Loader2 } from 'lucide-react';
 import Navigation from '../components/Navigation';
+import { DataSourceAdapter } from '../services/dataSourceAdapter';
+import { Service } from '../types/api';
+import { isMockMode } from '../config/dataSource';
+import { Badge } from '@/components/ui/badge';
+import { useAuth } from '../contexts/AuthContext';
+
+interface LocalService {
+  name: string;
+  duration: string;
+  price: string;
+}
 
 const Settings = () => {
+  const { user, isLoggedIn } = useAuth();
   const [activeTab, setActiveTab] = useState('business');
+  const [services, setServices] = useState<LocalService[]>([]);
+  const [servicesLoading, setServicesLoading] = useState(true);
+
+  // Mock services - only used in mock mode
+  const mockServices: LocalService[] = [
+    { name: 'Classic Haircut', duration: '30', price: '120' },
+    { name: 'Beard Trim & Shape', duration: '20', price: '80' },
+    { name: 'Cut & Beard Combo', duration: '45', price: '180' },
+    { name: 'Hair Styling', duration: '25', price: '100' }
+  ];
+
+  // Load services when services tab is active
+  useEffect(() => {
+    if (activeTab === 'services') {
+      const loadServices = async () => {
+        setServicesLoading(true);
+
+        try {
+          if (isMockMode()) {
+            console.log('🎭 Settings: Using mock services');
+            setServices(mockServices);
+          } else {
+            if (!isLoggedIn || !user) {
+              throw new Error('User must be logged in to access services');
+            }
+
+            console.log('🌐 Settings: Fetching services from API for user:', user.id);
+            const response = await DataSourceAdapter.getBusinessServices(user.id);
+
+            if (response.error) {
+              throw new Error(response.error);
+            }
+
+            // Convert API services to local format
+            const apiServices: LocalService[] = (response.data || []).map((service: Service) => ({
+              name: service.name,
+              duration: service.durationMinutes.toString(),
+              price: service.price.toString()
+            }));
+
+            setServices(apiServices);
+          }
+        } catch (err) {
+          console.error('Failed to load services:', err);
+          // Fallback to mock data in mock mode, empty array in API mode
+          if (isMockMode()) {
+            setServices(mockServices);
+          } else {
+            setServices([]);
+          }
+        } finally {
+          setServicesLoading(false);
+        }
+      };
+
+      loadServices();
+    }
+  }, [activeTab]);
 
   const tabs = [
     { id: 'business', label: 'Business Info', icon: User },
@@ -19,7 +89,7 @@ const Settings = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
       <Navigation />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-900 mb-2">Business Settings</h1>
@@ -34,11 +104,10 @@ const Settings = () => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 ${
-                    activeTab === tab.id
-                      ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-500'
-                      : 'text-slate-700 hover:bg-slate-100'
-                  }`}
+                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 ${activeTab === tab.id
+                    ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-500'
+                    : 'text-slate-700 hover:bg-slate-100'
+                    }`}
                 >
                   <tab.icon className="h-5 w-5" />
                   <span className="font-medium">{tab.label}</span>
@@ -50,7 +119,7 @@ const Settings = () => {
           {/* Content */}
           <div className="lg:col-span-3">
             <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-6 md:p-8">
-              
+
               {activeTab === 'business' && (
                 <div>
                   <h2 className="text-2xl font-bold text-slate-900 mb-6">Business Information</h2>
@@ -102,54 +171,73 @@ const Settings = () => {
               {activeTab === 'services' && (
                 <div>
                   <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold text-slate-900">Services & Pricing</h2>
+                    <div className="flex items-center gap-3">
+                      <h2 className="text-2xl font-bold text-slate-900">Services & Pricing</h2>
+                      {isMockMode() && (
+                        <Badge variant="outline">Mock Mode</Badge>
+                      )}
+                    </div>
                     <button className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-4 py-2 rounded-xl font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200">
                       + Add Service
                     </button>
                   </div>
-                  
-                  <div className="space-y-4">
-                    {[
-                      { name: 'Classic Haircut', duration: '30', price: '120' },
-                      { name: 'Beard Trim & Shape', duration: '20', price: '80' },
-                      { name: 'Cut & Beard Combo', duration: '45', price: '180' },
-                      { name: 'Hair Styling', duration: '25', price: '100' }
-                    ].map((service, index) => (
-                      <div key={index} className="bg-slate-50 rounded-2xl p-6">
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                          <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-2">Service Name</label>
-                            <input
-                              type="text"
-                              className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                              defaultValue={service.name}
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-2">Duration (min)</label>
-                            <input
-                              type="number"
-                              className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                              defaultValue={service.duration}
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-2">Price (R)</label>
-                            <input
-                              type="number"
-                              className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                              defaultValue={service.price}
-                            />
-                          </div>
-                          <div className="flex items-end">
-                            <button className="w-full p-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                              Remove
-                            </button>
+
+                  {servicesLoading ? (
+                    <div className="flex items-center justify-center py-12">
+                      <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+                      <span className="ml-2 text-slate-600">Loading services...</span>
+                    </div>
+                  ) : services.length > 0 ? (
+                    <div className="space-y-4">
+                      {services.map((service, index) => (
+                        <div key={index} className="bg-slate-50 rounded-2xl p-6">
+                          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div>
+                              <label className="block text-sm font-medium text-slate-700 mb-2">Service Name</label>
+                              <input
+                                type="text"
+                                className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                defaultValue={service.name}
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-slate-700 mb-2">Duration (min)</label>
+                              <input
+                                type="number"
+                                className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                defaultValue={service.duration}
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-slate-700 mb-2">Price (R)</label>
+                              <input
+                                type="number"
+                                className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                defaultValue={service.price}
+                              />
+                            </div>
+                            <div className="flex items-end">
+                              <button className="w-full p-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                                Remove
+                              </button>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-12">
+                      <p className="text-slate-600 mb-4">
+                        {isMockMode()
+                          ? "No services available in mock mode"
+                          : "No services found. Add your first service to get started."
+                        }
+                      </p>
+                      <button className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-4 py-2 rounded-xl font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200">
+                        + Add Your First Service
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
 

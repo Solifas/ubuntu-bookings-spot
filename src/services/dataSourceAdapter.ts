@@ -65,17 +65,20 @@ export class DataSourceAdapter {
         }
     }
 
-    static async getService(id: string): Promise<DataSourceResponse<Service>> {
+    static async getService(id: string): Promise<DataSourceResponse<Service | null>> {
         try {
             if (isApiMode()) {
                 console.log('🌐 Using API for getService');
-                return await apiClient.getService(id);
+                const response = await apiClient.getService(id);
+                // Handle 404 as null instead of error
+                if (response.status === 404) {
+                    return { data: null, status: 200 };
+                }
+                return response;
             } else {
                 console.log('🎭 Using Mock data for getService');
                 const data = await MockDataService.getService(id);
-                if (!data) {
-                    return { error: 'Service not found', status: 404 };
-                }
+                // Return null for not found instead of error
                 return { data, status: 200 };
             }
         } catch (error) {
@@ -125,17 +128,22 @@ export class DataSourceAdapter {
         }
     }
 
-    static async updateService(id: string, data: UpdateServiceCommand): Promise<DataSourceResponse<Service>> {
+    static async updateService(id: string, data: UpdateServiceCommand): Promise<DataSourceResponse<Service | null>> {
         try {
             if (isApiMode()) {
                 console.log('🌐 Using API for updateService');
-                return await apiClient.updateService(id, data);
+                const response = await apiClient.updateService(id, data);
+                // Handle 404 as null instead of error
+                if (response.status === 404) {
+                    return { data: null, status: 200 };
+                }
+                return response;
             } else {
                 console.log('🎭 Using Mock data for updateService');
                 // For mock, we'll just return the updated data
                 const existingService = await MockDataService.getService(id);
                 if (!existingService) {
-                    return { error: 'Service not found', status: 404 };
+                    return { data: null, status: 200 };
                 }
                 const updatedService = { ...existingService, ...data };
                 return { data: updatedService, status: 200 };
@@ -212,16 +220,21 @@ export class DataSourceAdapter {
         }
     }
 
-    static async updateBookingStatus(bookingId: string, status: BookingStatus): Promise<DataSourceResponse<Booking>> {
+    static async updateBookingStatus(bookingId: string, status: BookingStatus): Promise<DataSourceResponse<Booking | null>> {
         try {
             if (isApiMode()) {
                 console.log('🌐 Using API for updateBookingStatus');
-                return await apiClient.updateBooking(bookingId, { id: bookingId, status });
+                const response = await apiClient.updateBooking(bookingId, { id: bookingId, status });
+                // Handle 404 as null instead of error
+                if (response.status === 404) {
+                    return { data: null, status: 200 };
+                }
+                return response;
             } else {
                 console.log('🎭 Using Mock data for updateBookingStatus');
                 const data = await MockDataService.updateBookingStatus(bookingId, status);
                 if (!data) {
-                    return { error: 'Booking not found', status: 404 };
+                    return { data: null, status: 200 };
                 }
                 // Convert BookingWithDetails to Booking for consistency
                 const booking: Booking = {
@@ -286,17 +299,20 @@ export class DataSourceAdapter {
     }
 
     // Business
-    static async getBusiness(id: string): Promise<DataSourceResponse<Business>> {
+    static async getBusiness(id: string): Promise<DataSourceResponse<Business | null>> {
         try {
             if (isApiMode()) {
                 console.log('🌐 Using API for getBusiness');
-                return await apiClient.getBusiness(id);
+                const response = await apiClient.getBusiness(id);
+                // Handle 404 as null instead of error
+                if (response.status === 404) {
+                    return { data: null, status: 200 };
+                }
+                return response;
             } else {
                 console.log('🎭 Using Mock data for getBusiness');
                 const data = await MockDataService.getBusiness(id);
-                if (!data) {
-                    return { error: 'Business not found', status: 404 };
-                }
+                // Return null for not found instead of error
                 return { data, status: 200 };
             }
         } catch (error) {
@@ -341,16 +357,21 @@ export class DataSourceAdapter {
         }
     }
 
-    static async updateBusiness(id: string, data: any): Promise<DataSourceResponse<Business>> {
+    static async updateBusiness(id: string, data: any): Promise<DataSourceResponse<Business | null>> {
         try {
             if (isApiMode()) {
                 console.log('🌐 Using API for updateBusiness');
-                return await apiClient.updateBusiness(id, data);
+                const response = await apiClient.updateBusiness(id, data);
+                // Handle 404 as null instead of error
+                if (response.status === 404) {
+                    return { data: null, status: 200 };
+                }
+                return response;
             } else {
                 console.log('🎭 Using Mock data for updateBusiness');
                 const existing = await MockDataService.getBusiness(id);
                 if (!existing) {
-                    return { error: 'Business not found', status: 404 };
+                    return { data: null, status: 200 };
                 }
                 const updated = { ...existing, ...data };
                 return { data: updated, status: 200 };
@@ -392,14 +413,19 @@ export class DataSourceAdapter {
         }
     }
 
-    static async getBooking(id: string): Promise<DataSourceResponse<Booking>> {
+    static async getBooking(id: string): Promise<DataSourceResponse<Booking | null>> {
         try {
             if (isApiMode()) {
                 console.log('🌐 Using API for getBooking');
-                return await apiClient.getBooking(id);
+                const response = await apiClient.getBooking(id);
+                // Handle 404 as null instead of error
+                if (response.status === 404) {
+                    return { data: null, status: 200 };
+                }
+                return response;
             } else {
                 console.log('🎭 Using Mock data for getBooking');
-                // For mock, create a simple booking
+                // For mock, create a simple booking (or return null if not found)
                 const booking: Booking = {
                     id,
                     serviceId: 'mock-service',

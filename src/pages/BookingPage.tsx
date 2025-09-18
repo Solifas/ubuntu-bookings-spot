@@ -1,9 +1,21 @@
 
-import React, { useState } from 'react';
-import { Calendar, Clock, MapPin, User, Star, LogIn } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Calendar, Clock, MapPin, User, Star, LogIn, Loader2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import AuthModal from '../components/AuthModal';
 import LocationSearch from '../components/LocationSearch';
+import { DataSourceAdapter } from '../services/dataSourceAdapter';
+import { Service } from '../types/api';
+import { isMockMode } from '../config/dataSource';
+import { Badge } from '@/components/ui/badge';
+
+interface LocalService {
+  id: string;
+  name: string;
+  duration: string;
+  price: string;
+  description: string;
+}
 
 const BookingPage = () => {
   const { user, isLoggedIn } = useAuth();
@@ -14,13 +26,62 @@ const BookingPage = () => {
   const [step, setStep] = useState(1);
   const [showAuth, setShowAuth] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
+  const [services, setServices] = useState<LocalService[]>([]);
+  const [servicesLoading, setServicesLoading] = useState(true);
 
-  const services = [
+  // Mock services - only used in mock mode
+  const mockServices: LocalService[] = [
     { id: 'haircut', name: 'Classic Haircut', duration: '30 min', price: 'R120', description: 'Professional cut and styling' },
     { id: 'beard-trim', name: 'Beard Trim & Shape', duration: '20 min', price: 'R80', description: 'Expert beard grooming' },
     { id: 'combo', name: 'Cut & Beard Combo', duration: '45 min', price: 'R180', description: 'Complete grooming package' },
     { id: 'styling', name: 'Hair Styling', duration: '25 min', price: 'R100', description: 'Professional styling service' }
   ];
+
+  // Load services on component mount
+  useEffect(() => {
+    const loadServices = async () => {
+      setServicesLoading(true);
+
+      try {
+        if (isMockMode()) {
+          console.log('🎭 BookingPage: Using mock services');
+          setServices(mockServices);
+        } else {
+          console.log('🌐 BookingPage: Fetching services from API');
+          // For booking page, we might want to fetch services from all providers
+          // or from a specific business. For now, we'll use a generic approach
+          const response = await DataSourceAdapter.getServices();
+
+          if (response.error) {
+            throw new Error(response.error);
+          }
+
+          // Convert API services to local format
+          const apiServices: LocalService[] = (response.data || []).map((service: Service) => ({
+            id: service.id,
+            name: service.name,
+            duration: `${service.durationMinutes} min`,
+            price: `R${service.price}`,
+            description: service.description || 'Professional service'
+          }));
+
+          setServices(apiServices);
+        }
+      } catch (err) {
+        console.error('Failed to load services:', err);
+        // Fallback to mock data in mock mode, empty array in API mode
+        if (isMockMode()) {
+          setServices(mockServices);
+        } else {
+          setServices([]);
+        }
+      } finally {
+        setServicesLoading(false);
+      }
+    };
+
+    loadServices();
+  }, []);
 
   const timeSlots = [
     '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
@@ -52,7 +113,7 @@ const BookingPage = () => {
                 </div>
               </div>
             </div>
-            
+
             {!isLoggedIn && (
               <button
                 onClick={() => {
@@ -101,32 +162,53 @@ const BookingPage = () => {
         <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-100 p-4 sm:p-6 md:p-8">
           {step === 1 && (
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 sm:mb-6">Choose Your Service</h2>
-              <div className="grid grid-cols-1 gap-3 sm:gap-4">
-                {services.map((service) => (
-                  <div
-                    key={service.id}
-                    onClick={() => setSelectedService(service.id)}
-                    className={`p-4 sm:p-6 rounded-xl sm:rounded-2xl border-2 cursor-pointer transition-all duration-200 hover:shadow-lg ${
-                      selectedService === service.id
+              <div className="flex items-center gap-3 mb-4 sm:mb-6">
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Choose Your Service</h2>
+                {isMockMode() && (
+                  <Badge variant="outline">Mock Mode</Badge>
+                )}
+              </div>
+
+              {servicesLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+                  <span className="ml-2 text-slate-600">Loading services...</span>
+                </div>
+              ) : services.length > 0 ? (
+                <div className="grid grid-cols-1 gap-3 sm:gap-4">
+                  {services.map((service) => (
+                    <div
+                      key={service.id}
+                      onClick={() => setSelectedService(service.id)}
+                      className={`p-4 sm:p-6 rounded-xl sm:rounded-2xl border-2 cursor-pointer transition-all duration-200 hover:shadow-lg ${selectedService === service.id
                         ? 'border-blue-500 bg-blue-50'
                         : 'border-slate-200 hover:border-blue-300'
-                    }`}
-                  >
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2">
-                      <h3 className="text-base sm:text-lg font-semibold text-slate-900">{service.name}</h3>
-                      <span className="text-lg font-bold text-blue-600">{service.price}</span>
+                        }`}
+                    >
+                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2">
+                        <h3 className="text-base sm:text-lg font-semibold text-slate-900">{service.name}</h3>
+                        <span className="text-lg font-bold text-blue-600">{service.price}</span>
+                      </div>
+                      <p className="text-slate-600 text-sm mb-2">{service.description}</p>
+                      <div className="flex items-center space-x-1 text-slate-500 text-sm">
+                        <Clock className="h-4 w-4" />
+                        <span>{service.duration}</span>
+                      </div>
                     </div>
-                    <p className="text-slate-600 text-sm mb-2">{service.description}</p>
-                    <div className="flex items-center space-x-1 text-slate-500 text-sm">
-                      <Clock className="h-4 w-4" />
-                      <span>{service.duration}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              
-              {selectedService && (
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <p className="text-slate-600 mb-4">
+                    {isMockMode()
+                      ? "No services available in mock mode"
+                      : "No services available. Please check back later."
+                    }
+                  </p>
+                </div>
+              )}
+
+              {selectedService && services.length > 0 && (
                 <div className="mt-6 sm:mt-8 flex justify-end">
                   <button
                     onClick={() => setStep(2)}
@@ -142,7 +224,7 @@ const BookingPage = () => {
           {step === 2 && (
             <div>
               <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 sm:mb-6">Choose Location</h2>
-              
+
               <div className="mb-6 sm:mb-8">
                 <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-3 sm:mb-4">Where would you like the service?</h3>
                 <LocationSearch
@@ -177,7 +259,7 @@ const BookingPage = () => {
           {step === 3 && (
             <div>
               <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 sm:mb-6">Select Date & Time</h2>
-              
+
               {/* Date Selection */}
               <div className="mb-6 sm:mb-8">
                 <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-3 sm:mb-4">Choose Date</h3>
@@ -188,16 +270,15 @@ const BookingPage = () => {
                     const dateStr = date.toISOString().split('T')[0];
                     const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
                     const dayNum = date.getDate();
-                    
+
                     return (
                       <div
                         key={dateStr}
                         onClick={() => setSelectedDate(dateStr)}
-                        className={`p-3 sm:p-4 rounded-lg sm:rounded-xl border-2 cursor-pointer transition-all duration-200 text-center ${
-                          selectedDate === dateStr
-                            ? 'border-blue-500 bg-blue-50'
-                            : 'border-slate-200 hover:border-blue-300'
-                        }`}
+                        className={`p-3 sm:p-4 rounded-lg sm:rounded-xl border-2 cursor-pointer transition-all duration-200 text-center ${selectedDate === dateStr
+                          ? 'border-blue-500 bg-blue-50'
+                          : 'border-slate-200 hover:border-blue-300'
+                          }`}
                       >
                         <div className="text-xs sm:text-sm text-slate-600">{dayName}</div>
                         <div className="text-sm sm:text-lg font-semibold text-slate-900">{dayNum}</div>
@@ -216,11 +297,10 @@ const BookingPage = () => {
                       <button
                         key={time}
                         onClick={() => setSelectedTime(time)}
-                        className={`p-2 sm:p-3 rounded-lg sm:rounded-xl border-2 font-medium transition-all duration-200 text-sm ${
-                          selectedTime === time
-                            ? 'border-blue-500 bg-blue-50 text-blue-700'
-                            : 'border-slate-200 text-slate-700 hover:border-blue-300'
-                        }`}
+                        className={`p-2 sm:p-3 rounded-lg sm:rounded-xl border-2 font-medium transition-all duration-200 text-sm ${selectedTime === time
+                          ? 'border-blue-500 bg-blue-50 text-blue-700'
+                          : 'border-slate-200 text-slate-700 hover:border-blue-300'
+                          }`}
                       >
                         {time}
                       </button>
@@ -251,7 +331,7 @@ const BookingPage = () => {
           {step === 4 && isLoggedIn && (
             <div>
               <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 sm:mb-6">Confirm Booking</h2>
-              
+
               {/* Booking Summary */}
               <div className="bg-slate-50 rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8">
                 <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-3 sm:mb-4">Booking Summary</h3>

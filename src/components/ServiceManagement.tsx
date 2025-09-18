@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Edit, Trash2, Clock, DollarSign } from 'lucide-react';
+import { Plus, Edit, Trash2, Clock, DollarSign, Loader2 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import AddServiceForm from './AddServiceForm';
+import { DataSourceAdapter } from '../services/dataSourceAdapter';
+import { Service } from '../types/api';
+import { isMockMode } from '../config/dataSource';
+import { useAuth } from '../contexts/AuthContext';
 
-interface Service {
+interface LocalService {
   id: string;
   name: string;
   duration: number;
@@ -16,8 +20,14 @@ interface Service {
 }
 
 const ServiceManagement = () => {
+  const { user, isLoggedIn } = useAuth();
   const [isAddFormOpen, setIsAddFormOpen] = useState(false);
-  const [services, setServices] = useState<Service[]>([
+  const [services, setServices] = useState<LocalService[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Mock services - only shown in mock mode
+  const mockServices: LocalService[] = [
     {
       id: '1',
       name: 'Classic Haircut',
@@ -50,36 +60,276 @@ const ServiceManagement = () => {
       description: 'Hair styling and finishing',
       active: false
     }
-  ]);
+  ];
 
-  const handleAddService = (newService: Service) => {
-    setServices(prev => [...prev, newService]);
+  // Load services based on data source mode
+  useEffect(() => {
+    const loadServices = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        if (isMockMode()) {
+          // In mock mode, use the hardcoded services
+          console.log('🎭 ServiceManagement: Using mock services');
+          setServices(mockServices);
+        } else {
+          // In API mode, fetch from the backend
+          if (!isLoggedIn || !user) {
+            throw new Error('User must be logged in to access services');
+          }
+
+          if (user.type !== 'provider') {
+            throw new Error('Only providers can manage services');
+          }
+
+          console.log('🌐 ServiceManagement: Fetching services from API for user:', user.id);
+          const response = await DataSourceAdapter.getBusinessServices(user.id);
+
+          if (response.error) {
+            throw new Error(response.error);
+          }
+
+          // Convert API services to local format
+          const apiServices: LocalService[] = (response.data || []).map((service: Service) => ({
+            id: service.id,
+            name: service.name,
+            duration: service.durationMinutes,
+            price: service.price,
+            description: service.description || '',
+            active: service.isActive
+          }));
+
+          setServices(apiServices);
+        }
+      } catch (err) {
+        console.error('Failed to load services:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load services');
+
+        // Fallback to empty array in API mode, mock services in mock mode
+        if (isMockMode()) {
+          setServices(mockServices);
+        } else {
+          setServices([]);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadServices();
+  }, [isLoggedIn, user]);
+
+  const handleAddService = async (newService: LocalService) => {
+    try {
+      if (isMockMode()) {
+        // In mock mode, just add to local state
+        setServices(prev => [...prev, newService]);
+        toast({
+          title: "Service Added",
+          description: `${newService.name} has been added to your services.`,
+        });
+      } else {
+        // In API mode, create via API
+        if (!user) {
+          throw new Error('User must be logged in to create services');
+        }
+
+        const response = await DataSourceAdapter.createService({
+          businessId: user.id,
+          name: newService.name,
+          description: newService.description,
+          price: newService.price,
+          durationMinutes: newService.duration,
+          isActive: newService.active
+        });
+
+        if (response.error) {
+          throw new Error(response.error);
+        }
+
+        // Add to local state
+        setServices(prev => [...prev, newService]);
+        toast({
+          title: "Service Added",
+          description: `${newService.name} has been added to your services.`,
+        });
+      }
+    } catch (err) {
+      console.error('Failed to add service:', err);
+      toast({
+        title: "Error",
+        description: "Failed to add service. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleToggleService = (serviceId: string) => {
-    setServices(prev => prev.map(service =>
-      service.id === serviceId
-        ? { ...service, active: !service.active }
-        : service
-    ));
-
+  const handleToggleService = async (serviceId: string) => {
     const service = services.find(s => s.id === serviceId);
-    toast({
-      title: service?.active ? "Service Disabled" : "Service Enabled",
-      description: `${service?.name} has been ${service?.active ? 'disabled' : 'enabled'}.`,
-    });
+    if (!service) return;
+
+    const newActiveState = !service.active;
+
+    try {
+      if (isMockMode()) {
+        // In mock mode, just update local state
+        setServices(prev => prev.map(s =>
+          s.id === serviceId ? { ...s, active: newActiveState } : s
+        ));
+      } else {
+        // In API mode, update via API
+        const response = await DataSourceAdapter.updateService(serviceId, {
+          id: serviceId,
+          isActive: newActiveState
+        });
+
+        if (response.error) {
+          throw new Error(response.error);
+        }
+
+        if (response.data === null) {
+          throw new Error('Service not found');
+        }
+
+        // Update local state
+        setServices(prev => prev.map(s =>
+          s.id === serviceId ? { ...s, active: newActiveState } : s
+        ));
+      }
+
+      toast({
+        title: newActiveState ? "Service Enabled" : "Service Disabled",
+        description: `${service.name} has been ${newActiveState ? 'enabled' : 'disabled'}.`,
+      });
+    } catch (err) {
+      console.error('Failed to toggle service:', err);
+      toast({
+        title: "Error",
+        description: "Failed to update service. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleDeleteService = (serviceId: string) => {
+  const handleDeleteService = async (serviceId: string) => {
     const service = services.find(s => s.id === serviceId);
-    setServices(prev => prev.filter(service => service.id !== serviceId));
+    if (!service) return;
 
-    toast({
-      title: "Service Deleted",
-      description: `${service?.name} has been removed from your services.`,
-      variant: "destructive",
-    });
+    try {
+      if (isMockMode()) {
+        // In mock mode, just remove from local state
+        setServices(prev => prev.filter(s => s.id !== serviceId));
+      } else {
+        // In API mode, delete via API
+        const response = await DataSourceAdapter.deleteService(serviceId);
+
+        if (response.error) {
+          throw new Error(response.error);
+        }
+
+        // Remove from local state
+        setServices(prev => prev.filter(s => s.id !== serviceId));
+      }
+
+      toast({
+        title: "Service Deleted",
+        description: `${service.name} has been removed from your services.`,
+        variant: "destructive",
+      });
+    } catch (err) {
+      console.error('Failed to delete service:', err);
+      toast({
+        title: "Error",
+        description: "Failed to delete service. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
+
+  // Show authentication required state
+  if (!isMockMode() && !isLoggedIn) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h2 className="text-2xl font-bold text-slate-900">Service Management</h2>
+            <p className="text-slate-600">Manage your services, pricing, and availability</p>
+          </div>
+        </div>
+        <Card className="p-12">
+          <div className="text-center">
+            <h3 className="text-lg font-semibold text-slate-900 mb-2">Authentication Required</h3>
+            <p className="text-slate-600 mb-4">
+              Please log in as a provider to manage your services.
+            </p>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  // Show provider access required state
+  if (!isMockMode() && isLoggedIn && user?.type !== 'provider') {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h2 className="text-2xl font-bold text-slate-900">Service Management</h2>
+            <p className="text-slate-600">Manage your services, pricing, and availability</p>
+          </div>
+        </div>
+        <Card className="p-12">
+          <div className="text-center">
+            <h3 className="text-lg font-semibold text-slate-900 mb-2">Provider Access Required</h3>
+            <p className="text-slate-600 mb-4">
+              Only service providers can manage services. Please register as a provider to access this feature.
+            </p>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h2 className="text-2xl font-bold text-slate-900">Service Management</h2>
+            <p className="text-slate-600">Manage your services, pricing, and availability</p>
+          </div>
+        </div>
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+          <span className="ml-2 text-slate-600">Loading services...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error && !isMockMode()) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h2 className="text-2xl font-bold text-slate-900">Service Management</h2>
+            <p className="text-slate-600">Manage your services, pricing, and availability</p>
+          </div>
+        </div>
+        <Card className="p-6">
+          <div className="text-center">
+            <p className="text-red-600 mb-4">Failed to load services: {error}</p>
+            <Button onClick={() => window.location.reload()}>
+              Try Again
+            </Button>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -87,7 +337,14 @@ const ServiceManagement = () => {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-slate-900">Service Management</h2>
-          <p className="text-slate-600">Manage your services, pricing, and availability</p>
+          <p className="text-slate-600">
+            Manage your services, pricing, and availability
+            {isMockMode() && (
+              <Badge variant="outline" className="ml-2">
+                Mock Mode
+              </Badge>
+            )}
+          </p>
         </div>
         <Button
           onClick={() => setIsAddFormOpen(true)}
@@ -98,91 +355,123 @@ const ServiceManagement = () => {
         </Button>
       </div>
 
+      {/* Empty state */}
+      {services.length === 0 && !loading && (
+        <Card className="p-12">
+          <div className="text-center">
+            <h3 className="text-lg font-semibold text-slate-900 mb-2">No services yet</h3>
+            <p className="text-slate-600 mb-4">
+              {isMockMode()
+                ? "Switch to mock mode to see sample services, or add your first service."
+                : "Get started by adding your first service."
+              }
+            </p>
+            <Button
+              onClick={() => setIsAddFormOpen(true)}
+              className="bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Your First Service
+            </Button>
+          </div>
+        </Card>
+      )}
+
       {/* Services Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {services.map((service) => (
-          <Card key={service.id} className={`${!service.active ? 'opacity-60' : ''}`}>
-            <CardHeader className="pb-3">
-              <div className="flex justify-between items-start">
-                <CardTitle className="text-lg">{service.name}</CardTitle>
-                <Badge variant={service.active ? "default" : "secondary"}>
-                  {service.active ? 'Active' : 'Inactive'}
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-sm text-slate-600">{service.description}</p>
-
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-1 text-sm text-slate-600">
-                  <Clock className="h-3 w-3" />
-                  {service.duration} min
+      {services.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {services.map((service) => (
+            <Card key={service.id} className={`${!service.active ? 'opacity-60' : ''}`}>
+              <CardHeader className="pb-3">
+                <div className="flex justify-between items-start">
+                  <CardTitle className="text-lg">{service.name}</CardTitle>
+                  <Badge variant={service.active ? "default" : "secondary"}>
+                    {service.active ? 'Active' : 'Inactive'}
+                  </Badge>
                 </div>
-                <div className="flex items-center gap-1 text-lg font-semibold text-slate-900">
-                  <DollarSign className="h-4 w-4" />
-                  {service.price}
-                </div>
-              </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-slate-600">{service.description}</p>
 
-              <div className="flex gap-2 pt-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex-1"
-                  onClick={() => handleToggleService(service.id)}
-                >
-                  {service.active ? 'Disable' : 'Enable'}
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Edit className="h-3 w-3" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleDeleteService(service.id)}
-                  className="text-red-600 hover:text-red-700"
-                >
-                  <Trash2 className="h-3 w-3" />
-                </Button>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-1 text-sm text-slate-600">
+                    <Clock className="h-3 w-3" />
+                    {service.duration} min
+                  </div>
+                  <div className="flex items-center gap-1 text-lg font-semibold text-slate-900">
+                    <DollarSign className="h-4 w-4" />
+                    {service.price}
+                  </div>
+                </div>
+
+                <div className="flex gap-2 pt-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => handleToggleService(service.id)}
+                  >
+                    {service.active ? 'Disable' : 'Enable'}
+                  </Button>
+                  <Button variant="outline" size="sm">
+                    <Edit className="h-3 w-3" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDeleteService(service.id)}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      {/* Quick Stats */}
+      {services.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+          <Card>
+            <CardContent className="p-6">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-slate-900">{services.filter(s => s.active).length}</div>
+                <div className="text-sm text-slate-600">Active Services</div>
               </div>
             </CardContent>
           </Card>
-        ))}
-      </div>
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-        <Card>
-          <CardContent className="p-6">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-slate-900">{services.filter(s => s.active).length}</div>
-              <div className="text-sm text-slate-600">Active Services</div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-slate-900">
-                ${Math.round(services.filter(s => s.active).reduce((acc, s) => acc + s.price, 0) / services.filter(s => s.active).length)}
+          <Card>
+            <CardContent className="p-6">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-slate-900">
+                  {services.filter(s => s.active).length > 0
+                    ? `$${Math.round(services.filter(s => s.active).reduce((acc, s) => acc + s.price, 0) / services.filter(s => s.active).length)}`
+                    : '$0'
+                  }
+                </div>
+                <div className="text-sm text-slate-600">Average Price</div>
               </div>
-              <div className="text-sm text-slate-600">Average Price</div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-slate-900">
-                {Math.round(services.filter(s => s.active).reduce((acc, s) => acc + s.duration, 0) / services.filter(s => s.active).length)} min
+          <Card>
+            <CardContent className="p-6">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-slate-900">
+                  {services.filter(s => s.active).length > 0
+                    ? `${Math.round(services.filter(s => s.active).reduce((acc, s) => acc + s.duration, 0) / services.filter(s => s.active).length)} min`
+                    : '0 min'
+                  }
+                </div>
+                <div className="text-sm text-slate-600">Average Duration</div>
               </div>
-              <div className="text-sm text-slate-600">Average Duration</div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* Add Service Form */}
       <AddServiceForm

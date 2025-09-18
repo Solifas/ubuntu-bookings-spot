@@ -40,35 +40,29 @@ export const createBooking = async (bookingDetails: BookingDetails): Promise<Boo
     return response.data;
 };
 
-export const getBooking = async (bookingId: string): Promise<Booking> => {
+export const getBooking = async (bookingId: string): Promise<Booking | null> => {
     const response = await DataSourceAdapter.getBooking(bookingId);
 
     if (response.error) {
         throw new Error(response.error);
     }
 
-    if (!response.data) {
-        throw new Error('Booking not found');
-    }
-
-    return response.data;
+    // Return null if booking not found instead of throwing error
+    return response.data || null;
 };
 
 export const updateBookingStatus = async (
     bookingId: string,
     status: BookingStatus
-): Promise<Booking> => {
+): Promise<Booking | null> => {
     const response = await DataSourceAdapter.updateBookingStatus(bookingId, status);
 
     if (response.error) {
         throw new Error(response.error);
     }
 
-    if (!response.data) {
-        throw new Error('Failed to update booking');
-    }
-
-    return response.data;
+    // Return null if booking not found instead of throwing error
+    return response.data || null;
 };
 
 // Get bookings for a provider with enhanced details

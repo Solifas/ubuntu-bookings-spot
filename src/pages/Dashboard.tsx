@@ -35,7 +35,17 @@ const Dashboard = () => {
   const handleBookingAction = async (bookingId: string, action: 'accept' | 'decline') => {
     try {
       const status = action === 'accept' ? BookingStatus.CONFIRMED : BookingStatus.CANCELLED;
-      await updateBookingStatus.mutateAsync({ bookingId, status });
+      const result = await updateBookingStatus.mutateAsync({ bookingId, status });
+
+      // Check if booking was found and updated
+      if (result === null) {
+        toast({
+          title: "Booking Not Found",
+          description: "The booking could not be found. It may have been already updated or cancelled.",
+          variant: "destructive",
+        });
+        return;
+      }
 
       const booking = pendingBookings.find(b => b.id === bookingId);
       if (booking) {
