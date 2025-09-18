@@ -6,7 +6,7 @@ import { Plus, Edit, Trash2, Clock, DollarSign, Loader2 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import AddServiceForm from './AddServiceForm';
 import { DataSourceAdapter } from '../services/dataSourceAdapter';
-import { Service } from '../types/api';
+import { Service, UpdateServiceCommand } from '../types/api';
 import { isMockMode } from '../config/dataSource';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -17,7 +17,22 @@ interface LocalService {
   price: number;
   description: string;
   active: boolean;
+  category?: string;
+  imageUrl?: string;
+  tags?: string[];
 }
+
+const mapApiServiceToLocal = (service: Service): LocalService => ({
+  id: service.id,
+  name: service.name,
+  duration: service.durationMinutes,
+  price: service.price,
+  description: service.description ?? '',
+  active: service.isActive,
+  category: service.category,
+  imageUrl: service.imageUrl,
+  tags: service.tags,
+});
 
 const ServiceManagement = () => {
   const { user, isLoggedIn } = useAuth();
@@ -91,14 +106,7 @@ const ServiceManagement = () => {
           }
 
           // Convert API services to local format
-          const apiServices: LocalService[] = (response.data || []).map((service: Service) => ({
-            id: service.id,
-            name: service.name,
-            duration: service.durationMinutes,
-            price: service.price,
-            description: service.description || '',
-            active: service.isActive
-          }));
+          const apiServices: LocalService[] = (response.data || []).map(mapApiServiceToLocal);
 
           setServices(apiServices);
         }
@@ -139,8 +147,11 @@ const ServiceManagement = () => {
           businessId: user.id,
           name: newService.name,
           description: newService.description,
+          category: newService.category,
           price: newService.price,
           durationMinutes: newService.duration,
+          imageUrl: newService.imageUrl,
+          tags: newService.tags,
           isActive: newService.active
         });
 
@@ -148,11 +159,12 @@ const ServiceManagement = () => {
           throw new Error(response.error);
         }
 
-        // Add to local state
-        setServices(prev => [...prev, newService]);
+        const createdService = response.data ? mapApiServiceToLocal(response.data) : newService;
+
+        setServices(prev => [...prev, createdService]);
         toast({
           title: "Service Added",
-          description: `${newService.name} has been added to your services.`,
+          description: `${createdService.name} has been added to your services.`,
         });
       }
     } catch (err) {
@@ -165,24 +177,29 @@ const ServiceManagement = () => {
     }
   };
 
-  const handleToggleService = async (serviceId: string) => {
-    const service = services.find(s => s.id === serviceId);
-    if (!service) return;
+  const handleToggleService = async (service: LocalService) => {
+    const nextService: LocalService = {
+      ...service,
+      active: !service.active,
+    };
 
-    const newActiveState = !service.active;
+    const updatePayload: UpdateServiceCommand = {
+      id: service.id,
+      name: service.name,
+      description: service.description,
+      price: service.price,
+      durationMinutes: service.duration,
+      isActive: nextService.active,
+      category: service.category,
+      imageUrl: service.imageUrl,
+      tags: service.tags,
+    };
 
     try {
       if (isMockMode()) {
-        // In mock mode, just update local state
-        setServices(prev => prev.map(s =>
-          s.id === serviceId ? { ...s, active: newActiveState } : s
-        ));
+        setServices(prev => prev.map(s => (s.id === service.id ? nextService : s)));
       } else {
-        // In API mode, update via API
-        const response = await DataSourceAdapter.updateService(serviceId, {
-          id: serviceId,
-          isActive: newActiveState
-        });
+        const response = await DataSourceAdapter.updateService(service.id, updatePayload);
 
         if (response.error) {
           throw new Error(response.error);
@@ -192,18 +209,16 @@ const ServiceManagement = () => {
           throw new Error('Service not found');
         }
 
-        // Update local state
-        setServices(prev => prev.map(s =>
-          s.id === serviceId ? { ...s, active: newActiveState } : s
-        ));
+        const syncedService = mapApiServiceToLocal(response.data);
+        setServices(prev => prev.map(s => (s.id === service.id ? syncedService : s)));
       }
 
       toast({
-        title: newActiveState ? "Service Enabled" : "Service Disabled",
-        description: `${service.name} has been ${newActiveState ? 'enabled' : 'disabled'}.`,
+        title: nextService.active ? "Service Enabled" : "Service Disabled",
+        description: `${nextService.name} is now ${nextService.active ? 'active' : 'inactive'} - duration ${nextService.duration} min - price $${nextService.price}`,
       });
     } catch (err) {
-      console.error('Failed to toggle service:', err);
+      console.error('Failed to update service:', err);
       toast({
         title: "Error",
         description: "Failed to update service. Please try again.",
@@ -409,7 +424,7 @@ const ServiceManagement = () => {
                     variant="outline"
                     size="sm"
                     className="flex-1"
-                    onClick={() => handleToggleService(service.id)}
+                    onClick={() => handleToggleService(service)}
                   >
                     {service.active ? 'Disable' : 'Enable'}
                   </Button>
