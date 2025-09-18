@@ -6,7 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 const Register = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { login } = useAuth();
+  const { register } = useAuth();
   const [userType, setUserType] = useState<'client' | 'provider'>('client');
   const [formData, setFormData] = useState({
     name: '',
@@ -28,20 +28,27 @@ const Register = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (formData.password !== formData.confirmPassword) {
       alert('Passwords do not match');
       return;
     }
 
     setLoading(true);
-    
+
     try {
-      await login(formData.email, formData.password, userType);
+      await register({
+        email: formData.email,
+        fullName: formData.name,
+        contactNumber: formData.phone,
+        password: formData.password,
+        userType: userType
+      });
       console.log('Registration successful');
       navigate('/dashboard');
     } catch (error) {
       console.error('Registration failed:', error);
+      alert(error instanceof Error ? error.message : 'Registration failed');
     } finally {
       setLoading(false);
     }
@@ -63,14 +70,14 @@ const Register = () => {
             <ArrowLeft className="h-4 w-4" />
             <span>Back to Home</span>
           </Link>
-          
+
           <div className="flex items-center justify-center space-x-2 mb-4">
             <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-green-400 rounded-full flex items-center justify-center">
               <Calendar className="h-7 w-7 text-white" />
             </div>
             <span className="text-2xl font-bold text-slate-800">BookSpot</span>
           </div>
-          
+
           <h1 className="text-3xl font-bold text-slate-900 mb-2">Create Account</h1>
           <p className="text-slate-600">Join thousands of users on BookSpot</p>
         </div>
@@ -87,11 +94,10 @@ const Register = () => {
                 <button
                   type="button"
                   onClick={() => setUserType('client')}
-                  className={`p-3 rounded-xl border-2 transition-all duration-200 flex items-center justify-center space-x-2 ${
-                    userType === 'client'
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-slate-200 hover:border-blue-300'
-                  }`}
+                  className={`p-3 rounded-xl border-2 transition-all duration-200 flex items-center justify-center space-x-2 ${userType === 'client'
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-slate-200 hover:border-blue-300'
+                    }`}
                 >
                   <User className="h-4 w-4" />
                   <span className="font-medium">Client</span>
@@ -99,11 +105,10 @@ const Register = () => {
                 <button
                   type="button"
                   onClick={() => setUserType('provider')}
-                  className={`p-3 rounded-xl border-2 transition-all duration-200 flex items-center justify-center space-x-2 ${
-                    userType === 'provider'
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-slate-200 hover:border-blue-300'
-                  }`}
+                  className={`p-3 rounded-xl border-2 transition-all duration-200 flex items-center justify-center space-x-2 ${userType === 'provider'
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-slate-200 hover:border-blue-300'
+                    }`}
                 >
                   <Building className="h-4 w-4" />
                   <span className="font-medium">Provider</span>

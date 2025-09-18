@@ -7,7 +7,8 @@ import PricingCard from '../components/PricingCard';
 import LocationSearch from '../components/LocationSearch';
 import SearchResults from '../components/SearchResults';
 import DemoModal from '../components/DemoModal';
-import { searchServices, Service, mockServices } from '../data/servicesData';
+import { Service } from '../data/servicesData';
+import { useSearchServices } from '../hooks/useServices';
 
 const Homepage = () => {
   const navigate = useNavigate();
@@ -17,16 +18,25 @@ const Homepage = () => {
   const [showResults, setShowResults] = useState(false);
   const [showDemoModal, setShowDemoModal] = useState(false);
 
+  // Use the new data source system for homepage services
+  const { data: servicesData, isLoading } = useSearchServices({
+    page: 1,
+    pageSize: 8 // Get first 8 services for homepage display
+  });
+
+  const services = servicesData?.services || [];
+
   const serviceTypes = [
-    'Barber', 'Hair Salon', 'Beauty Therapist', 'Massage Therapist', 
+    'Barber', 'Hair Salon', 'Beauty Therapist', 'Massage Therapist',
     'Personal Trainer', 'Tutor', 'Plumber', 'Electrician'
   ];
 
   const handleSearch = () => {
     console.log('Searching for:', searchQuery, 'in location:', selectedLocation);
-    const results = searchServices(searchQuery, selectedLocation);
-    setSearchResults(results);
-    setShowResults(true);
+    if (searchQuery.trim() || selectedLocation.trim()) {
+      // Navigate to a search results page or update search params
+      navigate(`/search?q=${encodeURIComponent(searchQuery)}&location=${encodeURIComponent(selectedLocation)}`);
+    }
   };
 
   const handleServiceTypeClick = (serviceType: string) => {
@@ -131,7 +141,7 @@ const Homepage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       <Navigation />
-      
+
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
@@ -141,10 +151,10 @@ const Homepage = () => {
               <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent"> Anywhere</span>
             </h1>
             <p className="text-xl md:text-2xl text-slate-600 mb-8 leading-relaxed">
-              Discover and book appointments with trusted service providers near you. 
+              Discover and book appointments with trusted service providers near you.
               From barbers to tutors, find the perfect professional for your needs.
             </p>
-            
+
             {/* Search Section */}
             <div className="bg-white rounded-2xl shadow-xl p-6 mb-8 max-w-4xl mx-auto">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -203,13 +213,13 @@ const Homepage = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-              <button 
+              <button
                 onClick={handleJoinAsProvider}
                 className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
               >
                 Join as Service Provider
               </button>
-              <button 
+              <button
                 onClick={handleWatchDemo}
                 className="text-slate-700 px-8 py-4 rounded-full text-lg font-semibold hover:bg-slate-100 transition-all duration-200 border-2 border-slate-200 hover:border-slate-300"
               >
@@ -237,7 +247,7 @@ const Homepage = () => {
       />
 
       {/* Demo Modal */}
-      <DemoModal 
+      <DemoModal
         isOpen={showDemoModal}
         onClose={() => setShowDemoModal(false)}
       />
@@ -255,47 +265,60 @@ const Homepage = () => {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
-            {mockServices.slice(0, 8).map((service) => (
-              <div key={service.id} className="bg-white rounded-lg md:rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden group hover:scale-102">
-                <div className="w-full h-20 md:h-32 bg-gradient-to-br from-blue-400 to-green-400 flex items-center justify-center">
-                  <span className="text-white font-medium text-xs md:text-sm">{service.type}</span>
-                </div>
-                <div className="p-2 md:p-4">
-                  <div className="flex items-start justify-between mb-1">
-                    <h3 className="font-medium text-slate-900 text-xs md:text-sm leading-tight flex-1 pr-1">
-                      {service.name}
-                    </h3>
-                    <span className="text-blue-600 font-bold text-xs md:text-sm">{service.price}</span>
-                  </div>
-                  
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center space-x-1">
-                      <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                      <span className="text-xs font-medium text-slate-700">{service.rating}</span>
-                    </div>
-                    <span className="text-xs text-green-600 bg-green-100 px-1 py-0.5 rounded">
-                      Available
-                    </span>
-                  </div>
-                  
-                  <div className="flex items-center text-slate-500 text-xs mb-2">
-                    <MapPin className="h-3 w-3 mr-1" />
-                    <span className="truncate">{service.location}</span>
-                  </div>
-                  
-                  <button 
-                    onClick={() => {
-                      setSearchQuery(service.type);
-                      setSearchResults([service]);
-                      setShowResults(true);
-                    }}
-                    className="w-full bg-gradient-to-r from-blue-500 to-green-500 text-white py-1 md:py-1.5 px-2 rounded-md font-medium text-xs hover:from-blue-600 hover:to-green-600 transition-all duration-200"
-                  >
-                    Book Now
-                  </button>
-                </div>
+            {isLoading ? (
+              // Loading skeleton
+              Array.from({ length: 8 }).map((_, index) => (
+                <div key={index} className="bg-slate-200 animate-pulse rounded-lg md:rounded-xl h-32 md:h-48"></div>
+              ))
+            ) : services.length === 0 ? (
+              // No services found
+              <div className="col-span-full text-center py-12">
+                <p className="text-slate-600">No services available at the moment.</p>
               </div>
-            ))}
+            ) : (
+              // Actual services
+              services.map((service) => (
+                <div key={service.id} className="bg-white rounded-lg md:rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden group hover:scale-102">
+                  <div className="w-full h-20 md:h-32 bg-gradient-to-br from-blue-400 to-green-400 flex items-center justify-center">
+                    <span className="text-white font-medium text-xs md:text-sm">{service.type}</span>
+                  </div>
+                  <div className="p-2 md:p-4">
+                    <div className="flex items-start justify-between mb-1">
+                      <h3 className="font-medium text-slate-900 text-xs md:text-sm leading-tight flex-1 pr-1">
+                        {service.name}
+                      </h3>
+                      <span className="text-blue-600 font-bold text-xs md:text-sm">{service.price}</span>
+                    </div>
+
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center space-x-1">
+                        <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                        <span className="text-xs font-medium text-slate-700">{service.rating}</span>
+                      </div>
+                      <span className="text-xs text-green-600 bg-green-100 px-1 py-0.5 rounded">
+                        Available
+                      </span>
+                    </div>
+
+                    <div className="flex items-center text-slate-500 text-xs mb-2">
+                      <MapPin className="h-3 w-3 mr-1" />
+                      <span className="truncate">{service.location}</span>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        setSearchQuery(service.type);
+                        setSearchResults([service]);
+                        setShowResults(true);
+                      }}
+                      className="w-full bg-gradient-to-r from-blue-500 to-green-500 text-white py-1 md:py-1.5 px-2 rounded-md font-medium text-xs hover:from-blue-600 hover:to-green-600 transition-all duration-200"
+                    >
+                      Book Now
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -349,7 +372,7 @@ const Homepage = () => {
           <p className="text-xl text-blue-100 mb-8">
             Join thousands of service providers worldwide who've already made the switch to smarter booking.
           </p>
-          <button 
+          <button
             onClick={handleJoinAsProvider}
             className="bg-white text-blue-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-slate-100 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
           >

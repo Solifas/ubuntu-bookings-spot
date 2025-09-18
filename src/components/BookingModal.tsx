@@ -5,6 +5,8 @@ import { Service } from '../data/servicesData';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
+import { createBooking, BookingDetails } from '../services/bookingService';
+import { toast } from '@/components/ui/use-toast';
 
 interface BookingModalProps {
   service: Service | null;
@@ -29,6 +31,7 @@ const BookingModal = ({ service, isVisible, onClose, onBookingConfirm }: Booking
   const [clientPhone, setClientPhone] = useState('');
   const [clientEmail, setClientEmail] = useState('');
   const [currentStep, setCurrentStep] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   // Mock available time slots - in real app this would come from the service provider's calendar
   const availableTimeSlots = [
@@ -63,7 +66,7 @@ const BookingModal = ({ service, isVisible, onClose, onBookingConfirm }: Booking
     };
 
     onBookingConfirm(bookingDetails);
-    
+
     // Reset form
     setSelectedDate(undefined);
     setSelectedTimeSlot('');
@@ -103,7 +106,7 @@ const BookingModal = ({ service, isVisible, onClose, onBookingConfirm }: Booking
           {currentStep === 1 && (
             <div>
               <h4 className="text-lg font-semibold text-slate-900 mb-4">Select Date & Time</h4>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Calendar */}
                 <div>

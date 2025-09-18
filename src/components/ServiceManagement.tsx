@@ -57,12 +57,12 @@ const ServiceManagement = () => {
   };
 
   const handleToggleService = (serviceId: string) => {
-    setServices(prev => prev.map(service => 
-      service.id === serviceId 
+    setServices(prev => prev.map(service =>
+      service.id === serviceId
         ? { ...service, active: !service.active }
         : service
     ));
-    
+
     const service = services.find(s => s.id === serviceId);
     toast({
       title: service?.active ? "Service Disabled" : "Service Enabled",
@@ -73,7 +73,7 @@ const ServiceManagement = () => {
   const handleDeleteService = (serviceId: string) => {
     const service = services.find(s => s.id === serviceId);
     setServices(prev => prev.filter(service => service.id !== serviceId));
-    
+
     toast({
       title: "Service Deleted",
       description: `${service?.name} has been removed from your services.`,
@@ -89,7 +89,7 @@ const ServiceManagement = () => {
           <h2 className="text-2xl font-bold text-slate-900">Service Management</h2>
           <p className="text-slate-600">Manage your services, pricing, and availability</p>
         </div>
-        <Button 
+        <Button
           onClick={() => setIsAddFormOpen(true)}
           className="bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
         >
@@ -112,7 +112,7 @@ const ServiceManagement = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-sm text-slate-600">{service.description}</p>
-              
+
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-1 text-sm text-slate-600">
                   <Clock className="h-3 w-3" />
@@ -125,9 +125,9 @@ const ServiceManagement = () => {
               </div>
 
               <div className="flex gap-2 pt-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+                <Button
+                  variant="outline"
+                  size="sm"
                   className="flex-1"
                   onClick={() => handleToggleService(service.id)}
                 >
@@ -136,8 +136,8 @@ const ServiceManagement = () => {
                 <Button variant="outline" size="sm">
                   <Edit className="h-3 w-3" />
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   size="sm"
                   onClick={() => handleDeleteService(service.id)}
                   className="text-red-600 hover:text-red-700"
@@ -160,7 +160,7 @@ const ServiceManagement = () => {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-6">
             <div className="text-center">
@@ -171,7 +171,7 @@ const ServiceManagement = () => {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-6">
             <div className="text-center">
@@ -185,7 +185,7 @@ const ServiceManagement = () => {
       </div>
 
       {/* Add Service Form */}
-      <AddServiceForm 
+      <AddServiceForm
         open={isAddFormOpen}
         onOpenChange={setIsAddFormOpen}
         onAddService={handleAddService}

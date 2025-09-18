@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { MapPin, Search } from 'lucide-react';
+import { useCitySuggestions } from '../hooks/useLocations';
 
 interface LocationSearchProps {
   value: string;
@@ -9,34 +10,15 @@ interface LocationSearchProps {
 }
 
 const LocationSearch = ({ value, onChange, placeholder = "Search location..." }: LocationSearchProps) => {
-  const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  // Mock South African locations for demo
-  const mockLocations = [
-    "Sandton City, Johannesburg",
-    "Rosebank, Johannesburg", 
-    "Century City, Cape Town",
-    "Durban North, KZN",
-    "Hatfield, Pretoria",
-    "Stellenbosch, Western Cape",
-    "Port Elizabeth, Eastern Cape",
-    "Bloemfontein, Free State"
-  ];
+  // Use the new data source system for city suggestions
+  const suggestions = useCitySuggestions(value);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     onChange(inputValue);
-    
-    if (inputValue.length > 0) {
-      const filtered = mockLocations.filter(location =>
-        location.toLowerCase().includes(inputValue.toLowerCase())
-      );
-      setSuggestions(filtered);
-      setShowSuggestions(true);
-    } else {
-      setShowSuggestions(false);
-    }
+    setShowSuggestions(inputValue.length > 0);
   };
 
   const handleSuggestionClick = (location: string) => {
