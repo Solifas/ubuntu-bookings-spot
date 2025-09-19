@@ -1,107 +1,169 @@
-
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { TrendingUp, Calendar, Clock, Star, Loader2 } from 'lucide-react';
 import { DataSourceAdapter } from '../services/dataSourceAdapter';
-import { isMockMode } from '../config/dataSource';
-import { Badge } from '@/components/ui/badge';
+import { useAuth } from '../contexts/AuthContext';
+import type { DashboardStats, BookingWithDetails } from '../types/api';
 
 interface PopularService {
+  id: string;
   name: string;
   bookings: number;
-  revenue: string;
+  revenue: number;
 }
 
+interface RecentMetric {
+  label: string;
+  value: string;
+  highlight?: boolean;
+}
+
+const formatCurrency = (value: number) => `R${value.toLocaleString('en-ZA', { minimumFractionDigits: 0 })}`;
+
 const BusinessInsights = () => {
+  const { user, isLoggedIn } = useAuth();
+  const [stats, setStats] = useState<DashboardStats | null>(null);
   const [popularServices, setPopularServices] = useState<PopularService[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock data - only used in mock mode
-  const mockPopularServices: PopularService[] = [
-    { name: 'Haircut & Beard Trim', bookings: 45, revenue: 'R8,100' },
-    { name: 'Classic Haircut', bookings: 32, revenue: 'R3,840' },
-    { name: 'Beard Styling', bookings: 28, revenue: 'R2,240' },
-    { name: 'Hair Styling', bookings: 18, revenue: 'R1,800' }
-  ];
-
-  const insights = [
-    {
-      title: 'Revenue Growth',
-      value: '+23%',
-      description: 'vs last month',
-      icon: TrendingUp,
-      color: 'text-green-600',
-      bgColor: 'bg-green-100'
-    },
-    {
-      title: 'Booking Rate',
-      value: '87%',
-      description: 'capacity utilized',
-      icon: Calendar,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-100'
-    },
-    {
-      title: 'Avg Session',
-      value: '45 min',
-      description: 'per appointment',
-      icon: Clock,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-100'
-    },
-    {
-      title: 'Client Rating',
-      value: '4.9',
-      description: '127 reviews',
-      icon: Star,
-      color: 'text-yellow-600',
-      bgColor: 'bg-yellow-100'
-    }
-  ];
-
-  const recentMetrics = [
-    { label: 'Today\'s Revenue', value: 'R1,240', change: '+12%' },
-    { label: 'New Clients', value: '8', change: '+25%' },
-    { label: 'Repeat Bookings', value: '15', change: '+8%' },
-    { label: 'Cancellations', value: '2', change: '-50%' }
-  ];
-
-  // Load popular services based on data source mode
   useEffect(() => {
-    const loadPopularServices = async () => {
+    const fetchInsights = async () => {
+      if (!isLoggedIn || !user) {
+        setError('Please log in to view business insights.');
+        setStats(null);
+        setPopularServices([]);
+        setLoading(false);
+        return;
+      }
+
+      if (user.type !== 'provider') {
+        setError('Business insights are only available to provider accounts.');
+        setStats(null);
+        setPopularServices([]);
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
+      setError(null);
 
       try {
-        if (isMockMode()) {
-          // In mock mode, use hardcoded data
-          console.log('🎭 BusinessInsights: Using mock popular services');
-          setPopularServices(mockPopularServices);
-        } else {
-          // In API mode, fetch from backend
-          console.log('🌐 BusinessInsights: Fetching popular services from API');
+        const [statsResponse, bookingsResponse] = await Promise.all([
+          DataSourceAdapter.getDashboardStats(user.id),
+          DataSourceAdapter.getProviderBookings(user.id),
+        ]);
 
-          // For now, we'll use mock data even in API mode since we don't have a specific endpoint
-          // In a real implementation, you'd call something like:
-          // const response = await DataSourceAdapter.getPopularServices('current-provider-id');
-          setPopularServices([]);
+        if (statsResponse.error) {
+          throw new Error(statsResponse.error);
         }
+        setStats(statsResponse.data ?? null);
+
+        if (bookingsResponse.error) {
+          throw new Error(bookingsResponse.error);
+        }
+
+        const bookings: BookingWithDetails[] = bookingsResponse.data ?? [];
+        const serviceTotals = new Map<string, PopularService>();
+
+        bookings.forEach((booking) => {
+          if (!booking.service) return;
+          const existing = serviceTotals.get(booking.service.id) ?? {
+            id: booking.service.id,
+            name: booking.service.name,
+            bookings: 0,
+            revenue: 0,
+          };
+          existing.bookings += 1;
+          existing.revenue += booking.service.price ?? 0;
+          serviceTotals.set(booking.service.id, existing);
+        });
+
+        const topServices = Array.from(serviceTotals.values())
+          .sort((a, b) => {
+            if (b.bookings === a.bookings) {
+              return b.revenue - a.revenue;
+            }
+            return b.bookings - a.bookings;
+          })
+          .slice(0, 5);
+
+        setPopularServices(topServices);
       } catch (err) {
-        console.error('Failed to load popular services:', err);
-        // Fallback to mock data in case of error
-        if (isMockMode()) {
-          setPopularServices(mockPopularServices);
-        } else {
-          setPopularServices([]);
-        }
+        console.error('Failed to load business insights:', err);
+        setStats(null);
+        setPopularServices([]);
+        setError(err instanceof Error ? err.message : 'Failed to load business insights.');
       } finally {
         setLoading(false);
       }
     };
 
-    loadPopularServices();
-  }, []);
+    fetchInsights();
+  }, [isLoggedIn, user]);
+
+  const insights = useMemo(() => [
+    {
+      title: 'Monthly Revenue',
+      value: stats ? formatCurrency(stats.monthlyRevenue) : 'N/A',
+      description: 'Revenue from completed bookings this month',
+      icon: TrendingUp,
+      color: 'text-green-600',
+      bgColor: 'bg-green-100',
+    },
+    {
+      title: "Today's Bookings",
+      value: stats ? stats.todayBookings.toString() : 'N/A',
+      description: 'Scheduled for today',
+      icon: Calendar,
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-100',
+    },
+    {
+      title: 'Weekly Bookings',
+      value: stats ? stats.weekBookings.toString() : 'N/A',
+      description: 'Bookings over the last 7 days',
+      icon: Clock,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-100',
+    },
+    {
+      title: 'Total Clients',
+      value: stats ? stats.totalClients.toString() : 'N/A',
+      description: 'Clients served to date',
+      icon: Star,
+      color: 'text-yellow-600',
+      bgColor: 'bg-yellow-100',
+    },
+  ], [stats]);
+
+  const recentMetrics: RecentMetric[] = useMemo(() => [
+    {
+      label: 'Pending bookings',
+      value: stats ? stats.pendingBookings.toString() : 'N/A',
+    },
+    {
+      label: 'Confirmed bookings',
+      value: stats ? stats.confirmedBookings.toString() : 'N/A',
+      highlight: true,
+    },
+    {
+      label: 'Monthly revenue',
+      value: stats ? formatCurrency(stats.monthlyRevenue) : 'N/A',
+    },
+    {
+      label: 'Total clients',
+      value: stats ? stats.totalClients.toString() : 'N/A',
+    },
+  ], [stats]);
 
   return (
     <div className="space-y-6">
+      {error && (
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
       {/* Key Insights */}
       <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-6">
         <h2 className="text-xl font-bold text-slate-900 mb-6">Business Insights</h2>
@@ -121,19 +183,13 @@ const BusinessInsights = () => {
 
       {/* Recent Metrics */}
       <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-6">
-        <h3 className="text-lg font-semibold text-slate-900 mb-4">Today's Performance</h3>
+        <h3 className="text-lg font-semibold text-slate-900 mb-4">At a Glance</h3>
         <div className="grid grid-cols-2 gap-4">
           {recentMetrics.map((metric, index) => (
             <div key={index} className="p-4 bg-slate-50 rounded-xl">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-sm text-slate-600">{metric.label}</div>
-                  <div className="text-xl font-bold text-slate-900">{metric.value}</div>
-                </div>
-                <div className={`text-sm font-medium ${metric.change.startsWith('+') ? 'text-green-600' : 'text-red-600'
-                  }`}>
-                  {metric.change}
-                </div>
+              <div className="text-sm text-slate-600">{metric.label}</div>
+              <div className={`text-xl font-bold ${metric.highlight ? 'text-blue-600' : 'text-slate-900'}`}>
+                {metric.value}
               </div>
             </div>
           ))}
@@ -144,9 +200,6 @@ const BusinessInsights = () => {
       <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-slate-900">Popular Services</h3>
-          {isMockMode() && (
-            <Badge variant="outline">Mock Mode</Badge>
-          )}
         </div>
 
         {loading ? (
@@ -156,14 +209,14 @@ const BusinessInsights = () => {
           </div>
         ) : popularServices.length > 0 ? (
           <div className="space-y-3">
-            {popularServices.map((service, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+            {popularServices.map((service) => (
+              <div key={service.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
                 <div>
                   <div className="font-medium text-slate-900">{service.name}</div>
                   <div className="text-sm text-slate-600">{service.bookings} bookings</div>
                 </div>
                 <div className="text-right">
-                  <div className="font-bold text-slate-900">{service.revenue}</div>
+                  <div className="font-bold text-slate-900">{formatCurrency(service.revenue)}</div>
                   <div className="text-sm text-slate-600">revenue</div>
                 </div>
               </div>
@@ -171,12 +224,7 @@ const BusinessInsights = () => {
           </div>
         ) : (
           <div className="text-center py-8">
-            <p className="text-slate-600">
-              {isMockMode()
-                ? "No popular services data available in mock mode"
-                : "No service data available. Connect to your backend to see popular services."
-              }
-            </p>
+            <p className="text-slate-600">No popular services data available yet.</p>
           </div>
         )}
       </div>
@@ -185,3 +233,4 @@ const BusinessInsights = () => {
 };
 
 export default BusinessInsights;
+

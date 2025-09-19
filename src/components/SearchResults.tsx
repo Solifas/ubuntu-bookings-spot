@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { Star, MapPin, Clock, Phone } from 'lucide-react';
-import { Service } from '../data/servicesData';
+import type { Service } from '../data/servicesData';
 import BookingModal from './BookingModal';
 import { toast } from '@/components/ui/use-toast';
 
@@ -149,3 +148,4 @@ const SearchResults = ({ services, isVisible, onClose }: SearchResultsProps) => 
 };
 
 export default SearchResults;
+

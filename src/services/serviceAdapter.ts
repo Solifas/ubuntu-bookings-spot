@@ -1,40 +1,66 @@
 // Service adapter to bridge API data and frontend display data
-import { Service as ApiService, ServiceWithBusiness, Business } from '../types/api';
+import { Service as ApiService, ServiceWithBusiness } from '../types/api';
 import { Service as FrontendService } from '../data/servicesData';
 
+type BusinessDetails = {
+    name?: string;
+    city?: string;
+    address?: string;
+    phone?: string;
+    email?: string;
+    rating?: number;
+    reviewCount?: number;
+};
+
+const slugify = (value: string) => value.toLowerCase().replace(/\s+/g, '-');
+
 export const adaptApiServiceToFrontend = (
-    apiService: ApiService,
-    businessInfo?: { name: string; city: string; address?: string; phone?: string; email?: string; rating?: number; reviewCount?: number }
+    apiService?: Partial<ApiService>,
+    businessInfo?: BusinessDetails
 ): FrontendService => {
+    const name = apiService?.name ?? 'Service';
+    const id = apiService?.id ?? slugify(name);
+    const priceValue = typeof apiService?.price === 'number' ? apiService.price : 0;
+    const durationValue = typeof apiService?.durationMinutes === 'number' ? apiService.durationMinutes : undefined;
+    const tags = Array.isArray(apiService?.tags) && apiService.tags.length > 0
+        ? apiService.tags
+        : [slugify(name)];
+
     return {
-        id: apiService.id,
-        name: apiService.name,
-        type: apiService.category || businessInfo?.name || 'Service Provider',
-        description: apiService.description || `${apiService.name} - ${apiService.durationMinutes} minutes`,
-        price: `R${apiService.price.toFixed(0)}`,
-        rating: businessInfo?.rating || 4.5,
-        reviewCount: businessInfo?.reviewCount || 0,
-        location: businessInfo?.address || businessInfo?.city || 'Location TBD',
-        availability: apiService.isActive ? 'Available' : 'Unavailable',
-        image: apiService.imageUrl || '/placeholder.svg',
-        phone: businessInfo?.phone || '+27 XX XXX XXXX',
-        email: businessInfo?.email || 'contact@provider.co.za',
-        tags: apiService.tags || [apiService.name.toLowerCase().replace(/\s+/g, '-')]
+        id,
+        name,
+        type: apiService?.category ?? businessInfo?.name ?? 'Service Provider',
+        description: apiService?.description ?? (durationValue ? `${name} - ${durationValue} minutes` : `${name} service`),
+        price: `R${Math.max(0, priceValue).toFixed(0)}`,
+        rating: businessInfo?.rating ?? 4.5,
+        reviewCount: businessInfo?.reviewCount ?? 0,
+        location: businessInfo?.address ?? businessInfo?.city ?? 'Location TBD',
+        availability: apiService?.isActive === false ? 'Unavailable' : 'Available',
+        image: apiService?.imageUrl ?? '/placeholder.svg',
+        phone: businessInfo?.phone ?? '+27 XX XXX XXXX',
+        email: businessInfo?.email ?? 'contact@provider.co.za',
+        tags,
     };
 };
 
 export const adaptServiceWithBusinessToFrontend = (
-    serviceWithBusiness: ServiceWithBusiness
+    serviceWithBusiness?: Partial<ServiceWithBusiness>
 ): FrontendService => {
-    return adaptApiServiceToFrontend(serviceWithBusiness, {
-        name: serviceWithBusiness.business.businessName,
-        city: serviceWithBusiness.business.city,
-        address: serviceWithBusiness.business.address,
-        phone: serviceWithBusiness.business.phone,
-        email: serviceWithBusiness.business.email,
-        rating: serviceWithBusiness.business.rating,
-        reviewCount: serviceWithBusiness.business.reviewCount
-    });
+    if (!serviceWithBusiness) {
+        return adaptApiServiceToFrontend();
+    }
+
+    const { business, ...service } = serviceWithBusiness as Partial<ServiceWithBusiness> & Partial<ApiService> & { business?: ServiceWithBusiness['business'] };
+
+    return adaptApiServiceToFrontend(service, business ? {
+        name: business.businessName,
+        city: business.city,
+        address: business.address,
+        phone: business.phone,
+        email: business.email,
+        rating: business.rating,
+        reviewCount: business.reviewCount,
+    } : undefined);
 };
 
 export const adaptFrontendServiceToApi = (
@@ -57,9 +83,10 @@ export const adaptFrontendServiceToApi = (
         description: frontendService.description,
         category: frontendService.type,
         price: parseFloat(frontendService.price?.replace('R', '') || '0'),
-        durationMinutes: 60, // Default duration, should be configurable
+        durationMinutes: 60,
         imageUrl: frontendService.image !== '/placeholder.svg' ? frontendService.image : undefined,
         tags: frontendService.tags,
         isActive: frontendService.availability === 'Available'
     };
 };
+

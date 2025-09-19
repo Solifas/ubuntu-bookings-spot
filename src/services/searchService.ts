@@ -20,25 +20,50 @@ export class SearchService {
                 throw new Error(response.error);
             }
 
-            if (!response.data) {
+            const data = response.data;
+
+            if (!data) {
                 return {
                     services: [],
                     totalCount: 0,
                     page: 1,
-                    pageSize: 10,
-                    totalPages: 0
+                    pageSize: params.pageSize ?? 10,
+                    totalPages: 0,
                 };
             }
 
-            // Convert API services to frontend format
-            const frontendServices = response.data.services.map(adaptServiceWithBusinessToFrontend);
+            const rawServices: Partial<ServiceWithBusiness>[] = Array.isArray(data)
+                ? (data as ServiceWithBusiness[])
+                : Array.isArray((data as ServiceSearchResponse).services)
+                    ? (data as ServiceSearchResponse).services as ServiceWithBusiness[]
+                    : [];
+
+            const frontendServices = rawServices.map((service) =>
+                adaptServiceWithBusinessToFrontend(service)
+            );
+
+            const totalCount = Array.isArray(data)
+                ? rawServices.length
+                : (data as ServiceSearchResponse).totalCount ?? rawServices.length;
+
+            const pageSize = Array.isArray(data)
+                ? params.pageSize ?? (rawServices.length || 10)
+                : (data as ServiceSearchResponse).pageSize ?? params.pageSize ?? (rawServices.length || 10);
+
+            const page = Array.isArray(data)
+                ? params.page ?? 1
+                : (data as ServiceSearchResponse).page ?? params.page ?? 1;
+
+            const totalPages = pageSize > 0
+                ? Math.max(1, Math.ceil((totalCount || rawServices.length) / pageSize))
+                : 0;
 
             return {
                 services: frontendServices,
-                totalCount: response.data.totalCount,
-                page: response.data.page,
-                pageSize: response.data.pageSize,
-                totalPages: response.data.totalPages
+                totalCount,
+                page,
+                pageSize,
+                totalPages,
             };
         } catch (error) {
             console.error('Search services failed:', error);

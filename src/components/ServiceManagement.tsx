@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Plus, Edit, Trash2, Clock, DollarSign, Loader2 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import AddServiceForm from './AddServiceForm';
+import EditServiceForm from './EditServiceForm';
 import { DataSourceAdapter } from '../services/dataSourceAdapter';
 import { Service, UpdateServiceCommand } from '../types/api';
 import { isMockMode } from '../config/dataSource';
@@ -37,6 +38,8 @@ const mapApiServiceToLocal = (service: Service): LocalService => ({
 const ServiceManagement = () => {
   const { user, isLoggedIn } = useAuth();
   const [isAddFormOpen, setIsAddFormOpen] = useState(false);
+  const [isEditFormOpen, setIsEditFormOpen] = useState(false);
+  const [serviceBeingEdited, setServiceBeingEdited] = useState<LocalService | null>(null);
   const [services, setServices] = useState<LocalService[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -107,7 +110,7 @@ const ServiceManagement = () => {
 
           // Convert API services to local format
           const apiServices: LocalService[] = (response.data || []).map(mapApiServiceToLocal);
-
+          console.log(apiServices);
           setServices(apiServices);
         }
       } catch (err) {
@@ -127,6 +130,18 @@ const ServiceManagement = () => {
 
     loadServices();
   }, [isLoggedIn, user]);
+
+  const handleEditFormOpenChange = (open: boolean) => {
+    setIsEditFormOpen(open);
+    if (!open) {
+      setServiceBeingEdited(null);
+    }
+  };
+
+  const handleEditServiceClick = (service: LocalService) => {
+    setServiceBeingEdited(service);
+    setIsEditFormOpen(true);
+  };
 
   const handleAddService = async (newService: LocalService) => {
     try {
@@ -173,6 +188,58 @@ const ServiceManagement = () => {
         title: "Error",
         description: "Failed to add service. Please try again.",
         variant: "destructive",
+      });
+    }
+  };
+
+  const handleUpdateService = async (updatedService: LocalService): Promise<void> => {
+    try {
+      if (isMockMode()) {
+        setServices(prev => prev.map(s => (s.id === updatedService.id ? updatedService : s)));
+        toast({
+          title: 'Service Updated',
+          description: `${updatedService.name} has been updated.`,
+        });
+        handleEditFormOpenChange(false);
+        return;
+      }
+
+      const updatePayload: UpdateServiceCommand = {
+        id: updatedService.id,
+        name: updatedService.name,
+        description: updatedService.description,
+        price: updatedService.price,
+        durationMinutes: updatedService.duration,
+        isActive: updatedService.active,
+        category: updatedService.category,
+        imageUrl: updatedService.imageUrl,
+        tags: updatedService.tags,
+      };
+
+      const response = await DataSourceAdapter.updateService(updatedService.id, updatePayload);
+
+      if (response.error) {
+        throw new Error(response.error);
+      }
+
+      if (!response.data) {
+        throw new Error('Service not found');
+      }
+
+      const syncedService = mapApiServiceToLocal(response.data);
+      setServices(prev => prev.map(s => (s.id === syncedService.id ? syncedService : s)));
+
+      toast({
+        title: 'Service Updated',
+        description: `${syncedService.name} has been updated.`,
+      });
+      handleEditFormOpenChange(false);
+    } catch (err) {
+      console.error('Failed to update service:', err);
+      toast({
+        title: 'Error',
+        description: 'Failed to update service. Please try again.',
+        variant: 'destructive',
       });
     }
   };
@@ -414,8 +481,7 @@ const ServiceManagement = () => {
                     {service.duration} min
                   </div>
                   <div className="flex items-center gap-1 text-lg font-semibold text-slate-900">
-                    <DollarSign className="h-4 w-4" />
-                    {service.price}
+                    R{service.price}
                   </div>
                 </div>
 
@@ -428,7 +494,11 @@ const ServiceManagement = () => {
                   >
                     {service.active ? 'Disable' : 'Enable'}
                   </Button>
-                  <Button variant="outline" size="sm">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleEditServiceClick(service)}
+                  >
                     <Edit className="h-3 w-3" />
                   </Button>
                   <Button
@@ -493,6 +563,12 @@ const ServiceManagement = () => {
         open={isAddFormOpen}
         onOpenChange={setIsAddFormOpen}
         onAddService={handleAddService}
+      />
+      <EditServiceForm
+        open={isEditFormOpen}
+        service={serviceBeingEdited}
+        onOpenChange={handleEditFormOpenChange}
+        onUpdateService={handleUpdateService}
       />
     </div>
   );

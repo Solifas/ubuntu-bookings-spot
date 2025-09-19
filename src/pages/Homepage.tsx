@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Calendar, Users, Clock, MapPin, Star, Smartphone, BarChart3, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Navigation from '../components/Navigation';
@@ -7,24 +7,39 @@ import PricingCard from '../components/PricingCard';
 import LocationSearch from '../components/LocationSearch';
 import SearchResults from '../components/SearchResults';
 import DemoModal from '../components/DemoModal';
-import { Service } from '../data/servicesData';
-import { useSearchServices } from '../hooks/useServices';
+import type { Service as FrontendService } from '../data/servicesData';
+import { SearchService } from '../services/searchService';
 
 const Homepage = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
-  const [searchResults, setSearchResults] = useState<Service[]>([]);
+  const [searchResults, setSearchResults] = useState<FrontendService[]>([]);
   const [showResults, setShowResults] = useState(false);
   const [showDemoModal, setShowDemoModal] = useState(false);
 
-  // Use the new data source system for homepage services
-  const { data: servicesData, isLoading } = useSearchServices({
-    page: 1,
-    pageSize: 8 // Get first 8 services for homepage display
-  });
+  const [popularServices, setPopularServices] = useState<FrontendService[]>([]);
+  const [isPopularLoading, setIsPopularLoading] = useState(true);
+  const displayedServices = useMemo(() => popularServices.slice(0, Math.min(popularServices.length, 10)), [popularServices]);
 
-  const services = servicesData?.services || [];
+  useEffect(() => {
+    const loadPopularServices = async () => {
+      try {
+        const response = await SearchService.searchServices(
+          SearchService.buildSearchParams(undefined, undefined, undefined, undefined, undefined, 1, 12)
+        );
+
+        setPopularServices(response.services);
+      } catch (error) {
+        console.error('Failed to load homepage services:', error);
+        setPopularServices([]);
+      } finally {
+        setIsPopularLoading(false);
+      }
+    };
+
+    loadPopularServices();
+  }, []);
 
   const serviceTypes = [
     'Barber', 'Hair Salon', 'Beauty Therapist', 'Massage Therapist',
@@ -39,11 +54,21 @@ const Homepage = () => {
     }
   };
 
-  const handleServiceTypeClick = (serviceType: string) => {
+  const handleServiceTypeClick = async (serviceType: string) => {
     setSearchQuery(serviceType);
-    const results = searchServices(serviceType, selectedLocation);
-    setSearchResults(results);
-    setShowResults(true);
+
+    try {
+      const response = await SearchService.searchServices(
+        SearchService.buildSearchParams(serviceType, selectedLocation || undefined, undefined, undefined, undefined, 1, 10)
+      );
+
+      setSearchResults(response.services);
+      setShowResults(true);
+    } catch (error) {
+      console.error('Failed to load services for type:', serviceType, error);
+      setSearchResults([]);
+      setShowResults(true);
+    }
   };
 
   const handleJoinAsProvider = () => {
@@ -265,19 +290,16 @@ const Homepage = () => {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
-            {isLoading ? (
-              // Loading skeleton
+            {isPopularLoading ? (
               Array.from({ length: 8 }).map((_, index) => (
                 <div key={index} className="bg-slate-200 animate-pulse rounded-lg md:rounded-xl h-32 md:h-48"></div>
               ))
-            ) : services.length === 0 ? (
-              // No services found
+            ) : displayedServices.length === 0 ? (
               <div className="col-span-full text-center py-12">
                 <p className="text-slate-600">No services available at the moment.</p>
               </div>
             ) : (
-              // Actual services
-              services.map((service) => (
+              displayedServices.map((service) => (
                 <div key={service.id} className="bg-white rounded-lg md:rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden group hover:scale-102">
                   <div className="w-full h-20 md:h-32 bg-gradient-to-br from-blue-400 to-green-400 flex items-center justify-center">
                     <span className="text-white font-medium text-xs md:text-sm">{service.type}</span>
@@ -403,3 +425,4 @@ const Homepage = () => {
 };
 
 export default Homepage;
+
