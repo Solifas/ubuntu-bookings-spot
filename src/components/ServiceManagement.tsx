@@ -21,6 +21,7 @@ interface LocalService {
   category?: string;
   imageUrl?: string;
   tags?: string[];
+  location?: string;
 }
 
 const mapApiServiceToLocal = (service: Service): LocalService => ({
@@ -214,6 +215,7 @@ const ServiceManagement = () => {
         category: updatedService.category,
         imageUrl: updatedService.imageUrl,
         tags: updatedService.tags,
+        location: updatedService.location,
       };
 
       const response = await DataSourceAdapter.updateService(updatedService.id, updatePayload);

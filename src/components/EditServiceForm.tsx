@@ -14,6 +14,7 @@ export interface EditableService {
   price: number;
   description: string;
   active: boolean;
+  location?: string;
   category?: string;
   imageUrl?: string;
   tags?: string[];
@@ -28,6 +29,7 @@ interface EditServiceFormProps {
 
 interface FormData {
   name: string;
+  location?: string;
   duration: number;
   price: number;
   description: string;
@@ -45,6 +47,7 @@ const EditServiceForm: React.FC<EditServiceFormProps> = ({ open, service, onOpen
   } = useForm<FormData>({
     defaultValues: {
       name: '',
+      location: '',
       duration: 30,
       price: 0,
       description: '',
@@ -58,6 +61,7 @@ const EditServiceForm: React.FC<EditServiceFormProps> = ({ open, service, onOpen
     if (service) {
       reset({
         name: service.name,
+        location: service.location || '',
         duration: service.duration,
         price: service.price,
         description: service.description,
@@ -80,6 +84,7 @@ const EditServiceForm: React.FC<EditServiceFormProps> = ({ open, service, onOpen
       price: data.price,
       description: data.description,
       active: data.active,
+      location: data.location ?? service.location,
     };
 
     await onUpdateService(updatedService);
@@ -103,6 +108,15 @@ const EditServiceForm: React.FC<EditServiceFormProps> = ({ open, service, onOpen
             {errors.name && (
               <p className="text-sm text-red-600">{errors.name.message}</p>
             )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="edit-location">Location</Label>
+            <Input
+              id="edit-location"
+              {...register('location')}
+              placeholder="e.g., Sandton, Johannesburg"
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-4">

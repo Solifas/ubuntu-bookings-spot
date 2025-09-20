@@ -68,6 +68,7 @@ export interface CreateServiceCommand {
     imageUrl?: string;
     tags?: string[];
     isActive: boolean;
+    location?: string;
 }
 
 export interface UpdateServiceCommand {
@@ -80,6 +81,7 @@ export interface UpdateServiceCommand {
     imageUrl?: string;
     tags?: string[];
     isActive?: boolean;
+    location?: string;
 }
 
 export interface Booking {
