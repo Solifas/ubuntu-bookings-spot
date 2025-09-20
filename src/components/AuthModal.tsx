@@ -31,7 +31,7 @@ const AuthModal = ({ isOpen, onClose, mode, onModeChange, defaultUserType = 'cli
     setLoading(true);
     
     try {
-      await login(formData.email, formData.password, formData.userType as 'client' | 'provider');
+      await login(formData.email, formData.password);
       console.log('Login successful');
       onClose();
       // Redirect based on user type

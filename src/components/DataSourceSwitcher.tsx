@@ -1,6 +1,6 @@
 // Data Source Switcher - Development tool to switch between API and Mock data
 import React, { useState, useEffect } from 'react';
-import { getCurrentMode, setDataSourceMode, DataSourceMode } from '../config/dataSource';
+import { getCurrentMode, setDataSourceMode, DataSourceMode, isApiMode, isMockMode } from '../config/dataSource';
 import { Database, Globe, TestTube } from 'lucide-react';
 
 const DataSourceSwitcher: React.FC = () => {

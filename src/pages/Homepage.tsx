@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Navigation from '../components/Navigation';
 import FeatureCard from '../components/FeatureCard';
 import PricingCard from '../components/PricingCard';
-import LocationSearch from '../components/LocationSearch';
+import UnifiedSearch from '../components/UnifiedSearch';
 import SearchResults from '../components/SearchResults';
 import DemoModal from '../components/DemoModal';
 import type { Service as FrontendService } from '../data/servicesData';
@@ -46,11 +46,27 @@ const Homepage = () => {
     'Personal Trainer', 'Tutor', 'Plumber', 'Electrician'
   ];
 
-  const handleSearch = () => {
-    console.log('Searching for:', searchQuery, 'in location:', selectedLocation);
-    if (searchQuery.trim() || selectedLocation.trim()) {
-      // Navigate to a search results page or update search params
-      navigate(`/search?q=${encodeURIComponent(searchQuery)}&location=${encodeURIComponent(selectedLocation)}`);
+  const handleSearch = async (query: string, location: string) => {
+    console.log('Searching for:', query, 'in location:', location);
+    setSearchQuery(query);
+    setSelectedLocation(location);
+    
+    if (query.trim() || location.trim()) {
+      try {
+        const response = await SearchService.searchServices(
+          SearchService.buildSearchParams(query || undefined, location || undefined, undefined, undefined, undefined, 1, 20)
+        );
+        
+        setSearchResults(response.services);
+        setShowResults(true);
+        
+        // Also navigate for URL sharing
+        navigate(`/search?q=${encodeURIComponent(query)}&location=${encodeURIComponent(location)}`);
+      } catch (error) {
+        console.error('Search failed:', error);
+        setSearchResults([]);
+        setShowResults(true);
+      }
     }
   };
 
@@ -182,41 +198,22 @@ const Homepage = () => {
 
             {/* Search Section */}
             <div className="bg-white rounded-2xl shadow-xl p-6 mb-8 max-w-4xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* Service Search */}
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="What service do you need?"
-                    className="w-full pl-10 pr-4 py-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
-                    list="services"
-                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                  />
-                  <datalist id="services">
-                    {serviceTypes.map((service) => (
-                      <option key={service} value={service} />
-                    ))}
-                  </datalist>
-                </div>
-
-                {/* Location Search */}
-                <div>
-                  <LocationSearch
-                    value={selectedLocation}
-                    onChange={setSelectedLocation}
-                    placeholder="Where do you need it?"
+              <div className="flex gap-4">
+                {/* Unified Search */}
+                <div className="flex-1">
+                  <UnifiedSearch
+                    onSearch={handleSearch}
+                    placeholder="Search for services or enter 'Service, Location' (e.g., 'Barber, Johannesburg')"
+                    className="w-full"
                   />
                 </div>
 
                 {/* Search Button */}
                 <button
-                  onClick={handleSearch}
-                  className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  onClick={() => handleSearch(searchQuery, selectedLocation)}
+                  className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 whitespace-nowrap"
                 >
-                  Search Services
+                  Search
                 </button>
               </div>
 

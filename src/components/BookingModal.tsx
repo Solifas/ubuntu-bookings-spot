@@ -5,7 +5,7 @@ import { Service } from '../data/servicesData';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
-import { createBooking, BookingDetails } from '../services/bookingService';
+import { createBooking } from '../services/bookingService';
 import { toast } from '@/components/ui/use-toast';
 
 interface BookingModalProps {

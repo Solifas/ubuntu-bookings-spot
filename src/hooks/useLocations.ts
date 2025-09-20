@@ -19,7 +19,7 @@ export const useCities = () => {
             return response.data || [];
         },
         staleTime: 24 * 60 * 60 * 1000, // 24 hours - cities don't change often
-        select: (data) => data.data || [], // Extract data from ApiResponse
+        select: (data) => data || [], // Extract data from ApiResponse
     });
 };
 
