@@ -15,7 +15,7 @@ const Homepage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
   const [searchResults, setSearchResults] = useState<FrontendService[]>([]);
-  const [showResults, setShowResults] = useState(false);
+  const [showSearchResults, setShowSearchResults] = useState(false);
   const [showDemoModal, setShowDemoModal] = useState(false);
 
   const [popularServices, setPopularServices] = useState<FrontendService[]>([]);
@@ -58,14 +58,22 @@ const Homepage = () => {
         );
         
         setSearchResults(response.services);
-        setShowResults(true);
+        setShowSearchResults(true);
+        
+        // Scroll to results section
+        setTimeout(() => {
+          const resultsSection = document.getElementById('search-results-section');
+          if (resultsSection) {
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100);
         
         // Also navigate for URL sharing
         navigate(`/search?q=${encodeURIComponent(query)}&location=${encodeURIComponent(location)}`);
       } catch (error) {
         console.error('Search failed:', error);
         setSearchResults([]);
-        setShowResults(true);
+        setShowSearchResults(true);
       }
     }
   };
@@ -79,11 +87,19 @@ const Homepage = () => {
       );
 
       setSearchResults(response.services);
-      setShowResults(true);
+      setShowSearchResults(true);
+      
+      // Scroll to results section
+      setTimeout(() => {
+        const resultsSection = document.getElementById('search-results-section');
+        if (resultsSection) {
+          resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
     } catch (error) {
       console.error('Failed to load services for type:', serviceType, error);
       setSearchResults([]);
-      setShowResults(true);
+      setShowSearchResults(true);
     }
   };
 
@@ -261,86 +277,165 @@ const Homepage = () => {
         </div>
       </section>
 
-      {/* Search Results Modal */}
-      <SearchResults
-        services={searchResults}
-        isVisible={showResults}
-        onClose={() => setShowResults(false)}
-      />
-
       {/* Demo Modal */}
       <DemoModal
         isOpen={showDemoModal}
         onClose={() => setShowDemoModal(false)}
       />
 
-      {/* Popular Services Section */}
-      <section className="py-16 md:py-24 bg-gradient-to-b from-blue-50 to-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-              Popular Services
-            </h2>
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-              Discover top-rated service providers in your area. From beauty treatments to home repairs, find exactly what you need.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
-            {isPopularLoading ? (
-              Array.from({ length: 8 }).map((_, index) => (
-                <div key={index} className="bg-slate-200 animate-pulse rounded-lg md:rounded-xl h-32 md:h-48"></div>
-              ))
-            ) : displayedServices.length === 0 ? (
-              <div className="col-span-full text-center py-12">
-                <p className="text-slate-600">No services available at the moment.</p>
+      {/* Search Results Section */}
+      {showSearchResults && (
+        <section id="search-results-section" className="py-16 md:py-24 bg-gradient-to-b from-blue-50 to-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+                Search Results
+                {searchQuery && (
+                  <span className="block text-xl text-slate-600 mt-2">
+                    for "{searchQuery}" {selectedLocation && `in ${selectedLocation}`}
+                  </span>
+                )}
+              </h2>
+              <div className="flex justify-center items-center gap-4 mb-4">
+                <p className="text-lg text-slate-600">
+                  Found {searchResults.length} services
+                </p>
+                <button
+                  onClick={() => setShowSearchResults(false)}
+                  className="text-blue-600 hover:text-blue-800 font-medium"
+                >
+                  Show Popular Services Instead
+                </button>
               </div>
-            ) : (
-              displayedServices.map((service) => (
-                <div key={service.id} className="bg-white rounded-lg md:rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden group hover:scale-102">
-                  <div className="w-full h-20 md:h-32 bg-gradient-to-br from-blue-400 to-green-400 flex items-center justify-center">
-                    <span className="text-white font-medium text-xs md:text-sm">{service.type}</span>
-                  </div>
-                  <div className="p-2 md:p-4">
-                    <div className="flex items-start justify-between mb-1">
-                      <h3 className="font-medium text-slate-900 text-xs md:text-sm leading-tight flex-1 pr-1">
-                        {service.name}
-                      </h3>
-                      <span className="text-blue-600 font-bold text-xs md:text-sm">{service.price}</span>
-                    </div>
+            </div>
 
-                    <div className="flex items-center justify-between mb-1">
-                      <div className="flex items-center space-x-1">
-                        <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                        <span className="text-xs font-medium text-slate-700">{service.rating}</span>
-                      </div>
-                      <span className="text-xs text-green-600 bg-green-100 px-1 py-0.5 rounded">
-                        Available
-                      </span>
-                    </div>
-
-                    <div className="flex items-center text-slate-500 text-xs mb-2">
-                      <MapPin className="h-3 w-3 mr-1" />
-                      <span className="truncate">{service.location}</span>
-                    </div>
-
-                    <button
-                      onClick={() => {
-                        setSearchQuery(service.type);
-                        setSearchResults([service]);
-                        setShowResults(true);
-                      }}
-                      className="w-full bg-gradient-to-r from-blue-500 to-green-500 text-white py-1 md:py-1.5 px-2 rounded-md font-medium text-xs hover:from-blue-600 hover:to-green-600 transition-all duration-200"
-                    >
-                      Book Now
-                    </button>
-                  </div>
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
+              {searchResults.length === 0 ? (
+                <div className="col-span-full text-center py-12">
+                  <p className="text-slate-600 text-lg mb-4">No services found matching your search.</p>
+                  <button
+                    onClick={() => setShowSearchResults(false)}
+                    className="text-blue-600 hover:text-blue-800 font-medium"
+                  >
+                    Browse Popular Services Instead
+                  </button>
                 </div>
-              ))
-            )}
+              ) : (
+                searchResults.map((service) => (
+                  <div key={service.id} className="bg-white rounded-lg md:rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden group hover:scale-102">
+                    <div className="w-full h-20 md:h-32 bg-gradient-to-br from-blue-400 to-green-400 flex items-center justify-center">
+                      <span className="text-white font-medium text-xs md:text-sm">{service.type}</span>
+                    </div>
+                    <div className="p-2 md:p-4">
+                      <div className="flex items-start justify-between mb-1">
+                        <h3 className="font-medium text-slate-900 text-xs md:text-sm leading-tight flex-1 pr-1">
+                          {service.name}
+                        </h3>
+                        <span className="text-blue-600 font-bold text-xs md:text-sm">{service.price}</span>
+                      </div>
+
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center space-x-1">
+                          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                          <span className="text-xs font-medium text-slate-700">{service.rating}</span>
+                        </div>
+                        <span className="text-xs text-green-600 bg-green-100 px-1 py-0.5 rounded">
+                          Available
+                        </span>
+                      </div>
+
+                      <div className="flex items-center text-slate-500 text-xs mb-2">
+                        <MapPin className="h-3 w-3 mr-1" />
+                        <span className="truncate">{service.location}</span>
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          // Handle booking logic here
+                          console.log('Book service:', service.name);
+                        }}
+                        className="w-full bg-gradient-to-r from-blue-500 to-green-500 text-white py-1 md:py-1.5 px-2 rounded-md font-medium text-xs hover:from-blue-600 hover:to-green-600 transition-all duration-200"
+                      >
+                        Book Now
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
+
+      {/* Popular Services Section */}
+      {!showSearchResults && (
+        <section className="py-16 md:py-24 bg-gradient-to-b from-blue-50 to-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+                Popular Services
+              </h2>
+              <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+                Discover top-rated service providers in your area. From beauty treatments to home repairs, find exactly what you need.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
+              {isPopularLoading ? (
+                Array.from({ length: 8 }).map((_, index) => (
+                  <div key={index} className="bg-slate-200 animate-pulse rounded-lg md:rounded-xl h-32 md:h-48"></div>
+                ))
+              ) : displayedServices.length === 0 ? (
+                <div className="col-span-full text-center py-12">
+                  <p className="text-slate-600">No services available at the moment.</p>
+                </div>
+              ) : (
+                displayedServices.map((service) => (
+                  <div key={service.id} className="bg-white rounded-lg md:rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden group hover:scale-102">
+                    <div className="w-full h-20 md:h-32 bg-gradient-to-br from-blue-400 to-green-400 flex items-center justify-center">
+                      <span className="text-white font-medium text-xs md:text-sm">{service.type}</span>
+                    </div>
+                    <div className="p-2 md:p-4">
+                      <div className="flex items-start justify-between mb-1">
+                        <h3 className="font-medium text-slate-900 text-xs md:text-sm leading-tight flex-1 pr-1">
+                          {service.name}
+                        </h3>
+                        <span className="text-blue-600 font-bold text-xs md:text-sm">{service.price}</span>
+                      </div>
+
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center space-x-1">
+                          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                          <span className="text-xs font-medium text-slate-700">{service.rating}</span>
+                        </div>
+                        <span className="text-xs text-green-600 bg-green-100 px-1 py-0.5 rounded">
+                          Available
+                        </span>
+                      </div>
+
+                      <div className="flex items-center text-slate-500 text-xs mb-2">
+                        <MapPin className="h-3 w-3 mr-1" />
+                        <span className="truncate">{service.location}</span>
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          setSearchQuery(service.type);
+                          setSearchResults([service]);
+                          setShowSearchResults(true);
+                        }}
+                        className="w-full bg-gradient-to-r from-blue-500 to-green-500 text-white py-1 md:py-1.5 px-2 rounded-md font-medium text-xs hover:from-blue-600 hover:to-green-600 transition-all duration-200"
+                      >
+                        Book Now
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Features Section */}
       <section className="py-16 md:py-24 bg-white">
