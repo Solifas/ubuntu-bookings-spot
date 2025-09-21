@@ -17,6 +17,7 @@ const Homepage = () => {
   const [searchResults, setSearchResults] = useState<FrontendService[]>([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [showDemoModal, setShowDemoModal] = useState(false);
+  const [currentSearchInput, setCurrentSearchInput] = useState('');
 
   const [popularServices, setPopularServices] = useState<FrontendService[]>([]);
   const [isPopularLoading, setIsPopularLoading] = useState(true);
@@ -221,12 +222,31 @@ const Homepage = () => {
                     onSearch={handleSearch}
                     placeholder="Search for services or enter 'Service, Location' (e.g., 'Barber, Johannesburg')"
                     className="w-full"
+                    onInputChange={setCurrentSearchInput}
+                    currentValue={currentSearchInput}
                   />
                 </div>
 
                 {/* Search Button */}
                 <button
-                  onClick={() => handleSearch(searchQuery, selectedLocation)}
+                  onClick={() => {
+                    // Parse the current input to extract service and location
+                    const query = currentSearchInput.trim();
+                    if (!query) return;
+                    
+                    const parts = query.split(',').map(part => part.trim());
+                    let serviceQuery = '';
+                    let locationQuery = '';
+                    
+                    if (parts.length === 2) {
+                      serviceQuery = parts[0];
+                      locationQuery = parts[1];
+                    } else {
+                      serviceQuery = query;
+                    }
+                    
+                    handleSearch(serviceQuery, locationQuery);
+                  }}
                   className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 whitespace-nowrap"
                 >
                   Search

@@ -6,6 +6,8 @@ interface UnifiedSearchProps {
   onSearch: (query: string, location: string) => void;
   placeholder?: string;
   className?: string;
+  onInputChange?: (value: string) => void;
+  currentValue?: string;
 }
 
 interface SearchSuggestion {
@@ -17,9 +19,11 @@ interface SearchSuggestion {
 const UnifiedSearch = ({ 
   onSearch, 
   placeholder = "Search for services or location...", 
-  className = "" 
+  className = "",
+  onInputChange,
+  currentValue
 }: UnifiedSearchProps) => {
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState(currentValue || '');
   const [selectedService, setSelectedService] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -64,9 +68,17 @@ const UnifiedSearch = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputValue(value);
+    onInputChange?.(value);
     setShowSuggestions(value.length > 0);
     setActiveSuggestionIndex(-1);
   };
+
+  // Sync with external current value
+  useEffect(() => {
+    if (currentValue !== undefined && currentValue !== inputValue) {
+      setInputValue(currentValue);
+    }
+  }, [currentValue]);
 
   const handleSuggestionClick = (suggestion: SearchSuggestion) => {
     if (suggestion.type === 'service') {
