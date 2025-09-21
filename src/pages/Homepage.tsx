@@ -68,9 +68,6 @@ const Homepage = () => {
             resultsSection.scrollIntoView({ behavior: 'smooth' });
           }
         }, 100);
-        
-        // Also navigate for URL sharing
-        navigate(`/search?q=${encodeURIComponent(query)}&location=${encodeURIComponent(location)}`);
       } catch (error) {
         console.error('Search failed:', error);
         setSearchResults([]);

@@ -132,6 +132,45 @@ const mockServices: Service[] = [
         tags: ['electrical', 'installation', 'maintenance', 'professional'],
         isActive: true,
         createdAt: '2024-01-01T00:00:00Z'
+    },
+    {
+        id: '9',
+        businessId: 'bus9',
+        name: 'Deep Cleansing Facial',
+        description: 'Advanced deep cleansing facial treatment with organic products',
+        category: 'Beauty Therapy',
+        price: 380,
+        durationMinutes: 90,
+        imageUrl: '/placeholder.svg',
+        tags: ['facial', 'deep', 'cleansing', 'organic', 'skincare'],
+        isActive: true,
+        createdAt: '2024-01-01T00:00:00Z'
+    },
+    {
+        id: '10',
+        businessId: 'bus10',
+        name: 'Deep Sea Diving Lessons',
+        description: 'Professional deep sea diving lessons for beginners',
+        category: 'Adventure Sports',
+        price: 800,
+        durationMinutes: 180,
+        imageUrl: '/placeholder.svg',
+        tags: ['diving', 'deep', 'sea', 'adventure', 'lessons'],
+        isActive: true,
+        createdAt: '2024-01-01T00:00:00Z'
+    },
+    {
+        id: '11',
+        businessId: 'bus11',
+        name: 'Deep House Cleaning',
+        description: 'Comprehensive deep house cleaning service for homes',
+        category: 'Cleaning Services',
+        price: 500,
+        durationMinutes: 240,
+        imageUrl: '/placeholder.svg',
+        tags: ['cleaning', 'deep', 'house', 'comprehensive', 'home'],
+        isActive: true,
+        createdAt: '2024-01-01T00:00:00Z'
     }
 ];
 
@@ -164,6 +203,132 @@ const mockBusinesses: Business[] = [
         isActive: true,
         createdAt: '2024-01-01T00:00:00Z'
     },
+    {
+        id: 'bus3',
+        providerId: 'prov3',
+        businessName: 'Serenity Beauty Spa',
+        description: 'Luxury beauty treatments and skincare services',
+        city: 'Cape Town',
+        address: 'V&A Waterfront, Cape Town',
+        phone: '+27 21 123 4567',
+        email: 'bookings@serenityspa.co.za',
+        website: 'https://serenityspa.co.za',
+        imageUrl: '/placeholder.svg',
+        isActive: true,
+        createdAt: '2024-01-01T00:00:00Z'
+    },
+    {
+        id: 'bus4',
+        providerId: 'prov4',
+        businessName: 'Wellness Massage Therapy',
+        description: 'Professional therapeutic massage services',
+        city: 'Durban',
+        address: 'Gateway Mall, Durban',
+        phone: '+27 31 123 4567',
+        email: 'info@wellnessmassage.co.za',
+        website: 'https://wellnessmassage.co.za',
+        imageUrl: '/placeholder.svg',
+        isActive: true,
+        createdAt: '2024-01-01T00:00:00Z'
+    },
+    {
+        id: 'bus5',
+        providerId: 'prov5',
+        businessName: 'FitZone Personal Training',
+        description: 'Professional personal training and fitness coaching',
+        city: 'Pretoria',
+        address: 'Menlyn Park, Pretoria',
+        phone: '+27 12 123 4567',
+        email: 'training@fitzone.co.za',
+        website: 'https://fitzone.co.za',
+        imageUrl: '/placeholder.svg',
+        isActive: true,
+        createdAt: '2024-01-01T00:00:00Z'
+    },
+    {
+        id: 'bus6',
+        providerId: 'prov6',
+        businessName: 'Smart Tutoring Academy',
+        description: 'Academic tutoring services for all subjects',
+        city: 'Stellenbosch',
+        address: 'Eikestad Mall, Stellenbosch',
+        phone: '+27 21 456 7890',
+        email: 'tutors@smartacademy.co.za',
+        website: 'https://smartacademy.co.za',
+        imageUrl: '/placeholder.svg',
+        isActive: true,
+        createdAt: '2024-01-01T00:00:00Z'
+    },
+    {
+        id: 'bus7',
+        providerId: 'prov7',
+        businessName: 'QuickFix Plumbing',
+        description: '24/7 emergency plumbing and repair services',
+        city: 'Johannesburg',
+        address: 'Randburg, Johannesburg',
+        phone: '+27 11 789 0123',
+        email: 'emergency@quickfix.co.za',
+        website: 'https://quickfix.co.za',
+        imageUrl: '/placeholder.svg',
+        isActive: true,
+        createdAt: '2024-01-01T00:00:00Z'
+    },
+    {
+        id: 'bus8',
+        providerId: 'prov8',
+        businessName: 'PowerPro Electrical',
+        description: 'Professional electrical installation and repair services',
+        city: 'Cape Town',
+        address: 'Century City, Cape Town',
+        phone: '+27 21 345 6789',
+        email: 'service@powerpro.co.za',
+        website: 'https://powerpro.co.za',
+        imageUrl: '/placeholder.svg',
+        isActive: true,
+        createdAt: '2024-01-01T00:00:00Z'
+    },
+    {
+        id: 'bus9',
+        providerId: 'prov9',
+        businessName: 'Organic Beauty Studio',
+        description: 'Natural and organic beauty treatments',
+        city: 'Johannesburg',
+        address: 'Hyde Park, Johannesburg',
+        phone: '+27 11 456 7890',
+        email: 'bookings@organicbeauty.co.za',
+        website: 'https://organicbeauty.co.za',
+        imageUrl: '/placeholder.svg',
+        isActive: true,
+        createdAt: '2024-01-01T00:00:00Z'
+    },
+    {
+        id: 'bus10',
+        providerId: 'prov10',
+        businessName: 'Ocean Adventures Diving',
+        description: 'Professional diving lessons and underwater adventures',
+        city: 'Cape Town',
+        address: 'Camps Bay, Cape Town',
+        phone: '+27 21 567 8901',
+        email: 'dive@oceanadventures.co.za',
+        website: 'https://oceanadventures.co.za',
+        imageUrl: '/placeholder.svg',
+        isActive: true,
+        createdAt: '2024-01-01T00:00:00Z'
+    },
+    {
+        id: 'bus11',
+        providerId: 'prov11',
+        businessName: 'SparkleClean Services',
+        description: 'Professional deep cleaning services for homes and offices',
+        city: 'Durban',
+        address: 'Umhlanga, Durban',
+        phone: '+27 31 678 9012',
+        email: 'clean@sparkleclean.co.za',
+        website: 'https://sparkleclean.co.za',
+        imageUrl: '/placeholder.svg',
+        isActive: true,
+        createdAt: '2024-01-01T00:00:00Z'
+    }
     // Add more businesses as needed...
 ];
 
@@ -256,12 +421,18 @@ export class MockDataService {
 
         let filteredServices = mockServices;
 
-        // Apply filters
+        // Apply filters with enhanced partial matching
         if (params.name) {
-            filteredServices = filteredServices.filter(service =>
-                service.name.toLowerCase().includes(params.name.toLowerCase()) ||
-                service.description.toLowerCase().includes(params.name.toLowerCase())
-            );
+            const searchTerm = params.name.toLowerCase();
+            filteredServices = filteredServices.filter(service => {
+                // Search in name, description, category, and tags
+                const nameMatch = service.name.toLowerCase().includes(searchTerm);
+                const descriptionMatch = service.description.toLowerCase().includes(searchTerm);
+                const categoryMatch = service.category?.toLowerCase().includes(searchTerm);
+                const tagsMatch = service.tags?.some(tag => tag.toLowerCase().includes(searchTerm));
+                
+                return nameMatch || descriptionMatch || categoryMatch || tagsMatch;
+            });
         }
 
         if (params.category) {
