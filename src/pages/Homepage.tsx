@@ -199,9 +199,9 @@ const Homepage = () => {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
           <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-6xl font-bold text-slate-900 mb-6 leading-tight">
+            <h1 className="text-3xl md:text-5xl font-bold text-slate-900 mb-6 leading-tight">
               Find & Book Local Services
               <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent"> Anywhere</span>
             </h1>
