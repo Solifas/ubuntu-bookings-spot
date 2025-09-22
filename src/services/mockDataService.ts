@@ -344,20 +344,21 @@ const mockCities: CityInfo[] = [
 ];
 
 const mockBookings: BookingWithDetails[] = [
+    // Today's bookings
     {
         id: '1',
         serviceId: '1',
         clientId: 'client1',
         providerId: 'prov1',
-        startTime: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // 2 hours from now
-        endTime: new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString(),
-        status: BookingStatus.PENDING,
+        startTime: new Date(new Date().setHours(9, 0, 0, 0)).toISOString(),
+        endTime: new Date(new Date().setHours(10, 0, 0, 0)).toISOString(),
+        status: BookingStatus.CONFIRMED,
         createdAt: new Date().toISOString(),
         service: mockServices[0],
         client: {
             id: 'client1',
-            fullName: 'John Smith',
-            email: 'john@example.com',
+            fullName: 'Sarah Johnson',
+            email: 'sarah@example.com',
             contactNumber: '+27 11 555 0123'
         },
         business: {
@@ -370,21 +371,21 @@ const mockBookings: BookingWithDetails[] = [
         id: '2',
         serviceId: '2',
         clientId: 'client2',
-        providerId: 'prov2',
-        startTime: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // Tomorrow
-        endTime: new Date(Date.now() + 25.5 * 60 * 60 * 1000).toISOString(),
+        providerId: 'prov1',
+        startTime: new Date(new Date().setHours(11, 30, 0, 0)).toISOString(),
+        endTime: new Date(new Date().setHours(13, 0, 0, 0)).toISOString(),
         status: BookingStatus.CONFIRMED,
         createdAt: new Date().toISOString(),
         service: mockServices[1],
         client: {
             id: 'client2',
-            fullName: 'Maria Garcia',
-            email: 'maria@example.com',
+            fullName: 'Mike Brown',
+            email: 'mike@example.com',
             contactNumber: '+27 11 555 0456'
         },
         business: {
-            id: 'bus2',
-            businessName: 'Glamour Hair Salon',
+            id: 'bus1',
+            businessName: 'Premium Cuts Barber Shop',
             city: 'Johannesburg'
         }
     },
@@ -393,16 +394,172 @@ const mockBookings: BookingWithDetails[] = [
         serviceId: '1',
         clientId: 'client3',
         providerId: 'prov1',
-        startTime: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(), // Day after tomorrow
-        endTime: new Date(Date.now() + 49 * 60 * 60 * 1000).toISOString(),
+        startTime: new Date(new Date().setHours(14, 0, 0, 0)).toISOString(),
+        endTime: new Date(new Date().setHours(15, 0, 0, 0)).toISOString(),
         status: BookingStatus.PENDING,
         createdAt: new Date().toISOString(),
         service: mockServices[0],
         client: {
             id: 'client3',
-            fullName: 'David Wilson',
-            email: 'david@example.com',
+            fullName: 'Alex Wilson',
+            email: 'alex@example.com',
             contactNumber: '+27 11 555 0789'
+        },
+        business: {
+            id: 'bus1',
+            businessName: 'Premium Cuts Barber Shop',
+            city: 'Johannesburg'
+        }
+    },
+    {
+        id: '4',
+        serviceId: '3',
+        clientId: 'client4',
+        providerId: 'prov1',
+        startTime: new Date(new Date().setHours(16, 30, 0, 0)).toISOString(),
+        endTime: new Date(new Date().setHours(17, 30, 0, 0)).toISOString(),
+        status: BookingStatus.CONFIRMED,
+        createdAt: new Date().toISOString(),
+        service: mockServices[2],
+        client: {
+            id: 'client4',
+            fullName: 'Emma Davis',
+            email: 'emma@example.com',
+            contactNumber: '+27 11 555 0321'
+        },
+        business: {
+            id: 'bus1',
+            businessName: 'Premium Cuts Barber Shop',
+            city: 'Johannesburg'
+        }
+    },
+    // Tomorrow's bookings
+    {
+        id: '5',
+        serviceId: '1',
+        clientId: 'client5',
+        providerId: 'prov1',
+        startTime: new Date(new Date(Date.now() + 24 * 60 * 60 * 1000).setHours(10, 0, 0, 0)).toISOString(),
+        endTime: new Date(new Date(Date.now() + 24 * 60 * 60 * 1000).setHours(11, 0, 0, 0)).toISOString(),
+        status: BookingStatus.CONFIRMED,
+        createdAt: new Date().toISOString(),
+        service: mockServices[0],
+        client: {
+            id: 'client5',
+            fullName: 'John Smith',
+            email: 'john@example.com',
+            contactNumber: '+27 11 555 0654'
+        },
+        business: {
+            id: 'bus1',
+            businessName: 'Premium Cuts Barber Shop',
+            city: 'Johannesburg'
+        }
+    },
+    {
+        id: '6',
+        serviceId: '2',
+        clientId: 'client6',
+        providerId: 'prov1',
+        startTime: new Date(new Date(Date.now() + 24 * 60 * 60 * 1000).setHours(13, 0, 0, 0)).toISOString(),
+        endTime: new Date(new Date(Date.now() + 24 * 60 * 60 * 1000).setHours(14, 30, 0, 0)).toISOString(),
+        status: BookingStatus.CONFIRMED,
+        createdAt: new Date().toISOString(),
+        service: mockServices[1],
+        client: {
+            id: 'client6',
+            fullName: 'Lisa Garcia',
+            email: 'lisa@example.com',
+            contactNumber: '+27 11 555 0987'
+        },
+        business: {
+            id: 'bus1',
+            businessName: 'Premium Cuts Barber Shop',
+            city: 'Johannesburg'
+        }
+    },
+    // Pending booking requests
+    {
+        id: '7',
+        serviceId: '4',
+        clientId: 'client7',
+        providerId: 'prov1',
+        startTime: new Date(new Date(Date.now() + 24 * 60 * 60 * 1000).setHours(15, 0, 0, 0)).toISOString(),
+        endTime: new Date(new Date(Date.now() + 24 * 60 * 60 * 1000).setHours(16, 0, 0, 0)).toISOString(),
+        status: BookingStatus.PENDING,
+        createdAt: new Date().toISOString(),
+        service: mockServices[3],
+        client: {
+            id: 'client7',
+            fullName: 'David Lee',
+            email: 'david@example.com',
+            contactNumber: '+27 11 555 1234'
+        },
+        business: {
+            id: 'bus1',
+            businessName: 'Premium Cuts Barber Shop',
+            city: 'Johannesburg'
+        }
+    },
+    {
+        id: '8',
+        serviceId: '1',
+        clientId: 'client8',
+        providerId: 'prov1',
+        startTime: new Date(new Date(Date.now() + 48 * 60 * 60 * 1000).setHours(9, 30, 0, 0)).toISOString(),
+        endTime: new Date(new Date(Date.now() + 48 * 60 * 60 * 1000).setHours(10, 30, 0, 0)).toISOString(),
+        status: BookingStatus.PENDING,
+        createdAt: new Date().toISOString(),
+        service: mockServices[0],
+        client: {
+            id: 'client8',
+            fullName: 'Sophie Chen',
+            email: 'sophie@example.com',
+            contactNumber: '+27 11 555 5678'
+        },
+        business: {
+            id: 'bus1',
+            businessName: 'Premium Cuts Barber Shop',
+            city: 'Johannesburg'
+        }
+    },
+    {
+        id: '9',
+        serviceId: '2',
+        clientId: 'client9',
+        providerId: 'prov1',
+        startTime: new Date(new Date(Date.now() + 72 * 60 * 60 * 1000).setHours(14, 0, 0, 0)).toISOString(),
+        endTime: new Date(new Date(Date.now() + 72 * 60 * 60 * 1000).setHours(15, 30, 0, 0)).toISOString(),
+        status: BookingStatus.PENDING,
+        createdAt: new Date().toISOString(),
+        service: mockServices[1],
+        client: {
+            id: 'client9',
+            fullName: 'Michael Johnson',
+            email: 'michael@example.com',
+            contactNumber: '+27 11 555 9876'
+        },
+        business: {
+            id: 'bus1',
+            businessName: 'Premium Cuts Barber Shop',
+            city: 'Johannesburg'
+        }
+    },
+    {
+        id: '10',
+        serviceId: '3',
+        clientId: 'client10',
+        providerId: 'prov1',
+        startTime: new Date(new Date(Date.now() + 96 * 60 * 60 * 1000).setHours(11, 0, 0, 0)).toISOString(),
+        endTime: new Date(new Date(Date.now() + 96 * 60 * 60 * 1000).setHours(12, 0, 0, 0)).toISOString(),
+        status: BookingStatus.PENDING,
+        createdAt: new Date().toISOString(),
+        service: mockServices[2],
+        client: {
+            id: 'client10',
+            fullName: 'Rachel Green',
+            email: 'rachel@example.com',
+            contactNumber: '+27 11 555 4321'
         },
         business: {
             id: 'bus1',
