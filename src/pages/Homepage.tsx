@@ -252,20 +252,6 @@ const Homepage = () => {
 
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <button
-                onClick={handleJoinAsProvider}
-                className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
-              >
-                Join as Service Provider
-              </button>
-              <button
-                onClick={handleWatchDemo}
-                className="text-slate-700 px-8 py-4 rounded-full text-lg font-semibold hover:bg-slate-100 transition-all duration-200 border-2 border-slate-200 hover:border-slate-300"
-              >
-                Watch Demo
-              </button>
-            </div>
           </div>
         </div>
       </section>
@@ -278,9 +264,9 @@ const Homepage = () => {
 
       {/* Search Results Section */}
       {showSearchResults && (
-        <section id="search-results-section" className="py-8 bg-gradient-to-b from-blue-50 to-white">
+        <section id="search-results-section" className="py-4 bg-gradient-to-b from-blue-50 to-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
+            <div className="text-center mb-8">
               <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
                 Search Results
                 {searchQuery && (
@@ -362,9 +348,9 @@ const Homepage = () => {
 
       {/* Popular Services Section */}
       {!showSearchResults && (
-        <section className="py-16 md:py-24 bg-gradient-to-b from-blue-50 to-white">
+        <section className="py-4 bg-gradient-to-b from-blue-50 to-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
+            <div className="text-center mb-8">
               <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
                 Popular Services
               </h2>
@@ -429,6 +415,27 @@ const Homepage = () => {
           </div>
         </section>
       )}
+
+      {/* Action Buttons Section */}
+      <section className="py-8 bg-gradient-to-b from-blue-50 to-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <button
+              onClick={handleJoinAsProvider}
+              className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+            >
+              Join as Service Provider
+            </button>
+            <button
+              onClick={handleWatchDemo}
+              className="text-slate-700 px-8 py-4 rounded-full text-lg font-semibold hover:bg-slate-100 transition-all duration-200 border-2 border-slate-200 hover:border-slate-300"
+            >
+              Watch Demo
+            </button>
+          </div>
+        </div>
+
+      </section>
 
       {/* Features Section */}
       <section className="py-16 md:py-24 bg-white">
