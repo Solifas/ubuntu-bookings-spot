@@ -252,7 +252,7 @@ const Homepage = () => {
 
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <button
                 onClick={handleJoinAsProvider}
                 className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
@@ -266,15 +266,6 @@ const Homepage = () => {
                 Watch Demo
               </button>
             </div>
-
-            <div className="flex items-center justify-center space-x-2 text-slate-600">
-              <div className="flex items-center space-x-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                ))}
-              </div>
-              <span className="font-medium">4.9/5 from 500+ businesses worldwide</span>
-            </div>
           </div>
         </div>
       </section>
@@ -287,7 +278,7 @@ const Homepage = () => {
 
       {/* Search Results Section */}
       {showSearchResults && (
-        <section id="search-results-section" className="py-16 md:py-24 bg-gradient-to-b from-blue-50 to-white">
+        <section id="search-results-section" className="py-8 bg-gradient-to-b from-blue-50 to-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
@@ -508,8 +499,18 @@ const Homepage = () => {
               </div>
               <span className="text-xl font-bold">BookSpot</span>
             </div>
-            <div className="text-slate-400">
-              © 2024 BookSpot. Connecting service providers and clients worldwide.
+            <div className="flex flex-col md:flex-row items-center gap-4">
+              <div className="flex items-center space-x-2 text-slate-400">
+                <div className="flex items-center space-x-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <span className="text-sm">4.9/5 from 500+ businesses worldwide</span>
+              </div>
+              <div className="text-slate-400">
+                © 2024 BookSpot. Connecting service providers and clients worldwide.
+              </div>
             </div>
           </div>
         </div>
