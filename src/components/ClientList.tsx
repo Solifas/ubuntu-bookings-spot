@@ -1,8 +1,8 @@
 
-
 import React, { useState } from 'react';
 import { User, Phone, Mail, Calendar, MoreVertical, MessageCircle, Edit, Trash2, UserCheck } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
+import NewClientModal from './NewClientModal';
 
 interface Client {
   id: string;
@@ -98,6 +98,10 @@ const ClientList = () => {
 
   const toggleDropdown = (clientId: string) => {
     setOpenDropdown(openDropdown === clientId ? null : clientId);
+  };
+
+  const handleAddClient = (newClient: Client) => {
+    setClients(prev => [...prev, newClient]);
   };
 
   return (
@@ -292,9 +296,7 @@ const ClientList = () => {
       </div>
 
       <div className="mt-4 sm:mt-6">
-        <button className="w-full bg-gradient-to-r from-blue-500 to-green-500 text-white py-3 rounded-xl font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl text-sm sm:text-base">
-          + Add New Client
-        </button>
+        <NewClientModal onClientAdded={handleAddClient} />
       </div>
     </div>
   );
