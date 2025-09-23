@@ -613,9 +613,9 @@ const mockBookings: BookingWithDetails[] = [
         }
     },
     {
-        id: '8',
+        id: '13',
         serviceId: '1',
-        clientId: 'client8',
+        clientId: 'client13',
         providerId: 'prov1',
         startTime: new Date(new Date(Date.now() + 48 * 60 * 60 * 1000).setHours(9, 30, 0, 0)).toISOString(),
         endTime: new Date(new Date(Date.now() + 48 * 60 * 60 * 1000).setHours(10, 30, 0, 0)).toISOString(),
@@ -623,7 +623,7 @@ const mockBookings: BookingWithDetails[] = [
         createdAt: new Date().toISOString(),
         service: mockServices[0],
         client: {
-            id: 'client8',
+            id: 'client13',
             fullName: 'Sophie Chen',
             email: 'sophie@example.com',
             contactNumber: '+27 11 555 5678'
@@ -635,9 +635,9 @@ const mockBookings: BookingWithDetails[] = [
         }
     },
     {
-        id: '9',
+        id: '14',
         serviceId: '2',
-        clientId: 'client9',
+        clientId: 'client14',
         providerId: 'prov1',
         startTime: new Date(new Date(Date.now() + 72 * 60 * 60 * 1000).setHours(14, 0, 0, 0)).toISOString(),
         endTime: new Date(new Date(Date.now() + 72 * 60 * 60 * 1000).setHours(15, 30, 0, 0)).toISOString(),
@@ -645,7 +645,7 @@ const mockBookings: BookingWithDetails[] = [
         createdAt: new Date().toISOString(),
         service: mockServices[1],
         client: {
-            id: 'client9',
+            id: 'client14',
             fullName: 'Michael Johnson',
             email: 'michael@example.com',
             contactNumber: '+27 11 555 9876'
@@ -657,9 +657,9 @@ const mockBookings: BookingWithDetails[] = [
         }
     },
     {
-        id: '10',
+        id: '15',
         serviceId: '3',
-        clientId: 'client10',
+        clientId: 'client15',
         providerId: 'prov1',
         startTime: new Date(new Date(Date.now() + 96 * 60 * 60 * 1000).setHours(11, 0, 0, 0)).toISOString(),
         endTime: new Date(new Date(Date.now() + 96 * 60 * 60 * 1000).setHours(12, 0, 0, 0)).toISOString(),
@@ -667,7 +667,7 @@ const mockBookings: BookingWithDetails[] = [
         createdAt: new Date().toISOString(),
         service: mockServices[2],
         client: {
-            id: 'client10',
+            id: 'client15',
             fullName: 'Rachel Green',
             email: 'rachel@example.com',
             contactNumber: '+27 11 555 4321'

@@ -7,6 +7,7 @@ import ClientList from '../components/ClientList';
 import BusinessInsights from '../components/BusinessInsights';
 import CalendarView from '../components/CalendarView';
 import ServiceManagement from '../components/ServiceManagement';
+import NewBookingModal from '../components/NewBookingModal';
 import { toast } from '@/components/ui/use-toast';
 import { useAuth } from '../contexts/AuthContext';
 import { useProviderBookings, useUpdateBookingStatus } from '../hooks/useBookings';
@@ -206,9 +207,7 @@ const Dashboard = () => {
                 <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-100 p-4 sm:p-6">
                   <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">Quick Actions</h3>
                   <div className="space-y-2 sm:space-y-3">
-                    <button className="w-full bg-gradient-to-r from-blue-500 to-green-500 text-white p-3 sm:p-4 rounded-lg sm:rounded-xl font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl text-sm sm:text-base">
-                      + New Booking
-                    </button>
+                    <NewBookingModal />
                     <button
                       onClick={() => setActiveTab('calendar')}
                       className="w-full bg-slate-100 text-slate-700 p-3 sm:p-4 rounded-lg sm:rounded-xl font-medium hover:bg-slate-200 transition-all duration-200 text-sm sm:text-base"
