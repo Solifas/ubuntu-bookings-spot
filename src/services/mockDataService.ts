@@ -513,6 +513,117 @@ const mockBookings: BookingWithDetails[] = [
         service: mockServices[0],
         client: {
             id: 'client8',
+            fullName: 'Rachel Green',
+            email: 'rachel@example.com',
+            contactNumber: '+27 11 555 5678'
+        },
+        business: {
+            id: 'bus1',
+            businessName: 'Premium Cuts Barber Shop',
+            city: 'Johannesburg'
+        }
+    },
+    {
+        id: '9',
+        serviceId: '2',
+        clientId: 'client9',
+        providerId: 'prov1',
+        startTime: new Date(new Date(Date.now() + 72 * 60 * 60 * 1000).setHours(11, 0, 0, 0)).toISOString(),
+        endTime: new Date(new Date(Date.now() + 72 * 60 * 60 * 1000).setHours(12, 30, 0, 0)).toISOString(),
+        status: BookingStatus.PENDING,
+        createdAt: new Date().toISOString(),
+        service: mockServices[1],
+        client: {
+            id: 'client9',
+            fullName: 'Tom Anderson',
+            email: 'tom@example.com',
+            contactNumber: '+27 11 555 9012'
+        },
+        business: {
+            id: 'bus1',
+            businessName: 'Premium Cuts Barber Shop',
+            city: 'Johannesburg'
+        }
+    },
+    // This week's completed bookings
+    {
+        id: '10',
+        serviceId: '1',
+        clientId: 'client10',
+        providerId: 'prov1',
+        startTime: new Date(new Date(Date.now() - 24 * 60 * 60 * 1000).setHours(14, 0, 0, 0)).toISOString(),
+        endTime: new Date(new Date(Date.now() - 24 * 60 * 60 * 1000).setHours(15, 0, 0, 0)).toISOString(),
+        status: BookingStatus.COMPLETED,
+        createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+        service: mockServices[0],
+        client: {
+            id: 'client10',
+            fullName: 'Maria Santos',
+            email: 'maria@example.com',
+            contactNumber: '+27 11 555 3456'
+        },
+        business: {
+            id: 'bus1',
+            businessName: 'Premium Cuts Barber Shop',
+            city: 'Johannesburg'
+        }
+    },
+    {
+        id: '11',
+        serviceId: '2',
+        clientId: 'client11',
+        providerId: 'prov1',
+        startTime: new Date(new Date(Date.now() - 48 * 60 * 60 * 1000).setHours(10, 0, 0, 0)).toISOString(),
+        endTime: new Date(new Date(Date.now() - 48 * 60 * 60 * 1000).setHours(11, 30, 0, 0)).toISOString(),
+        status: BookingStatus.COMPLETED,
+        createdAt: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString(),
+        service: mockServices[1],
+        client: {
+            id: 'client11',
+            fullName: 'Peter Williams',
+            email: 'peter@example.com',
+            contactNumber: '+27 11 555 7890'
+        },
+        business: {
+            id: 'bus1',
+            businessName: 'Premium Cuts Barber Shop',
+            city: 'Johannesburg'
+        }
+    },
+    {
+        id: '12',
+        serviceId: '3',
+        clientId: 'client12',
+        providerId: 'prov1',
+        startTime: new Date(new Date(Date.now() - 72 * 60 * 60 * 1000).setHours(16, 0, 0, 0)).toISOString(),
+        endTime: new Date(new Date(Date.now() - 72 * 60 * 60 * 1000).setHours(17, 15, 0, 0)).toISOString(),
+        status: BookingStatus.COMPLETED,
+        createdAt: new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString(),
+        service: mockServices[2],
+        client: {
+            id: 'client12',
+            fullName: 'Jennifer Taylor',
+            email: 'jennifer@example.com',
+            contactNumber: '+27 11 555 2468'
+        },
+        business: {
+            id: 'bus1',
+            businessName: 'Premium Cuts Barber Shop',
+            city: 'Johannesburg'
+        }
+    },
+    {
+        id: '8',
+        serviceId: '1',
+        clientId: 'client8',
+        providerId: 'prov1',
+        startTime: new Date(new Date(Date.now() + 48 * 60 * 60 * 1000).setHours(9, 30, 0, 0)).toISOString(),
+        endTime: new Date(new Date(Date.now() + 48 * 60 * 60 * 1000).setHours(10, 30, 0, 0)).toISOString(),
+        status: BookingStatus.PENDING,
+        createdAt: new Date().toISOString(),
+        service: mockServices[0],
+        client: {
+            id: 'client8',
             fullName: 'Sophie Chen',
             email: 'sophie@example.com',
             contactNumber: '+27 11 555 5678'
@@ -709,11 +820,71 @@ export class MockDataService {
         await simulateDelay();
         simulateError();
 
+        // Calculate stats from mock bookings for better accuracy
+        const allBookings = mockBookings.filter(b => b.providerId === providerId);
+        
+        // Today's bookings (confirmed and completed)
+        const today = new Date();
+        const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const todayEnd = new Date(todayStart.getTime() + 24 * 60 * 60 * 1000);
+        
+        const todayBookings = allBookings.filter(booking => {
+            const bookingDate = new Date(booking.startTime);
+            return bookingDate >= todayStart && 
+                   bookingDate < todayEnd && 
+                   (booking.status === BookingStatus.CONFIRMED || 
+                    booking.status === BookingStatus.COMPLETED);
+        }).length;
+
+        // This week's bookings (confirmed and completed)
+        const weekStart = new Date(today);
+        weekStart.setDate(today.getDate() - today.getDay());
+        weekStart.setHours(0, 0, 0, 0);
+        
+        const weekBookings = allBookings.filter(booking => {
+            const bookingDate = new Date(booking.startTime);
+            return bookingDate >= weekStart && 
+                   (booking.status === BookingStatus.CONFIRMED || 
+                    booking.status === BookingStatus.COMPLETED);
+        }).length;
+
+        // Total clients (unique client IDs from all time)
+        const totalClients = new Set(allBookings.map(b => b.clientId)).size;
+
+        // Monthly revenue (confirmed and completed bookings only)
+        const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+        const monthlyRevenue = allBookings
+            .filter(booking => {
+                const bookingDate = new Date(booking.startTime);
+                return bookingDate >= monthStart && 
+                       (booking.status === BookingStatus.CONFIRMED || 
+                        booking.status === BookingStatus.COMPLETED);
+            })
+            .reduce((total, booking) => total + booking.service.price, 0);
+
+        // Pending and confirmed bookings count
+        const pendingBookings = allBookings.filter(b => b.status === BookingStatus.PENDING).length;
+        const confirmedBookings = allBookings.filter(b => b.status === BookingStatus.CONFIRMED).length;
+
+        return {
+            todayBookings,
+            weekBookings,
+            totalClients,
+            monthlyRevenue,
+            pendingBookings,
+            confirmedBookings
+        };
+    }
+
+    static async getProviderDashboard(providerId: string): Promise<any> {
+        await simulateDelay();
+        simulateError();
+
         const providerBookings = mockBookings.filter(b => b.providerId === providerId);
         const today = new Date();
         const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
         const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
-
+        
         const todayBookings = providerBookings.filter(b => {
             const bookingDate = new Date(b.startTime);
             return bookingDate.toDateString() === today.toDateString();
