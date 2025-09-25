@@ -86,10 +86,12 @@ const Dashboard = () => {
               {[
                 { id: 'overview', label: 'Overview' },
                 { id: 'bookings', label: 'Requests' },
-                { id: 'calendar', label: 'Calendar', icon: CalendarDays },
-                { id: 'services', label: 'Services', icon: Settings },
-                { id: 'clients', label: 'Clients' },
-                { id: 'insights', label: 'Insights' }
+                ...(user?.type === 'provider' ? [
+                  { id: 'calendar', label: 'Calendar', icon: CalendarDays },
+                  { id: 'services', label: 'Services', icon: Settings },
+                  { id: 'clients', label: 'Clients' },
+                  { id: 'insights', label: 'Insights' }
+                ] : [])
               ].map((tab) => (
                 <button
                   key={tab.id}

@@ -62,7 +62,7 @@ const Navigation = () => {
                   }`}
                 >
                   <Settings className="h-4 w-4" />
-                  <span>Settings</span>
+                  <span>{user?.type === 'client' ? 'Settings' : 'Settings'}</span>
                 </Link>
               )}
 
@@ -151,7 +151,7 @@ const Navigation = () => {
                   }`}
                 >
                   <Settings className="h-5 w-5" />
-                  <span className="font-medium">Settings</span>
+                  <span className="font-medium">{user?.type === 'client' ? 'Settings' : 'Settings'}</span>
                 </Link>
               )}
 

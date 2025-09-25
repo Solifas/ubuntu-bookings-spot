@@ -16,7 +16,7 @@ interface LocalService {
 
 const Settings = () => {
   const { user, isLoggedIn } = useAuth();
-  const [activeTab, setActiveTab] = useState('business');
+  const [activeTab, setActiveTab] = useState(user?.type === 'client' ? 'profile' : 'business');
   const [services, setServices] = useState<LocalService[]>([]);
   const [servicesLoading, setServicesLoading] = useState(true);
 
@@ -76,7 +76,10 @@ const Settings = () => {
     }
   }, [activeTab]);
 
-  const tabs = [
+  const tabs = user?.type === 'client' ? [
+    { id: 'profile', label: 'Profile', icon: User },
+    { id: 'notifications', label: 'Notifications', icon: Bell }
+  ] : [
     { id: 'business', label: 'Business Info', icon: User },
     { id: 'services', label: 'Services', icon: DollarSign },
     { id: 'availability', label: 'Availability', icon: Clock },
@@ -92,8 +95,8 @@ const Settings = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Business Settings</h1>
-          <p className="text-slate-600">Manage your business information and preferences.</p>
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">{user?.type === 'client' ? 'Account Settings' : 'Business Settings'}</h1>
+          <p className="text-slate-600">{user?.type === 'client' ? 'Manage your account information and preferences.' : 'Manage your business information and preferences.'}</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -120,24 +123,26 @@ const Settings = () => {
           <div className="lg:col-span-3">
             <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-6 md:p-8">
 
-              {activeTab === 'business' && (
+              {(activeTab === 'business' || activeTab === 'profile') && (
                 <div>
-                  <h2 className="text-2xl font-bold text-slate-900 mb-6">Business Information</h2>
+                  <h2 className="text-2xl font-bold text-slate-900 mb-6">{user?.type === 'client' ? 'Profile Information' : 'Business Information'}</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {user?.type === 'provider' && (
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Business Name</label>
+                        <input
+                          type="text"
+                          className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          defaultValue="Jabu's Barbershop"
+                        />
+                      </div>
+                    )}
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">Business Name</label>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">{user?.type === 'client' ? 'Full Name' : 'Owner Name'}</label>
                       <input
                         type="text"
                         className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        defaultValue="Jabu's Barbershop"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">Owner Name</label>
-                      <input
-                        type="text"
-                        className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        defaultValue="Jabu Sithole"
+                        defaultValue={user?.type === 'client' ? user?.name || 'John Doe' : 'Jabu Sithole'}
                       />
                     </div>
                     <div>
@@ -156,14 +161,16 @@ const Settings = () => {
                         defaultValue="jabu@barbershop.co.za"
                       />
                     </div>
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-slate-700 mb-2">Business Description</label>
-                      <textarea
-                        rows={4}
-                        className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        defaultValue="Professional barbershop specializing in modern cuts, traditional shaves, and beard grooming. Serving the Sandton community for over 5 years."
-                      />
-                    </div>
+                    {user?.type === 'provider' && (
+                      <div className="md:col-span-2">
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Business Description</label>
+                        <textarea
+                          rows={4}
+                          className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          defaultValue="Professional barbershop specializing in modern cuts, traditional shaves, and beard grooming. Serving the Sandton community for over 5 years."
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
