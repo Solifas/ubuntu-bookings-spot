@@ -164,7 +164,10 @@ const Dashboard = () => {
                 <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-100 p-4 sm:p-6">
                   <div className="flex items-center justify-between mb-4 sm:mb-6">
                     <h2 className="text-lg sm:text-xl font-bold text-slate-900">Confirmed Bookings</h2>
-                    <button className="text-blue-600 font-medium hover:text-blue-700 transition-colors text-sm sm:text-base">
+                    <button 
+                      onClick={() => setActiveTab('calendar')}
+                      className="text-blue-600 font-medium hover:text-blue-700 transition-colors text-sm sm:text-base"
+                    >
                       View All
                     </button>
                   </div>
