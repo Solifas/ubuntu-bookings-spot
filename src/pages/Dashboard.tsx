@@ -17,19 +17,20 @@ import { BookingStatus } from '../types/api';
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const { user } = useAuth();
+  const providerId = user?.id || 'prov1';
 
   // Replace mock data with real API calls
   const { data: pendingBookings = [], isLoading: loadingPending, error: errorPending } = useProviderBookings(
-    user?.id || '',
+    providerId,
     BookingStatus.PENDING
   );
 
   const { data: confirmedBookings = [], isLoading: loadingConfirmed, error: errorConfirmed } = useProviderBookings(
-    user?.id || '',
+    providerId,
     BookingStatus.CONFIRMED
   );
 
-  const { formattedStats, isLoading: loadingStats, error: errorStats } = useFormattedDashboardStats(user?.id || '');
+  const { formattedStats, isLoading: loadingStats, error: errorStats } = useFormattedDashboardStats(providerId);
 
   const updateBookingStatus = useUpdateBookingStatus();
 
