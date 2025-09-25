@@ -789,7 +789,8 @@ export class MockDataService {
         await simulateDelay();
         simulateError();
 
-        let filteredBookings = mockBookings.filter(b => b.providerId === providerId);
+        // In mock mode, return bookings for demo purposes regardless of providerId
+        let filteredBookings = mockBookings;
 
         if (status) {
             filteredBookings = filteredBookings.filter(b => b.status === status);
