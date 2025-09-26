@@ -208,27 +208,29 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* Quick Actions */}
-              <div className="space-y-4 sm:space-y-6">
-                <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-100 p-4 sm:p-6">
-                  <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">Quick Actions</h3>
-                  <div className="space-y-2 sm:space-y-3">
-                    <NewBookingModal />
-                    <button
-                      onClick={() => setActiveTab('calendar')}
-                      className="w-full bg-slate-100 text-slate-700 p-3 sm:p-4 rounded-lg sm:rounded-xl font-medium hover:bg-slate-200 transition-all duration-200 text-sm sm:text-base"
-                    >
-                      View Calendar
-                    </button>
-                    <button
-                      onClick={() => setActiveTab('services')}
-                      className="w-full bg-slate-100 text-slate-700 p-3 sm:p-4 rounded-lg sm:rounded-xl font-medium hover:bg-slate-200 transition-all duration-200 text-sm sm:text-base"
-                    >
-                      Manage Services
-                    </button>
+              {/* Quick Actions - Only for providers */}
+              {user?.type === 'provider' && (
+                <div className="space-y-4 sm:space-y-6">
+                  <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-100 p-4 sm:p-6">
+                    <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">Quick Actions</h3>
+                    <div className="space-y-2 sm:space-y-3">
+                      <NewBookingModal />
+                      <button
+                        onClick={() => setActiveTab('calendar')}
+                        className="w-full bg-slate-100 text-slate-700 p-3 sm:p-4 rounded-lg sm:rounded-xl font-medium hover:bg-slate-200 transition-all duration-200 text-sm sm:text-base"
+                      >
+                        View Calendar
+                      </button>
+                      <button
+                        onClick={() => setActiveTab('services')}
+                        className="w-full bg-slate-100 text-slate-700 p-3 sm:p-4 rounded-lg sm:rounded-xl font-medium hover:bg-slate-200 transition-all duration-200 text-sm sm:text-base"
+                      >
+                        Manage Services
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           </>
         )}
