@@ -10,7 +10,7 @@ import ServiceManagement from '../components/ServiceManagement';
 import NewBookingModal from '../components/NewBookingModal';
 import { toast } from '@/components/ui/use-toast';
 import { useAuth } from '../contexts/AuthContext';
-import { useProviderBookings, useUpdateBookingStatus } from '../hooks/useBookings';
+import { useProviderBookings, useUpdateBookingStatus, useClientBookings } from '../hooks/useBookings';
 import { useFormattedDashboardStats } from '../hooks/useDashboard';
 import { BookingStatus } from '../types/api';
 
@@ -28,6 +28,11 @@ const Dashboard = () => {
   const { data: confirmedBookings = [], isLoading: loadingConfirmed, error: errorConfirmed } = useProviderBookings(
     providerId,
     BookingStatus.CONFIRMED
+  );
+
+  // For clients, get their own bookings
+  const { data: clientBookings = [], isLoading: loadingClientBookings, error: errorClientBookings } = useClientBookings(
+    user?.type === 'client' ? (user?.id || '') : ''
   );
 
   const { formattedStats, isLoading: loadingStats, error: errorStats } = useFormattedDashboardStats(providerId);
@@ -238,92 +243,171 @@ const Dashboard = () => {
         {activeTab === 'bookings' && (
           <div className="max-w-6xl">
             <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-100 p-4 sm:p-6">
-              <h2 className="text-lg sm:text-xl font-bold text-slate-900 mb-4 sm:mb-6">Booking Requests</h2>
+              <h2 className="text-lg sm:text-xl font-bold text-slate-900 mb-4 sm:mb-6">
+                {user?.type === 'client' ? 'My Bookings' : 'Booking Requests'}
+              </h2>
 
-              {loadingPending ? (
-                <div className="space-y-4">
-                  {Array.from({ length: 3 }).map((_, i) => (
-                    <div key={i} className="animate-pulse bg-slate-100 rounded-lg h-32"></div>
-                  ))}
-                </div>
-              ) : errorPending ? (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                  <p className="text-red-700 text-sm">Failed to load pending bookings</p>
-                </div>
-              ) : pendingBookings.length === 0 ? (
-                <div className="text-center py-8 sm:py-12">
-                  <Calendar className="h-8 w-8 sm:h-12 sm:w-12 text-slate-400 mx-auto mb-3 sm:mb-4" />
-                  <p className="text-slate-600 text-sm sm:text-base">No pending booking requests</p>
-                  <p className="text-slate-500 text-xs sm:text-sm mt-1">New booking requests will appear here</p>
-                </div>
-              ) : (
-                <div className="space-y-4 sm:space-y-6">
-                  {pendingBookings.map((booking) => (
-                    <div key={booking.id} className="bg-slate-50 rounded-lg sm:rounded-xl p-4 sm:p-6">
-                      <div className="flex flex-col gap-4">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 sm:gap-4 mb-3">
-                            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                              <Users className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
-                            </div>
-                            <div>
-                              <h3 className="font-semibold text-slate-900 text-sm sm:text-base">{booking.client.fullName}</h3>
-                              <p className="text-slate-600 text-xs sm:text-sm">{booking.client.email}</p>
-                            </div>
-                          </div>
-
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
-                            <div>
-                              <p className="text-slate-500 font-medium">Service</p>
-                              <p className="text-slate-900">{booking.service.name}</p>
-                            </div>
-                            <div>
-                              <p className="text-slate-500 font-medium">Date & Time</p>
-                              <p className="text-slate-900">
-                                {new Date(booking.startTime).toLocaleDateString()} at {new Date(booking.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                              </p>
-                            </div>
-                            <div>
-                              <p className="text-slate-500 font-medium">Phone</p>
-                              <p className="text-slate-900">{booking.client.contactNumber || 'Not provided'}</p>
-                            </div>
-                            <div>
-                              <p className="text-slate-500 font-medium">Price</p>
-                              <p className="text-slate-900 font-semibold">R{booking.service.price}</p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex gap-2 sm:gap-3">
-                          <button
-                            onClick={() => handleBookingAction(booking.id, 'decline')}
-                            disabled={updateBookingStatus.isPending}
-                            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-sm disabled:opacity-50"
-                          >
-                            {updateBookingStatus.isPending ? (
-                              <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
-                            ) : (
-                              <X className="h-3 w-3 sm:h-4 sm:w-4" />
-                            )}
-                            Decline
-                          </button>
-                          <button
-                            onClick={() => handleBookingAction(booking.id, 'accept')}
-                            disabled={updateBookingStatus.isPending}
-                            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors text-sm disabled:opacity-50"
-                          >
-                            {updateBookingStatus.isPending ? (
-                              <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
-                            ) : (
-                              <Check className="h-3 w-3 sm:h-4 sm:w-4" />
-                            )}
-                            Accept
-                          </button>
-                        </div>
-                      </div>
+              {user?.type === 'client' ? (
+                // Client view - show their own bookings
+                <>
+                  {loadingClientBookings ? (
+                    <div className="space-y-4">
+                      {Array.from({ length: 3 }).map((_, i) => (
+                        <div key={i} className="animate-pulse bg-slate-100 rounded-lg h-32"></div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  ) : errorClientBookings ? (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                      <p className="text-red-700 text-sm">Failed to load your bookings</p>
+                    </div>
+                  ) : clientBookings.length === 0 ? (
+                    <div className="text-center py-8 sm:py-12">
+                      <Calendar className="h-8 w-8 sm:h-12 sm:w-12 text-slate-400 mx-auto mb-3 sm:mb-4" />
+                      <p className="text-slate-600 text-sm sm:text-base">No bookings yet</p>
+                      <p className="text-slate-500 text-xs sm:text-sm mt-1">Your bookings will appear here</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4 sm:space-y-6">
+                      {clientBookings.map((booking) => (
+                        <div key={booking.id} className="bg-slate-50 rounded-lg sm:rounded-xl p-4 sm:p-6">
+                          <div className="flex flex-col gap-4">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-3 sm:gap-4 mb-3">
+                                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                  <Users className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+                                </div>
+                                <div>
+                                  <h3 className="font-semibold text-slate-900 text-sm sm:text-base">{booking.business.businessName}</h3>
+                                  <p className="text-slate-600 text-xs sm:text-sm">{booking.business.city}</p>
+                                </div>
+                                <div className="ml-auto">
+                                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                    booking.status === 'CONFIRMED' ? 'bg-green-100 text-green-700' :
+                                    booking.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' :
+                                    booking.status === 'CANCELLED' ? 'bg-red-100 text-red-700' :
+                                    'bg-blue-100 text-blue-700'
+                                  }`}>
+                                    {booking.status}
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
+                                <div>
+                                  <p className="text-slate-500 font-medium">Service</p>
+                                  <p className="text-slate-900">{booking.service.name}</p>
+                                </div>
+                                <div>
+                                  <p className="text-slate-500 font-medium">Date & Time</p>
+                                  <p className="text-slate-900">
+                                    {new Date(booking.startTime).toLocaleDateString()} at {new Date(booking.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="text-slate-500 font-medium">Duration</p>
+                                  <p className="text-slate-900">{booking.service.durationMinutes} minutes</p>
+                                </div>
+                                <div>
+                                  <p className="text-slate-500 font-medium">Price</p>
+                                  <p className="text-slate-900 font-semibold">R{booking.service.price}</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              ) : (
+                // Provider view - show pending requests
+                <>
+                  {loadingPending ? (
+                    <div className="space-y-4">
+                      {Array.from({ length: 3 }).map((_, i) => (
+                        <div key={i} className="animate-pulse bg-slate-100 rounded-lg h-32"></div>
+                      ))}
+                    </div>
+                  ) : errorPending ? (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                      <p className="text-red-700 text-sm">Failed to load pending bookings</p>
+                    </div>
+                  ) : pendingBookings.length === 0 ? (
+                    <div className="text-center py-8 sm:py-12">
+                      <Calendar className="h-8 w-8 sm:h-12 sm:w-12 text-slate-400 mx-auto mb-3 sm:mb-4" />
+                      <p className="text-slate-600 text-sm sm:text-base">No pending booking requests</p>
+                      <p className="text-slate-500 text-xs sm:text-sm mt-1">New booking requests will appear here</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4 sm:space-y-6">
+                      {pendingBookings.map((booking) => (
+                        <div key={booking.id} className="bg-slate-50 rounded-lg sm:rounded-xl p-4 sm:p-6">
+                          <div className="flex flex-col gap-4">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-3 sm:gap-4 mb-3">
+                                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                  <Users className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+                                </div>
+                                <div>
+                                  <h3 className="font-semibold text-slate-900 text-sm sm:text-base">{booking.client.fullName}</h3>
+                                  <p className="text-slate-600 text-xs sm:text-sm">{booking.client.email}</p>
+                                </div>
+                              </div>
+
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
+                                <div>
+                                  <p className="text-slate-500 font-medium">Service</p>
+                                  <p className="text-slate-900">{booking.service.name}</p>
+                                </div>
+                                <div>
+                                  <p className="text-slate-500 font-medium">Date & Time</p>
+                                  <p className="text-slate-900">
+                                    {new Date(booking.startTime).toLocaleDateString()} at {new Date(booking.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="text-slate-500 font-medium">Phone</p>
+                                  <p className="text-slate-900">{booking.client.contactNumber || 'Not provided'}</p>
+                                </div>
+                                <div>
+                                  <p className="text-slate-500 font-medium">Price</p>
+                                  <p className="text-slate-900 font-semibold">R{booking.service.price}</p>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="flex gap-2 sm:gap-3">
+                              <button
+                                onClick={() => handleBookingAction(booking.id, 'decline')}
+                                disabled={updateBookingStatus.isPending}
+                                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-sm disabled:opacity-50"
+                              >
+                                {updateBookingStatus.isPending ? (
+                                  <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
+                                ) : (
+                                  <X className="h-3 w-3 sm:h-4 sm:w-4" />
+                                )}
+                                Decline
+                              </button>
+                              <button
+                                onClick={() => handleBookingAction(booking.id, 'accept')}
+                                disabled={updateBookingStatus.isPending}
+                                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors text-sm disabled:opacity-50"
+                              >
+                                {updateBookingStatus.isPending ? (
+                                  <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
+                                ) : (
+                                  <Check className="h-3 w-3 sm:h-4 sm:w-4" />
+                                )}
+                                Accept
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>
