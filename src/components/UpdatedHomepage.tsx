@@ -159,12 +159,12 @@ const UpdatedHomepage = () => {
                                             <span className="truncate">{service.location}</span>
                                         </div>
 
-                                        <button
-                                            onClick={() => navigate(`/book?service=${service.id}`)}
-                                            className="w-full bg-gradient-to-r from-blue-500 to-green-500 text-white py-1.5 md:py-2 rounded text-xs md:text-sm font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0"
-                                        >
-                                            Book Now
-                                        </button>
+                        <button
+                            onClick={() => navigate('/book')}
+                            className="w-full bg-gradient-to-r from-blue-500 to-green-500 text-white py-1.5 md:py-2 rounded text-xs md:text-sm font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0"
+                        >
+                            Book Now
+                        </button>
                                     </div>
                                 </div>
                             ))
