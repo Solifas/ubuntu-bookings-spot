@@ -9,7 +9,7 @@ interface Client {
   id: string;
   fullName: string;
   email: string;
-  phone: string;
+  contactNumber?: string;
   totalBookings: number;
   lastVisit: string;
   avatar?: string;
