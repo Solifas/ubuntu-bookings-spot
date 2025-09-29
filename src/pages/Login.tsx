@@ -19,7 +19,7 @@ const Login = () => {
     try {
       await login(formData.email, formData.password);
       console.log('Login successful');
-      navigate('/dashboard');
+      navigate('/');
     } catch (error) {
       console.error('Login failed:', error);
       setError(error instanceof Error ? error.message : 'Login failed');
