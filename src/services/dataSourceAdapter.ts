@@ -7,6 +7,7 @@ import {
     ServiceSearchParams,
     ServiceSearchResponse,
     BookingWithDetails,
+    Client,
     BookingStatus,
     DashboardStats,
     CityInfo,
@@ -26,6 +27,26 @@ interface DataSourceResponse<T> {
 
 // Data Source Adapter Class
 export class DataSourceAdapter {
+    // Clients
+    static async getClients(): Promise<DataSourceResponse<Client[]>> {
+        try {
+            if (isApiMode()) {
+                console.log('dYO? Using API for getClients');
+                return await apiClient.getClients();
+            } else {
+                console.log('dYZ- Using Mock data for getClients');
+                const data = await MockDataService.getClients();
+                return { data, status: 200 };
+            }
+        } catch (error) {
+            console.error('DataSourceAdapter.getClients error:', error);
+            return {
+                error: error instanceof Error ? error.message : 'Unknown error',
+                status: 500
+            };
+        }
+    }
+
     // Services
     static async searchServices(params: ServiceSearchParams): Promise<DataSourceResponse<ServiceSearchResponse>> {
         try {

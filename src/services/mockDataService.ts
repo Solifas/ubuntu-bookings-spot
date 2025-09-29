@@ -4,6 +4,7 @@ import {
     Business,
     Booking,
     BookingWithDetails,
+    Client,
     DashboardStats,
     CityInfo,
     ServiceSearchResponse,
@@ -331,6 +332,41 @@ const mockBusinesses: Business[] = [
     }
     // Add more businesses as needed...
 ];
+const mockClients: Client[] = [
+    {
+        id: 'client1',
+        fullName: 'Thabo Mthembu',
+        email: 'thabo@email.com',
+        contactNumber: '+27 82 123 4567',
+        totalBookings: 12,
+        lastVisit: '2024-06-10T00:00:00Z'
+    },
+    {
+        id: 'client2',
+        fullName: 'Nomsa Dlamini',
+        email: 'nomsa@email.com',
+        contactNumber: '+27 84 987 6543',
+        totalBookings: 8,
+        lastVisit: '2024-06-08T00:00:00Z'
+    },
+    {
+        id: 'client3',
+        fullName: 'Johan van der Merwe',
+        email: 'johan@email.com',
+        contactNumber: '+27 79 555 1234',
+        totalBookings: 15,
+        lastVisit: '2024-06-12T00:00:00Z'
+    },
+    {
+        id: 'client4',
+        fullName: 'Aisha Patel',
+        email: 'aisha@email.com',
+        contactNumber: '+27 76 888 9999',
+        totalBookings: 6,
+        lastVisit: '2024-06-09T00:00:00Z'
+    }
+];
+
 
 const mockCities: CityInfo[] = [
     { city: 'Johannesburg', province: 'Gauteng', serviceCount: 45 },
@@ -777,6 +813,12 @@ export class MockDataService {
         await simulateDelay();
         simulateError();
         return mockServices.filter(s => s.businessId === businessId);
+    }
+
+    static async getClients(): Promise<Client[]> {
+        await simulateDelay();
+        simulateError();
+        return mockClients;
     }
 
     // Bookings

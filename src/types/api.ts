@@ -33,6 +33,16 @@ export interface Profile {
     createdAt: string;
 }
 
+export interface Client {
+    id: string;
+    fullName: string;
+    email: string;
+    contactNumber?: string;
+    totalBookings: number;
+    lastVisit: string;
+    avatarUrl?: string;
+}
+
 export interface UpdateProfileCommand {
     id: string;
     email?: string;

@@ -23,6 +23,7 @@ import {
     ServiceSearchResponse,
     ServiceWithBusiness,
     BookingWithDetails,
+    Client,
     BookingStatus,
     DashboardStats,
     CityInfo
@@ -126,6 +127,11 @@ class ApiClient {
             method: 'PUT',
             body: JSON.stringify(data),
         });
+    }
+
+    // Clients endpoints
+    async getClients(): Promise<ApiResponse<Client[]>> {
+        return this.request<Client[]>('/clients');
     }
 
     // Services endpoints
