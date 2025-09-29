@@ -329,10 +329,7 @@ const Homepage = () => {
                       </div>
 
                       <button
-                        onClick={() => {
-                          // Handle booking logic here
-                          console.log('Book service:', service.name);
-                        }}
+                        onClick={() => navigate('/book')}
                         className="w-full bg-gradient-to-r from-blue-500 to-green-500 text-white py-1 md:py-1.5 px-2 rounded-md font-medium text-xs hover:from-blue-600 hover:to-green-600 transition-all duration-200"
                       >
                         Book Now
@@ -398,11 +395,7 @@ const Homepage = () => {
                       </div>
 
                       <button
-                        onClick={() => {
-                          setSearchQuery(service.type);
-                          setSearchResults([service]);
-                          setShowSearchResults(true);
-                        }}
+                        onClick={() => navigate('/book')}
                         className="w-full bg-gradient-to-r from-blue-500 to-green-500 text-white py-1 md:py-1.5 px-2 rounded-md font-medium text-xs hover:from-blue-600 hover:to-green-600 transition-all duration-200"
                       >
                         Book Now

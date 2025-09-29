@@ -42,7 +42,7 @@ const Navigation = () => {
                 <span>Home</span>
               </Link>
               
-              {isLoggedIn && user?.type === 'provider' && (
+              {isLoggedIn && (
                 <Link 
                   to="/dashboard" 
                   className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm ${
@@ -50,7 +50,7 @@ const Navigation = () => {
                   }`}
                 >
                   <Calendar className="h-4 w-4" />
-                  <span>Dashboard</span>
+                  <span>{user?.type === 'client' ? 'My Bookings' : 'Dashboard'}</span>
                 </Link>
               )}
               
@@ -129,7 +129,7 @@ const Navigation = () => {
                 <span className="font-medium">Home</span>
               </Link>
               
-              {isLoggedIn && user?.type === 'provider' && (
+              {isLoggedIn && (
                 <Link 
                   to="/dashboard" 
                   onClick={() => setIsOpen(false)}
@@ -138,7 +138,7 @@ const Navigation = () => {
                   }`}
                 >
                   <Calendar className="h-5 w-5" />
-                  <span className="font-medium">Dashboard</span>
+                  <span className="font-medium">{user?.type === 'client' ? 'My Bookings' : 'Dashboard'}</span>
                 </Link>
               )}
               
