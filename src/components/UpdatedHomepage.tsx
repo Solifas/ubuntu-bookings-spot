@@ -52,26 +52,16 @@ const UpdatedHomepage = () => {
                         {/* Search Section */}
                         <div className="max-w-4xl mx-auto mb-12">
                             <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-slate-200">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                                    <div className="relative">
-                                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
-                                        <input
-                                            type="text"
-                                            value={searchQuery}
-                                            onChange={(e) => setSearchQuery(e.target.value)}
-                                            placeholder="What service do you need?"
-                                            className="w-full pl-10 pr-4 py-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
-                                            list="services"
-                                        />
-                                    </div>
-
-                                    <div className="relative">
-                                        <UpdatedLocationSearch
-                                            value={selectedLocation}
-                                            onChange={setSelectedLocation}
-                                            placeholder="Where do you need it?"
-                                        />
-                                    </div>
+                                <div className="relative w-full mb-6">
+                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
+                                    <input
+                                        type="text"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        placeholder="What service do you need?"
+                                        className="w-full pl-10 pr-4 py-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
+                                        list="services"
+                                    />
                                 </div>
 
                                 <button
