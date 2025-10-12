@@ -6,9 +6,11 @@ import Navigation from './Navigation';
 import UpdatedLocationSearch from './UpdatedLocationSearch';
 import { useSearchServices } from '../hooks/useServices';
 import { Service } from '../data/servicesData';
+import { useAuth } from '../contexts/AuthContext';
 
 const UpdatedHomepage = () => {
     const navigate = useNavigate();
+    const { user } = useAuth();
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedLocation, setSelectedLocation] = useState('');
 
@@ -74,20 +76,16 @@ const UpdatedHomepage = () => {
                         </div>
 
                         {/* CTA Buttons */}
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-                            <button
-                                onClick={handleJoinAsProvider}
-                                className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
-                            >
-                                Join as Service Provider
-                            </button>
-                            <button
-                                onClick={() => navigate('/register')}
-                                className="bg-white text-slate-700 px-8 py-4 rounded-full text-lg font-semibold hover:bg-slate-50 transition-all duration-200 shadow-lg hover:shadow-xl border border-slate-200"
-                            >
-                                Find Services
-                            </button>
-                        </div>
+                        {user?.type !== 'provider' && (
+                            <div className="flex justify-center items-center mb-12">
+                                <button
+                                    onClick={handleJoinAsProvider}
+                                    className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                                >
+                                    Join as Service Provider
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </section>
