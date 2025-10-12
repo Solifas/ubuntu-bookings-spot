@@ -13,6 +13,7 @@ import BookingPage from "./pages/BookingPage";
 import Settings from "./pages/Settings";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import Search from "./pages/Search";
 import NotFound from "./pages/NotFound";
 
 const App = () => (
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/settings" element={<Settings />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/search" element={<Search />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
