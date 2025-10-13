@@ -30,15 +30,15 @@ const BookingPage = () => {
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
   const [services, setServices] = useState<LocalService[]>([]);
   const [servicesLoading, setServicesLoading] = useState(true);
-  
+
   const createBookingMutation = useCreateBooking();
 
   // Mock services - only used in mock mode
   const mockServices: LocalService[] = [
-    { id: 'haircut', name: 'Classic Haircut', duration: '30 min', price: 'R120', description: 'Professional cut and styling' },
-    { id: 'beard-trim', name: 'Beard Trim & Shape', duration: '20 min', price: 'R80', description: 'Expert beard grooming' },
-    { id: 'combo', name: 'Cut & Beard Combo', duration: '45 min', price: 'R180', description: 'Complete grooming package' },
-    { id: 'styling', name: 'Hair Styling', duration: '25 min', price: 'R100', description: 'Professional styling service' }
+    { id: 'f91b7cd3-c51d-4898-ad4d-af71770b23ee', name: 'Classic Haircut', duration: '30 min', price: 'R120', description: 'Professional cut and styling' },
+    { id: 'f91b7cd3-c51d-4898-ad4d-af71770b23ea', name: 'Beard Trim & Shape', duration: '20 min', price: 'R80', description: 'Expert beard grooming' },
+    { id: 'f91b7cd3-c51d-4898-ad4d-af71770b23eb', name: 'Cut & Beard Combo', duration: '45 min', price: 'R180', description: 'Complete grooming package' },
+    { id: 'f91b7cd3-c51d-4898-ad4d-af71770b23ec', name: 'Hair Styling', duration: '25 min', price: 'R100', description: 'Professional styling service' }
   ];
 
   // Load services on component mount
@@ -377,7 +377,7 @@ const BookingPage = () => {
                 >
                   Back
                 </button>
-                <button 
+                <button
                   onClick={handleConfirmBooking}
                   disabled={createBookingMutation.isPending}
                   className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-green-500 text-white px-6 sm:px-8 py-3 rounded-xl font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
