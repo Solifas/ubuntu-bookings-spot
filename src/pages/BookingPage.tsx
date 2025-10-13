@@ -9,7 +9,7 @@ import { isMockMode } from '../config/dataSource';
 import { Badge } from '@/components/ui/badge';
 import { useCreateBooking } from '../hooks/useBookings';
 import { toast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface LocalService {
   id: string;
@@ -22,6 +22,7 @@ interface LocalService {
 const BookingPage = () => {
   const { user, isLoggedIn } = useAuth();
   const navigate = useNavigate();
+  const { providerId } = useParams<{ providerId: string }>();
   const [selectedService, setSelectedService] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
@@ -46,15 +47,19 @@ const BookingPage = () => {
     const loadServices = async () => {
       setServicesLoading(true);
 
+      if (!providerId) {
+        console.error('No provider ID provided');
+        setServicesLoading(false);
+        return;
+      }
+
       try {
         if (isMockMode()) {
-          console.log('🎭 BookingPage: Using mock services');
+          console.log(`🎭 BookingPage: Using mock services for provider ${providerId}`);
           setServices(mockServices);
         } else {
-          console.log('🌐 BookingPage: Fetching services from API');
-          // For booking page, we might want to fetch services from all providers
-          // or from a specific business. For now, we'll use a generic approach
-          const response = await DataSourceAdapter.getServices();
+          console.log(`🌐 BookingPage: Fetching services for provider ${providerId}`);
+          const response = await DataSourceAdapter.getBusinessServices(providerId);
 
           if (response.error) {
             throw new Error(response.error);
@@ -85,7 +90,7 @@ const BookingPage = () => {
     };
 
     loadServices();
-  }, []);
+  }, [providerId]);
 
   const timeSlots = [
     '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
