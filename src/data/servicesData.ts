@@ -13,6 +13,8 @@ export interface Service {
   phone: string;
   email: string;
   tags: string[];
+  businessId?: string;
+  providerId?: string;
 }
 
 export interface ServiceProvider {
@@ -41,7 +43,9 @@ export const mockServices: Service[] = [
     image: '/placeholder.svg',
     phone: '+27 11 123 4567',
     email: 'contact@premiumcuts.co.za',
-    tags: ['men', 'haircut', 'beard', 'styling']
+    tags: ['men', 'haircut', 'beard', 'styling'],
+    businessId: 'business-1',
+    providerId: 'provider-1'
   },
   {
     id: '2',
@@ -56,7 +60,9 @@ export const mockServices: Service[] = [
     image: '/placeholder.svg',
     phone: '+27 11 234 5678',
     email: 'bookings@glamoursalon.co.za',
-    tags: ['women', 'styling', 'wash', 'cut']
+    tags: ['women', 'styling', 'wash', 'cut'],
+    businessId: 'business-2',
+    providerId: 'provider-2'
   },
   {
     id: '3',
@@ -71,7 +77,9 @@ export const mockServices: Service[] = [
     image: '/placeholder.svg',
     phone: '+27 21 345 6789',
     email: 'spa@beautybliss.co.za',
-    tags: ['facial', 'skincare', 'relaxing', 'cleansing']
+    tags: ['facial', 'skincare', 'relaxing', 'cleansing'],
+    businessId: 'business-3',
+    providerId: 'provider-3'
   },
   {
     id: '4',
@@ -86,7 +94,9 @@ export const mockServices: Service[] = [
     image: '/placeholder.svg',
     phone: '+27 31 456 7890',
     email: 'therapy@massageheaven.co.za',
-    tags: ['massage', 'therapeutic', 'muscle', 'relaxation']
+    tags: ['massage', 'therapeutic', 'muscle', 'relaxation'],
+    businessId: 'business-4',
+    providerId: 'provider-4'
   },
   {
     id: '5',
@@ -101,7 +111,9 @@ export const mockServices: Service[] = [
     image: '/placeholder.svg',
     phone: '+27 12 567 8901',
     email: 'fit@strongbody.co.za',
-    tags: ['fitness', 'training', 'workout', 'health']
+    tags: ['fitness', 'training', 'workout', 'health'],
+    businessId: 'business-5',
+    providerId: 'provider-5'
   },
   {
     id: '6',
@@ -116,7 +128,9 @@ export const mockServices: Service[] = [
     image: '/placeholder.svg',
     phone: '+27 21 678 9012',
     email: 'learn@mathgenius.co.za',
-    tags: ['education', 'math', 'tutoring', 'high school']
+    tags: ['education', 'math', 'tutoring', 'high school'],
+    businessId: 'business-6',
+    providerId: 'provider-6'
   },
   {
     id: '7',
@@ -131,7 +145,9 @@ export const mockServices: Service[] = [
     image: '/placeholder.svg',
     phone: '+27 41 789 0123',
     email: 'emergency@quickfix.co.za',
-    tags: ['plumbing', 'emergency', '24/7', 'repair']
+    tags: ['plumbing', 'emergency', '24/7', 'repair'],
+    businessId: 'business-7',
+    providerId: 'provider-7'
   },
   {
     id: '8',
@@ -146,7 +162,9 @@ export const mockServices: Service[] = [
     image: '/placeholder.svg',
     phone: '+27 51 890 1234',
     email: 'power@sparkelectric.co.za',
-    tags: ['electrical', 'installation', 'maintenance', 'professional']
+    tags: ['electrical', 'installation', 'maintenance', 'professional'],
+    businessId: 'business-8',
+    providerId: 'provider-8'
   }
 ];
 

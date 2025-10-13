@@ -17,6 +17,8 @@ interface LocalService {
   duration: string;
   price: string;
   description: string;
+  businessId?: string;
+  type?: string;
 }
 
 const BookingPage = () => {
@@ -31,15 +33,16 @@ const BookingPage = () => {
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
   const [services, setServices] = useState<LocalService[]>([]);
   const [servicesLoading, setServicesLoading] = useState(true);
+  const [businessName, setBusinessName] = useState('Service Provider');
 
   const createBookingMutation = useCreateBooking();
 
   // Mock services - only used in mock mode
   const mockServices: LocalService[] = [
-    { id: 'f91b7cd3-c51d-4898-ad4d-af71770b23ee', name: 'Classic Haircut', duration: '30 min', price: 'R120', description: 'Professional cut and styling' },
-    { id: 'f91b7cd3-c51d-4898-ad4d-af71770b23ea', name: 'Beard Trim & Shape', duration: '20 min', price: 'R80', description: 'Expert beard grooming' },
-    { id: 'f91b7cd3-c51d-4898-ad4d-af71770b23eb', name: 'Cut & Beard Combo', duration: '45 min', price: 'R180', description: 'Complete grooming package' },
-    { id: 'f91b7cd3-c51d-4898-ad4d-af71770b23ec', name: 'Hair Styling', duration: '25 min', price: 'R100', description: 'Professional styling service' }
+    { id: 'f91b7cd3-c51d-4898-ad4d-af71770b23ee', name: 'Classic Haircut', duration: '30 min', price: 'R120', description: 'Professional cut and styling', businessId: 'business-1', type: 'Barber' },
+    { id: 'f91b7cd3-c51d-4898-ad4d-af71770b23ea', name: 'Beard Trim & Shape', duration: '20 min', price: 'R80', description: 'Expert beard grooming', businessId: 'business-1', type: 'Barber' },
+    { id: 'f91b7cd3-c51d-4898-ad4d-af71770b23eb', name: 'Cut & Beard Combo', duration: '45 min', price: 'R180', description: 'Complete grooming package', businessId: 'business-1', type: 'Barber' },
+    { id: 'f91b7cd3-c51d-4898-ad4d-af71770b23ec', name: 'Hair Styling', duration: '25 min', price: 'R100', description: 'Professional styling service', businessId: 'business-1', type: 'Barber' }
   ];
 
   // Load services on component mount
@@ -56,9 +59,20 @@ const BookingPage = () => {
       try {
         if (isMockMode()) {
           console.log(`🎭 BookingPage: Using mock services for provider ${providerId}`);
-          setServices(mockServices);
+          // Filter mock services by businessId
+          const filteredServices = mockServices.filter(s => s.businessId === providerId);
+          setServices(filteredServices);
+          setBusinessName(filteredServices[0]?.type || 'Service Provider');
         } else {
           console.log(`🌐 BookingPage: Fetching services for provider ${providerId}`);
+          
+          // Fetch business details first
+          const businessResponse = await DataSourceAdapter.getBusiness(providerId);
+          if (businessResponse.data) {
+            setBusinessName(businessResponse.data.businessName);
+          }
+
+          // Fetch services for this business
           const response = await DataSourceAdapter.getBusinessServices(providerId);
 
           if (response.error) {
@@ -147,7 +161,7 @@ const BookingPage = () => {
                 <User className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
               </div>
               <div className="min-w-0 flex-1">
-                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 truncate">Jabu's Barbershop</h1>
+                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 truncate">{businessName}</h1>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 text-slate-600 mt-1 gap-1 sm:gap-0">
                   <div className="flex items-center space-x-1">
                     <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />

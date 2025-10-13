@@ -40,6 +40,7 @@ export const adaptApiServiceToFrontend = (
         phone: businessInfo?.phone ?? '+27 XX XXX XXXX',
         email: businessInfo?.email ?? 'contact@provider.co.za',
         tags,
+        businessId: apiService?.businessId,
     };
 };
 
