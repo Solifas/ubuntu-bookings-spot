@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Calendar, Clock, MapPin, User, Star, LogIn, Loader2 } from 'lucide-react';
+import { Calendar, Clock, MapPin, User, Star, LogIn, Loader2, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import AuthModal from '../components/AuthModal';
 import { DataSourceAdapter } from '../services/dataSourceAdapter';
@@ -66,21 +66,29 @@ const BookingPage = () => {
         } else {
           console.log(`🌐 BookingPage: Fetching services for provider ${providerId}`);
           
-          // Fetch business details first
-          const businessResponse = await DataSourceAdapter.getBusiness(providerId);
-          if (businessResponse.data) {
-            setBusinessName(businessResponse.data.businessName);
-          }
-
-          // Fetch services for this business
-          const response = await DataSourceAdapter.getBusinessServices(providerId);
+          // Use public search endpoint to get all services, then filter by businessId
+          const response = await DataSourceAdapter.searchServices({ page: 1, pageSize: 100 });
 
           if (response.error) {
             throw new Error(response.error);
           }
 
+          // Filter services by businessId (response.data is an array of services)
+          const allServices = Array.isArray(response.data) ? response.data : [];
+          const businessServices = allServices.filter(
+            (service: Service) => service.businessId === providerId
+          );
+
+          // Try to get business name from first service or fetch business details
+          if (businessServices.length > 0) {
+            const businessResponse = await DataSourceAdapter.getBusiness(providerId);
+            if (businessResponse.data) {
+              setBusinessName(businessResponse.data.businessName);
+            }
+          }
+
           // Convert API services to local format
-          const apiServices: LocalService[] = (response.data || []).map((service: Service) => ({
+          const apiServices: LocalService[] = businessServices.map((service: Service) => ({
             id: service.id,
             name: service.name,
             duration: `${service.durationMinutes} min`,
@@ -94,7 +102,8 @@ const BookingPage = () => {
         console.error('Failed to load services:', err);
         // Fallback to mock data in mock mode, empty array in API mode
         if (isMockMode()) {
-          setServices(mockServices);
+          const filteredServices = mockServices.filter(s => s.businessId === providerId);
+          setServices(filteredServices);
         } else {
           setServices([]);
         }
@@ -155,6 +164,15 @@ const BookingPage = () => {
       {/* Header */}
       <div className="bg-white shadow-sm">
         <div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6">
+          {/* Back Button */}
+          <button
+            onClick={() => navigate('/')}
+            className="flex items-center gap-2 text-slate-600 hover:text-slate-900 mb-4 transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span className="text-sm font-medium">Back to Home</span>
+          </button>
+          
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center space-x-3 sm:space-x-4 w-full sm:w-auto">
               <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-400 to-green-400 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0">
