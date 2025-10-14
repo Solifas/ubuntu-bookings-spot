@@ -165,9 +165,74 @@ const Dashboard = () => {
             </div>
 
             {/* Main Content - Mobile Responsive */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-              {/* Upcoming Bookings */}
-              <div className="lg:col-span-2">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+              {/* Pending Booking Requests */}
+              <div>
+                <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-100 p-4 sm:p-6">
+                  <div className="flex items-center justify-between mb-4 sm:mb-6">
+                    <h2 className="text-lg sm:text-xl font-bold text-slate-900">Pending Requests</h2>
+                    {pendingBookings.length > 0 && (
+                      <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                        {pendingBookings.length}
+                      </span>
+                    )}
+                  </div>
+
+                  {loadingPending ? (
+                    <div className="space-y-4">
+                      {Array.from({ length: 2 }).map((_, i) => (
+                        <div key={i} className="animate-pulse bg-slate-100 rounded-lg h-24"></div>
+                      ))}
+                    </div>
+                  ) : errorPending ? (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                      <p className="text-red-700 text-sm">Failed to load pending requests</p>
+                    </div>
+                  ) : pendingBookings.length === 0 ? (
+                    <div className="text-center py-8">
+                      <Clock className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+                      <p className="text-slate-600">No pending requests</p>
+                      <p className="text-slate-500 text-sm mt-1">New booking requests will appear here</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3 sm:space-y-4 max-h-96 overflow-y-auto">
+                      {pendingBookings.map((booking) => (
+                        <div key={booking.id} className="bg-slate-50 rounded-lg p-4">
+                          <div className="flex items-start justify-between mb-2">
+                            <div>
+                              <h3 className="font-semibold text-slate-900">{booking.client.fullName}</h3>
+                              <p className="text-sm text-slate-600">{booking.service.name}</p>
+                            </div>
+                            <span className="bg-yellow-100 text-yellow-700 text-xs px-2 py-1 rounded-full">
+                              Pending
+                            </span>
+                          </div>
+                          <p className="text-sm text-slate-500">
+                            {new Date(booking.startTime).toLocaleDateString()} at {new Date(booking.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </p>
+                          <div className="flex gap-2 mt-3">
+                            <button
+                              onClick={() => handleBookingAction(booking.id, 'decline')}
+                              className="flex-1 px-3 py-1.5 bg-red-100 text-red-700 rounded text-sm hover:bg-red-200 transition-colors"
+                            >
+                              Decline
+                            </button>
+                            <button
+                              onClick={() => handleBookingAction(booking.id, 'accept')}
+                              className="flex-1 px-3 py-1.5 bg-green-100 text-green-700 rounded text-sm hover:bg-green-200 transition-colors"
+                            >
+                              Accept
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Confirmed Bookings */}
+              <div>
                 <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-100 p-4 sm:p-6">
                   <div className="flex items-center justify-between mb-4 sm:mb-6">
                     <h2 className="text-lg sm:text-xl font-bold text-slate-900">Confirmed Bookings</h2>
@@ -196,7 +261,7 @@ const Dashboard = () => {
                       <p className="text-slate-500 text-sm mt-1">Confirmed bookings will appear here</p>
                     </div>
                   ) : (
-                    <div className="space-y-3 sm:space-y-4">
+                    <div className="space-y-3 sm:space-y-4 max-h-96 overflow-y-auto">
                       {confirmedBookings.slice(0, 5).map((booking) => (
                         <BookingCard
                           key={booking.id}
@@ -212,31 +277,31 @@ const Dashboard = () => {
                   )}
                 </div>
               </div>
+            </div>
 
-              {/* Quick Actions - Only for providers */}
-              {user?.type === 'provider' && (
-                <div className="space-y-4 sm:space-y-6">
-                  <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-100 p-4 sm:p-6">
-                    <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">Quick Actions</h3>
-                    <div className="space-y-2 sm:space-y-3">
-                      <NewBookingModal />
-                      <button
-                        onClick={() => setActiveTab('calendar')}
-                        className="w-full bg-slate-100 text-slate-700 p-3 sm:p-4 rounded-lg sm:rounded-xl font-medium hover:bg-slate-200 transition-all duration-200 text-sm sm:text-base"
-                      >
-                        View Calendar
-                      </button>
-                      <button
-                        onClick={() => setActiveTab('services')}
-                        className="w-full bg-slate-100 text-slate-700 p-3 sm:p-4 rounded-lg sm:rounded-xl font-medium hover:bg-slate-200 transition-all duration-200 text-sm sm:text-base"
-                      >
-                        Manage Services
-                      </button>
-                    </div>
+            {/* Quick Actions for Providers */}
+            {user?.type === 'provider' && (
+              <div className="mt-6 sm:mt-8">
+                <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-100 p-4 sm:p-6">
+                  <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">Quick Actions</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
+                    <NewBookingModal />
+                    <button
+                      onClick={() => setActiveTab('calendar')}
+                      className="bg-slate-100 text-slate-700 p-3 sm:p-4 rounded-lg sm:rounded-xl font-medium hover:bg-slate-200 transition-all duration-200 text-sm sm:text-base"
+                    >
+                      View Calendar
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('services')}
+                      className="bg-slate-100 text-slate-700 p-3 sm:p-4 rounded-lg sm:rounded-xl font-medium hover:bg-slate-200 transition-all duration-200 text-sm sm:text-base"
+                    >
+                      Manage Services
+                    </button>
                   </div>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </>
         )}
 
@@ -244,7 +309,7 @@ const Dashboard = () => {
           <div className="max-w-6xl">
             <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-100 p-4 sm:p-6">
               <h2 className="text-lg sm:text-xl font-bold text-slate-900 mb-4 sm:mb-6">
-                {user?.type === 'client' ? 'My Bookings' : 'Booking Requests'}
+                {user?.type === 'client' ? 'My Bookings' : 'All Booking Requests'}
               </h2>
 
               {user?.type === 'client' ? (
