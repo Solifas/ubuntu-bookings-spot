@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Calendar, Users, Clock, TrendingUp, Check, X, Settings, CalendarDays, Loader2 } from 'lucide-react';
 import Navigation from '../components/Navigation';
@@ -30,6 +29,14 @@ const Dashboard = () => {
     BookingStatus.CONFIRMED
   );
 
+  // Fetch all bookings when Requests tab is active
+  const { data: allBookings = [], isLoading: loadingAllBookings, error: errorAllBookings, refetch: refetchAllBookings } = useProviderBookings(
+    providerId,
+    undefined, // No status filter - gets all bookings
+    undefined,
+    undefined
+  );
+
   // For clients, get their own bookings
   const { data: clientBookings = [], isLoading: loadingClientBookings, error: errorClientBookings } = useClientBookings(
     user?.type === 'client' ? (user?.id || '') : ''
@@ -54,7 +61,7 @@ const Dashboard = () => {
         return;
       }
 
-      const booking = pendingBookings.find(b => b.id === bookingId);
+      const booking = allBookings.find(b => b.id === bookingId) || pendingBookings.find(b => b.id === bookingId);
       if (booking) {
         toast({
           title: action === 'accept' ? "Booking Accepted" : "Booking Declined",
@@ -100,7 +107,13 @@ const Dashboard = () => {
               ].map((tab) => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                    // Fetch all bookings when Requests tab is clicked
+                    if (tab.id === 'bookings' && user?.type === 'provider') {
+                      refetchAllBookings();
+                    }
+                  }}
                   className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 rounded-lg font-medium transition-all duration-200 whitespace-nowrap text-sm sm:text-base ${activeTab === tab.id
                     ? 'bg-white text-blue-600 shadow-sm'
                     : 'text-slate-600 hover:text-slate-900'
@@ -109,9 +122,9 @@ const Dashboard = () => {
                   {tab.icon && <tab.icon className="h-3 w-3 sm:h-4 sm:w-4" />}
                   <span className="hidden xs:inline sm:inline">{tab.label}</span>
                   <span className="xs:hidden sm:hidden">{tab.label.slice(0, 4)}</span>
-                  {tab.id === 'bookings' && pendingBookings.length > 0 && (
+                  {tab.id === 'bookings' && allBookings.length > 0 && (
                     <span className="ml-1 sm:ml-2 bg-red-500 text-white text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
-                      {pendingBookings.length}
+                      {allBookings.length}
                     </span>
                   )}
                 </button>
@@ -347,17 +360,17 @@ const Dashboard = () => {
                                 </div>
                                 <div className="ml-auto">
                                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                    booking.status === 'CONFIRMED' ? 'bg-green-100 text-green-700' :
-                                    booking.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' :
-                                    booking.status === 'CANCELLED' ? 'bg-red-100 text-red-700' :
+                                    booking.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                    booking.status === 'confirmed' ? 'bg-green-100 text-green-700' :
+                                    booking.status === 'cancelled' ? 'bg-red-100 text-red-700' :
                                     'bg-blue-100 text-blue-700'
                                   }`}>
-                                    {booking.status}
+                                    {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
                                   </span>
                                 </div>
                               </div>
 
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
+                              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-xs sm:text-sm">
                                 <div>
                                   <p className="text-slate-500 font-medium">Service</p>
                                   <p className="text-slate-900">{booking.service.name}</p>
@@ -385,27 +398,27 @@ const Dashboard = () => {
                   )}
                 </>
               ) : (
-                // Provider view - show pending requests
+                // Provider view - show all booking requests sorted by date
                 <>
-                  {loadingPending ? (
+                  {loadingAllBookings ? (
                     <div className="space-y-4">
                       {Array.from({ length: 3 }).map((_, i) => (
                         <div key={i} className="animate-pulse bg-slate-100 rounded-lg h-32"></div>
                       ))}
                     </div>
-                  ) : errorPending ? (
+                  ) : errorAllBookings ? (
                     <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                      <p className="text-red-700 text-sm">Failed to load pending bookings</p>
+                      <p className="text-red-700 text-sm">Failed to load booking requests</p>
                     </div>
-                  ) : pendingBookings.length === 0 ? (
+                  ) : allBookings.length === 0 ? (
                     <div className="text-center py-8 sm:py-12">
                       <Calendar className="h-8 w-8 sm:h-12 sm:w-12 text-slate-400 mx-auto mb-3 sm:mb-4" />
-                      <p className="text-slate-600 text-sm sm:text-base">No pending booking requests</p>
-                      <p className="text-slate-500 text-xs sm:text-sm mt-1">New booking requests will appear here</p>
+                      <p className="text-slate-600 text-sm sm:text-base">No booking requests</p>
+                      <p className="text-slate-500 text-xs sm:text-sm mt-1">Booking requests will appear here</p>
                     </div>
                   ) : (
                     <div className="space-y-4 sm:space-y-6">
-                      {[...pendingBookings].sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime()).map((booking) => (
+                      {[...allBookings].sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime()).map((booking) => (
                         <div key={booking.id} className="bg-slate-50 rounded-lg sm:rounded-xl p-4 sm:p-6">
                           <div className="flex flex-col gap-4">
                             <div className="flex-1">
@@ -438,35 +451,48 @@ const Dashboard = () => {
                                   <p className="text-slate-500 font-medium">Price</p>
                                   <p className="text-slate-900 font-semibold">R{booking.service.price}</p>
                                 </div>
+                                <div>
+                                  <p className="text-slate-500 font-medium">Status</p>
+                                  <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
+                                    booking.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                    booking.status === 'confirmed' ? 'bg-green-100 text-green-700' :
+                                    booking.status === 'cancelled' ? 'bg-red-100 text-red-700' :
+                                    'bg-blue-100 text-blue-700'
+                                  }`}>
+                                    {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                                  </span>
+                                </div>
                               </div>
                             </div>
 
-                            <div className="flex gap-2 sm:gap-3">
-                              <button
-                                onClick={() => handleBookingAction(booking.id, 'decline')}
-                                disabled={updateBookingStatus.isPending}
-                                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-sm disabled:opacity-50"
-                              >
-                                {updateBookingStatus.isPending ? (
-                                  <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
-                                ) : (
-                                  <X className="h-3 w-3 sm:h-4 sm:w-4" />
-                                )}
-                                Decline
-                              </button>
-                              <button
-                                onClick={() => handleBookingAction(booking.id, 'accept')}
-                                disabled={updateBookingStatus.isPending}
-                                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors text-sm disabled:opacity-50"
-                              >
-                                {updateBookingStatus.isPending ? (
-                                  <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
-                                ) : (
-                                  <Check className="h-3 w-3 sm:h-4 sm:w-4" />
-                                )}
-                                Accept
-                              </button>
-                            </div>
+                            {booking.status === 'pending' && (
+                              <div className="flex gap-2 sm:gap-3">
+                                <button
+                                  onClick={() => handleBookingAction(booking.id, 'decline')}
+                                  disabled={updateBookingStatus.isPending}
+                                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-sm disabled:opacity-50"
+                                >
+                                  {updateBookingStatus.isPending ? (
+                                    <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
+                                  ) : (
+                                    <X className="h-3 w-3 sm:h-4 sm:w-4" />
+                                  )}
+                                  Decline
+                                </button>
+                                <button
+                                  onClick={() => handleBookingAction(booking.id, 'accept')}
+                                  disabled={updateBookingStatus.isPending}
+                                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors text-sm disabled:opacity-50"
+                                >
+                                  {updateBookingStatus.isPending ? (
+                                    <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
+                                  ) : (
+                                    <Check className="h-3 w-3 sm:h-4 sm:w-4" />
+                                  )}
+                                  Accept
+                                </button>
+                              </div>
+                            )}
                           </div>
                         </div>
                       ))}
