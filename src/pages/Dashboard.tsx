@@ -405,7 +405,7 @@ const Dashboard = () => {
                     </div>
                   ) : (
                     <div className="space-y-4 sm:space-y-6">
-                      {pendingBookings.map((booking) => (
+                      {[...pendingBookings].sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime()).map((booking) => (
                         <div key={booking.id} className="bg-slate-50 rounded-lg sm:rounded-xl p-4 sm:p-6">
                           <div className="flex flex-col gap-4">
                             <div className="flex-1">
