@@ -557,11 +557,20 @@ const Settings = () => {
               )}
 
               <div className="mt-8 flex justify-end space-x-4">
-                <button className="px-6 py-3 text-slate-700 border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors">
+                <button 
+                  className="px-6 py-3 text-slate-700 border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors"
+                  onClick={() => window.location.reload()}
+                  disabled={isSaving}
+                >
                   Cancel
                 </button>
-                <button className="px-6 py-3 bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-xl font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl">
-                  Save Changes
+                <button 
+                  className="px-6 py-3 bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-xl font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  onClick={handleSaveChanges}
+                  disabled={isSaving || businessLoading}
+                >
+                  {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
+                  {isSaving ? 'Saving...' : 'Save Changes'}
                 </button>
               </div>
             </div>
