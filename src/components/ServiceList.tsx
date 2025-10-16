@@ -3,9 +3,12 @@ import React, { useState } from 'react';
 import { useSearchServices } from '../hooks/useServices';
 import { ServiceSearchParams } from '../types/api';
 import { Service } from '../data/servicesData';
-import { Loader2, Search, MapPin, Filter } from 'lucide-react';
+import { Loader2, Search, MapPin, Filter, X } from 'lucide-react';
 
 const ServiceList: React.FC = () => {
+    const [searchQuery, setSearchQuery] = useState('');
+    const [locationQuery, setLocationQuery] = useState('');
+    const [categoryFilter, setCategoryFilter] = useState('');
     const [searchParams, setSearchParams] = useState<ServiceSearchParams>({
         page: 1,
         pageSize: 10
@@ -19,23 +22,39 @@ const ServiceList: React.FC = () => {
         refetch
     } = useSearchServices(searchParams);
 
-    const handleSearch = (query: string) => {
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
         setSearchParams(prev => ({
             ...prev,
-            name: query,
-            page: 1 // Reset to first page
-        }));
-    };
-
-    const handleLocationFilter = (city: string) => {
-        setSearchParams(prev => ({
-            ...prev,
-            city,
+            name: searchQuery,
+            city: locationQuery,
+            category: categoryFilter,
             page: 1
         }));
     };
 
-    const handleCategoryFilter = (category: string) => {
+    const handleSearchInputChange = (value: string) => {
+        setSearchQuery(value);
+        // Auto-search as user types
+        setSearchParams(prev => ({
+            ...prev,
+            name: value,
+            page: 1
+        }));
+    };
+
+    const handleLocationInputChange = (value: string) => {
+        setLocationQuery(value);
+        // Auto-search as user types
+        setSearchParams(prev => ({
+            ...prev,
+            city: value,
+            page: 1
+        }));
+    };
+
+    const handleCategoryChange = (category: string) => {
+        setCategoryFilter(category);
         setSearchParams(prev => ({
             ...prev,
             category,
@@ -43,10 +62,30 @@ const ServiceList: React.FC = () => {
         }));
     };
 
-    const handlePageChange = (page: number) => {
+    const clearSearchQuery = () => {
+        setSearchQuery('');
         setSearchParams(prev => ({
             ...prev,
-            page
+            name: undefined,
+            page: 1
+        }));
+    };
+
+    const clearLocationQuery = () => {
+        setLocationQuery('');
+        setSearchParams(prev => ({
+            ...prev,
+            city: undefined,
+            page: 1
+        }));
+    };
+
+    const clearCategoryFilter = () => {
+        setCategoryFilter('');
+        setSearchParams(prev => ({
+            ...prev,
+            category: undefined,
+            page: 1
         }));
     };
 
@@ -77,50 +116,123 @@ const ServiceList: React.FC = () => {
     const totalCount = searchResults?.totalCount || 0;
     const totalPages = searchResults?.totalPages || 0;
 
+    const handlePageChange = (page: number) => {
+        setSearchParams(prev => ({
+            ...prev,
+            page
+        }));
+    };
+
     return (
         <div className="space-y-6">
             {/* Search and Filters */}
             <div className="bg-white rounded-lg shadow-sm border p-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {/* Search Input */}
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
-                        <input
-                            type="text"
-                            placeholder="Search services..."
-                            className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            onChange={(e) => handleSearch(e.target.value)}
-                        />
-                    </div>
+                <form onSubmit={handleSearch}>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {/* Search Input */}
+                        <div className="relative">
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                            <input
+                                type="text"
+                                placeholder="Search services..."
+                                value={searchQuery}
+                                className="w-full pl-10 pr-10 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                onChange={(e) => handleSearchInputChange(e.target.value)}
+                            />
+                            {searchQuery && (
+                                <button
+                                    type="button"
+                                    onClick={clearSearchQuery}
+                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 hover:bg-slate-100 rounded-full transition-colors"
+                                >
+                                    <X className="h-4 w-4 text-slate-400" />
+                                </button>
+                            )}
+                        </div>
 
-                    {/* Location Filter */}
-                    <div className="relative">
-                        <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
-                        <input
-                            type="text"
-                            placeholder="City or location..."
-                            className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            onChange={(e) => handleLocationFilter(e.target.value)}
-                        />
-                    </div>
+                        {/* Location Input */}
+                        <div className="relative">
+                            <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                            <input
+                                type="text"
+                                placeholder="Location..."
+                                value={locationQuery}
+                                className="w-full pl-10 pr-10 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                onChange={(e) => handleLocationInputChange(e.target.value)}
+                            />
+                            {locationQuery && (
+                                <button
+                                    type="button"
+                                    onClick={clearLocationQuery}
+                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 hover:bg-slate-100 rounded-full transition-colors"
+                                >
+                                    <X className="h-4 w-4 text-slate-400" />
+                                </button>
+                            )}
+                        </div>
 
-                    {/* Category Filter */}
-                    <div className="relative">
-                        <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
-                        <select
-                            className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
-                            onChange={(e) => handleCategoryFilter(e.target.value)}
-                        >
-                            <option value="">All Categories</option>
-                            <option value="Hair Salon">Hair Salon</option>
-                            <option value="Massage Therapy">Massage Therapy</option>
-                            <option value="Beauty">Beauty</option>
-                            <option value="Fitness">Fitness</option>
-                            <option value="Education">Education</option>
-                            <option value="Home Services">Home Services</option>
-                        </select>
+                        {/* Category Filter */}
+                        <div className="relative">
+                            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                            <select
+                                value={categoryFilter}
+                                className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
+                                onChange={(e) => handleCategoryChange(e.target.value)}
+                            >
+                                <option value="">All Categories</option>
+                                <option value="Hair Salon">Hair Salon</option>
+                                <option value="Massage Therapy">Massage Therapy</option>
+                                <option value="Beauty">Beauty</option>
+                                <option value="Fitness">Fitness</option>
+                                <option value="Education">Education</option>
+                                <option value="Home Services">Home Services</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
+                </form>
+
+                {/* Active Filters Display */}
+                {(searchQuery || locationQuery || categoryFilter) && (
+                    <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-slate-200">
+                        <span className="text-sm text-slate-600">Active filters:</span>
+                        {searchQuery && (
+                            <div className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                                <Search className="h-3 w-3 mr-1" />
+                                <span>{searchQuery}</span>
+                                <button
+                                    onClick={clearSearchQuery}
+                                    className="ml-2 hover:bg-blue-200 rounded-full p-0.5"
+                                >
+                                    <X className="h-3 w-3" />
+                                </button>
+                            </div>
+                        )}
+                        {locationQuery && (
+                            <div className="flex items-center bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
+                                <MapPin className="h-3 w-3 mr-1" />
+                                <span>{locationQuery}</span>
+                                <button
+                                    onClick={clearLocationQuery}
+                                    className="ml-2 hover:bg-green-200 rounded-full p-0.5"
+                                >
+                                    <X className="h-3 w-3" />
+                                </button>
+                            </div>
+                        )}
+                        {categoryFilter && (
+                            <div className="flex items-center bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
+                                <Filter className="h-3 w-3 mr-1" />
+                                <span>{categoryFilter}</span>
+                                <button
+                                    onClick={clearCategoryFilter}
+                                    className="ml-2 hover:bg-purple-200 rounded-full p-0.5"
+                                >
+                                    <X className="h-3 w-3" />
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
 
             {/* Results Summary */}
