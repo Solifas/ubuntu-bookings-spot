@@ -21,11 +21,11 @@ const CalendarView = () => {
     undefined  // No end date filter
   );
 
-  // Filter bookings for the selected date
+  // Filter bookings for the selected date based on createdAt
   const selectedDateKey = format(selectedDate, 'yyyy-MM-dd');
   const dayBookings = allBookings.filter(booking => {
-    const bookingDate = format(new Date(booking.startTime), 'yyyy-MM-dd');
-    return bookingDate === selectedDateKey;
+    const bookingCreatedDate = format(new Date(booking.createdAt), 'yyyy-MM-dd');
+    return bookingCreatedDate === selectedDateKey;
   });
 
   const getStatusColor = (status: BookingStatus | string) => {
