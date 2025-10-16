@@ -3,10 +3,11 @@ import { useState, useEffect } from 'react';
 import { Clock, MapPin, DollarSign, User, Bell, Calendar, Loader2 } from 'lucide-react';
 import Navigation from '../components/Navigation';
 import { DataSourceAdapter } from '../services/dataSourceAdapter';
-import { Service } from '../types/api';
+import { Service, Business } from '../types/api';
 import { isMockMode } from '../config/dataSource';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '../contexts/AuthContext';
+import { toast } from 'sonner';
 
 interface LocalService {
   name: string;
@@ -19,14 +20,91 @@ const Settings = () => {
   const [activeTab, setActiveTab] = useState(user?.type === 'client' ? 'profile' : 'business');
   const [services, setServices] = useState<LocalService[]>([]);
   const [servicesLoading, setServicesLoading] = useState(true);
+  const [businessData, setBusinessData] = useState<Business | null>(null);
+  const [businessLoading, setBusinessLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  
+  // Form state for business/location
+  const [formData, setFormData] = useState({
+    businessName: '',
+    ownerName: '',
+    phone: '',
+    email: '',
+    description: '',
+    streetAddress: '',
+    city: '',
+    province: '',
+    postalCode: '',
+    googleMapsLink: ''
+  });
 
-  // Mock services - only used in mock mode
+  // Mock data - only used in mock mode
   const mockServices: LocalService[] = [
     { name: 'Classic Haircut', duration: '30', price: '120' },
     { name: 'Beard Trim & Shape', duration: '20', price: '80' },
     { name: 'Cut & Beard Combo', duration: '45', price: '180' },
     { name: 'Hair Styling', duration: '25', price: '100' }
   ];
+
+  const mockBusinessData = {
+    businessName: "Jabu's Barbershop",
+    ownerName: 'Jabu Sithole',
+    phone: '+27 82 123 4567',
+    email: 'jabu@barbershop.co.za',
+    description: 'Professional barbershop specializing in modern cuts, traditional shaves, and beard grooming. Serving the Sandton community for over 5 years.',
+    streetAddress: 'Shop 12, Sandton City Mall',
+    city: 'Sandton',
+    province: 'Gauteng',
+    postalCode: '2196',
+    googleMapsLink: ''
+  };
+
+  // Load business data
+  useEffect(() => {
+    if (user?.type === 'provider' && isLoggedIn) {
+      const loadBusinessData = async () => {
+        setBusinessLoading(true);
+        try {
+          if (isMockMode()) {
+            console.log('🎭 Settings: Using mock business data');
+            setFormData(mockBusinessData);
+          } else {
+            console.log('🌐 Settings: Fetching business data for user:', user.id);
+            const response = await DataSourceAdapter.getBusiness(user.id);
+            
+            if (response.error) {
+              throw new Error(response.error);
+            }
+
+            if (response.data) {
+              setBusinessData(response.data);
+              setFormData({
+                businessName: response.data.businessName,
+                ownerName: user.name,
+                phone: response.data.phone || '',
+                email: response.data.email || '',
+                description: response.data.description || '',
+                streetAddress: response.data.address || '',
+                city: response.data.city || '',
+                province: '',
+                postalCode: '',
+                googleMapsLink: ''
+              });
+            }
+          }
+        } catch (err) {
+          console.error('Failed to load business data:', err);
+          if (isMockMode()) {
+            setFormData(mockBusinessData);
+          }
+        } finally {
+          setBusinessLoading(false);
+        }
+      };
+
+      loadBusinessData();
+    }
+  }, [user, isLoggedIn]);
 
   // Load services when services tab is active
   useEffect(() => {
@@ -75,6 +153,50 @@ const Settings = () => {
       loadServices();
     }
   }, [activeTab]);
+
+  // Handle form field changes
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Handle save changes
+  const handleSaveChanges = async () => {
+    if (!user || user.type !== 'provider') return;
+
+    setIsSaving(true);
+    try {
+      if (isMockMode()) {
+        console.log('🎭 Settings: Mock mode - simulating save');
+        await new Promise(resolve => setTimeout(resolve, 500));
+        toast.success('Settings saved successfully (Mock mode)');
+      } else {
+        console.log('🌐 Settings: Saving business data via API');
+        
+        // Update business info
+        const updateData = {
+          businessName: formData.businessName,
+          phone: formData.phone,
+          email: formData.email,
+          description: formData.description,
+          address: formData.streetAddress,
+          city: formData.city
+        };
+
+        const response = await DataSourceAdapter.updateBusiness(user.id, updateData);
+        
+        if (response.error) {
+          throw new Error(response.error);
+        }
+
+        toast.success('Settings saved successfully');
+      }
+    } catch (err) {
+      console.error('Failed to save settings:', err);
+      toast.error('Failed to save settings. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const tabs = user?.type === 'client' ? [
     { id: 'profile', label: 'Profile', icon: User },
@@ -125,53 +247,71 @@ const Settings = () => {
 
               {(activeTab === 'business' || activeTab === 'profile') && (
                 <div>
-                  <h2 className="text-2xl font-bold text-slate-900 mb-6">{user?.type === 'client' ? 'Profile Information' : 'Business Information'}</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {user?.type === 'provider' && (
+                  <div className="flex items-center gap-3 mb-6">
+                    <h2 className="text-2xl font-bold text-slate-900">{user?.type === 'client' ? 'Profile Information' : 'Business Information'}</h2>
+                    {isMockMode() && (
+                      <Badge variant="outline">Mock Mode</Badge>
+                    )}
+                  </div>
+                  
+                  {businessLoading ? (
+                    <div className="flex items-center justify-center py-12">
+                      <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+                      <span className="ml-2 text-slate-600">Loading business information...</span>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {user?.type === 'provider' && (
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-2">Business Name</label>
+                          <input
+                            type="text"
+                            className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            value={formData.businessName}
+                            onChange={(e) => handleInputChange('businessName', e.target.value)}
+                          />
+                        </div>
+                      )}
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">Business Name</label>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">{user?.type === 'client' ? 'Full Name' : 'Owner Name'}</label>
                         <input
                           type="text"
                           className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          defaultValue="Jabu's Barbershop"
+                          value={user?.type === 'client' ? user?.name || '' : formData.ownerName}
+                          onChange={(e) => handleInputChange('ownerName', e.target.value)}
                         />
                       </div>
-                    )}
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">{user?.type === 'client' ? 'Full Name' : 'Owner Name'}</label>
-                      <input
-                        type="text"
-                        className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        defaultValue={user?.type === 'client' ? user?.name || 'John Doe' : 'Jabu Sithole'}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">Phone Number</label>
-                      <input
-                        type="tel"
-                        className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        defaultValue="+27 82 123 4567"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">Email Address</label>
-                      <input
-                        type="email"
-                        className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        defaultValue="jabu@barbershop.co.za"
-                      />
-                    </div>
-                    {user?.type === 'provider' && (
-                      <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-slate-700 mb-2">Business Description</label>
-                        <textarea
-                          rows={4}
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Phone Number</label>
+                        <input
+                          type="tel"
                           className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          defaultValue="Professional barbershop specializing in modern cuts, traditional shaves, and beard grooming. Serving the Sandton community for over 5 years."
+                          value={formData.phone}
+                          onChange={(e) => handleInputChange('phone', e.target.value)}
                         />
                       </div>
-                    )}
-                  </div>
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Email Address</label>
+                        <input
+                          type="email"
+                          className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          value={formData.email}
+                          onChange={(e) => handleInputChange('email', e.target.value)}
+                        />
+                      </div>
+                      {user?.type === 'provider' && (
+                        <div className="md:col-span-2">
+                          <label className="block text-sm font-medium text-slate-700 mb-2">Business Description</label>
+                          <textarea
+                            rows={4}
+                            className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            value={formData.description}
+                            onChange={(e) => handleInputChange('description', e.target.value)}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -287,55 +427,78 @@ const Settings = () => {
 
               {activeTab === 'location' && (
                 <div>
-                  <h2 className="text-2xl font-bold text-slate-900 mb-6">Business Location</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-slate-700 mb-2">Street Address</label>
-                      <input
-                        type="text"
-                        className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        defaultValue="Shop 12, Sandton City Mall"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">City</label>
-                      <input
-                        type="text"
-                        className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        defaultValue="Sandton"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">Province</label>
-                      <select className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        <option>Gauteng</option>
-                        <option>Western Cape</option>
-                        <option>KwaZulu-Natal</option>
-                        <option>Eastern Cape</option>
-                        <option>Free State</option>
-                        <option>Limpopo</option>
-                        <option>Mpumalanga</option>
-                        <option>North West</option>
-                        <option>Northern Cape</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">Postal Code</label>
-                      <input
-                        type="text"
-                        className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        defaultValue="2196"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">Google Maps Link</label>
-                      <input
-                        type="url"
-                        className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="https://maps.google.com/..."
-                      />
-                    </div>
+                  <div className="flex items-center gap-3 mb-6">
+                    <h2 className="text-2xl font-bold text-slate-900">Business Location</h2>
+                    {isMockMode() && (
+                      <Badge variant="outline">Mock Mode</Badge>
+                    )}
                   </div>
+                  
+                  {businessLoading ? (
+                    <div className="flex items-center justify-center py-12">
+                      <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+                      <span className="ml-2 text-slate-600">Loading location information...</span>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="md:col-span-2">
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Street Address</label>
+                        <input
+                          type="text"
+                          className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          value={formData.streetAddress}
+                          onChange={(e) => handleInputChange('streetAddress', e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">City</label>
+                        <input
+                          type="text"
+                          className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          value={formData.city}
+                          onChange={(e) => handleInputChange('city', e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Province</label>
+                        <select 
+                          className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          value={formData.province}
+                          onChange={(e) => handleInputChange('province', e.target.value)}
+                        >
+                          <option value="">Select Province</option>
+                          <option value="Gauteng">Gauteng</option>
+                          <option value="Western Cape">Western Cape</option>
+                          <option value="KwaZulu-Natal">KwaZulu-Natal</option>
+                          <option value="Eastern Cape">Eastern Cape</option>
+                          <option value="Free State">Free State</option>
+                          <option value="Limpopo">Limpopo</option>
+                          <option value="Mpumalanga">Mpumalanga</option>
+                          <option value="North West">North West</option>
+                          <option value="Northern Cape">Northern Cape</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Postal Code</label>
+                        <input
+                          type="text"
+                          className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          value={formData.postalCode}
+                          onChange={(e) => handleInputChange('postalCode', e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Google Maps Link</label>
+                        <input
+                          type="url"
+                          className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="https://maps.google.com/..."
+                          value={formData.googleMapsLink}
+                          onChange={(e) => handleInputChange('googleMapsLink', e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
