@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Calendar, Users, Clock, TrendingUp, Check, X, Settings, CalendarDays, Loader2 } from 'lucide-react';
+import { format } from 'date-fns';
 import Navigation from '../components/Navigation';
 import BookingCard from '../components/BookingCard';
 import ClientList from '../components/ClientList';
@@ -440,7 +441,7 @@ const Dashboard = () => {
                                 <div>
                                   <p className="text-slate-500 font-medium">Date & Time</p>
                                   <p className="text-slate-900">
-                                    {new Date(booking.startTime).toLocaleDateString()} at {new Date(booking.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    {format(new Date(booking.startTime), 'dd-MMMM-yyyy')} at {new Date(booking.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                   </p>
                                 </div>
                                 <div>
