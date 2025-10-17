@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useSearchServices } from '../hooks/useServices';
 import SearchResults from '../components/SearchResults';
 import Navigation from '../components/Navigation';
+import BookingModal from '../components/BookingModal';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -11,12 +12,17 @@ const Search = () => {
   const query = searchParams.get('q') || '';
   const location = searchParams.get('location') || '';
   const category = searchParams.get('category') || '';
+  const [selectedService, setSelectedService] = useState<any | null>(null);
 
   const { data, isLoading, error } = useSearchServices({
     name: query || undefined,
     city: location || undefined,
     category: category || undefined,
   });
+
+  const handleBookingConfirm = () => {
+    setSelectedService(null);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -69,10 +75,8 @@ const Search = () => {
                       </div>
                     </div>
                     <div className="text-right ml-6">
-                      <div className="text-2xl font-bold text-foreground mb-2">{service.price}</div>
-                      <Link to={`/book?serviceId=${service.id}`}>
-                        <Button>Book Now</Button>
-                      </Link>
+                      <div className="text-2xl font-bold text-foreground mb-2">${service.price}</div>
+                      <Button onClick={() => setSelectedService(service)}>Book Now</Button>
                     </div>
                   </div>
                 </div>
@@ -93,6 +97,13 @@ const Search = () => {
           </div>
         )}
       </main>
+
+      <BookingModal
+        service={selectedService}
+        isVisible={!!selectedService}
+        onClose={() => setSelectedService(null)}
+        onBookingConfirm={handleBookingConfirm}
+      />
     </div>
   );
 };
