@@ -8,7 +8,6 @@ import { Loader2, Search, MapPin, Filter, X } from 'lucide-react';
 
 const ServiceList: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
-    const [locationQuery, setLocationQuery] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('');
     const [searchParams, setSearchParams] = useState<ServiceSearchParams>({
         page: 1,
@@ -28,7 +27,6 @@ const ServiceList: React.FC = () => {
         setSearchParams(prev => ({
             ...prev,
             name: searchQuery,
-            city: locationQuery,
             category: categoryFilter,
             page: 1
         }));
@@ -40,16 +38,6 @@ const ServiceList: React.FC = () => {
         setSearchParams(prev => ({
             ...prev,
             name: value,
-            page: 1
-        }));
-    };
-
-    const handleLocationInputChange = (value: string) => {
-        setLocationQuery(value);
-        // Auto-search as user types
-        setSearchParams(prev => ({
-            ...prev,
-            city: value,
             page: 1
         }));
     };
@@ -68,15 +56,6 @@ const ServiceList: React.FC = () => {
         setSearchParams(prev => ({
             ...prev,
             name: undefined,
-            page: 1
-        }));
-    };
-
-    const clearLocationQuery = () => {
-        setLocationQuery('');
-        setSearchParams(prev => ({
-            ...prev,
-            city: undefined,
             page: 1
         }));
     };
@@ -129,9 +108,9 @@ const ServiceList: React.FC = () => {
             {/* Search and Filters */}
             <div className="bg-white rounded-lg shadow-sm border p-6">
                 <form onSubmit={handleSearch}>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {/* Search Input */}
-                        <div className="relative">
+                    <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                        {/* Search Input - Takes 3 columns */}
+                        <div className="relative md:col-span-3">
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
                             <input
                                 type="text"
@@ -151,29 +130,8 @@ const ServiceList: React.FC = () => {
                             )}
                         </div>
 
-                        {/* Location Input */}
-                        <div className="relative">
-                            <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
-                            <input
-                                type="text"
-                                placeholder="Location..."
-                                value={locationQuery}
-                                className="w-full pl-10 pr-10 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                onChange={(e) => handleLocationInputChange(e.target.value)}
-                            />
-                            {locationQuery && (
-                                <button
-                                    type="button"
-                                    onClick={clearLocationQuery}
-                                    className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 hover:bg-slate-100 rounded-full transition-colors"
-                                >
-                                    <X className="h-4 w-4 text-slate-400" />
-                                </button>
-                            )}
-                        </div>
-
-                        {/* Category Filter */}
-                        <div className="relative">
+                        {/* Category Filter - Takes 2 columns */}
+                        <div className="relative md:col-span-2">
                             <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
                             <select
                                 value={categoryFilter}
@@ -193,7 +151,7 @@ const ServiceList: React.FC = () => {
                 </form>
 
                 {/* Active Filters Display */}
-                {(searchQuery || locationQuery || categoryFilter) && (
+                {(searchQuery || categoryFilter) && (
                     <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-slate-200">
                         <span className="text-sm text-slate-600">Active filters:</span>
                         {searchQuery && (
@@ -203,18 +161,6 @@ const ServiceList: React.FC = () => {
                                 <button
                                     onClick={clearSearchQuery}
                                     className="ml-2 hover:bg-blue-200 rounded-full p-0.5"
-                                >
-                                    <X className="h-3 w-3" />
-                                </button>
-                            </div>
-                        )}
-                        {locationQuery && (
-                            <div className="flex items-center bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
-                                <MapPin className="h-3 w-3 mr-1" />
-                                <span>{locationQuery}</span>
-                                <button
-                                    onClick={clearLocationQuery}
-                                    className="ml-2 hover:bg-green-200 rounded-full p-0.5"
                                 >
                                     <X className="h-3 w-3" />
                                 </button>
