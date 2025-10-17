@@ -13,19 +13,28 @@ const UpdatedHomepage = () => {
     const { user } = useAuth();
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedLocation, setSelectedLocation] = useState('');
+    const [isSearchActive, setIsSearchActive] = useState(false);
 
-    // Replace mock services with real API call
+    // Fetch services based on search or show popular services
     const { data: servicesData, isLoading } = useSearchServices({
+        name: isSearchActive && searchQuery ? searchQuery : undefined,
+        city: isSearchActive && selectedLocation ? selectedLocation : undefined,
         page: 1,
-        pageSize: 8 // Get first 8 services for homepage display
+        pageSize: 8
     });
 
     const services = servicesData?.services || [];
 
     const handleSearch = () => {
         if (searchQuery.trim() || selectedLocation.trim()) {
-            navigate(`/search?q=${encodeURIComponent(searchQuery)}&location=${encodeURIComponent(selectedLocation)}`);
+            setIsSearchActive(true);
         }
+    };
+
+    const handleClearSearch = () => {
+        setSearchQuery('');
+        setSelectedLocation('');
+        setIsSearchActive(false);
     };
 
     const handleJoinAsProvider = () => {
@@ -90,16 +99,26 @@ const UpdatedHomepage = () => {
                 </div>
             </section>
 
-            {/* Popular Services Section */}
+            {/* Search Results / Popular Services Section */}
             <section className="py-20 bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-16">
                         <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-                            Popular Services
+                            {isSearchActive ? 'Search Results' : 'Popular Services'}
                         </h2>
                         <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-                            Discover top-rated service providers in your area. From beauty treatments to home repairs, find exactly what you need.
+                            {isSearchActive 
+                                ? `Found ${servicesData?.totalCount || 0} ${(servicesData?.totalCount || 0) === 1 ? 'result' : 'results'}` 
+                                : 'Discover top-rated service providers in your area. From beauty treatments to home repairs, find exactly what you need.'}
                         </p>
+                        {isSearchActive && (
+                            <button
+                                onClick={handleClearSearch}
+                                className="mt-4 text-blue-600 hover:text-blue-700 font-medium"
+                            >
+                                Clear search and view all services
+                            </button>
+                        )}
                     </div>
 
                     {/* Services Grid */}
