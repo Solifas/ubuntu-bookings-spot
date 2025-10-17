@@ -1,5 +1,6 @@
 // Example component showing how to use the new hooks
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSearchServices } from '../hooks/useServices';
 import { ServiceSearchParams } from '../types/api';
 import { Service } from '../data/servicesData';
@@ -294,6 +295,12 @@ const ServiceList: React.FC = () => {
 
 // Service Card Component
 const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
+    const navigate = useNavigate();
+    
+    const handleBookNow = () => {
+        navigate(`/book/${service.businessId || service.id}`);
+    };
+    
     return (
         <div className="bg-white rounded-lg shadow-sm border hover:shadow-md transition-shadow">
             <img
@@ -325,7 +332,10 @@ const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
                     </span>
                 </div>
 
-                <button className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                <button 
+                    onClick={handleBookNow}
+                    className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                >
                     Book Now
                 </button>
             </div>
