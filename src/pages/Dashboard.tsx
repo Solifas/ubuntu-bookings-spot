@@ -217,36 +217,43 @@ const Dashboard = () => {
                     </div>
                   ) : (
                     <div className="space-y-3 sm:space-y-4 max-h-96 overflow-y-auto">
-                      {pendingBookings.map((booking) => (
-                        <div key={booking.id} className="bg-slate-50 rounded-lg p-4">
-                          <div className="flex items-start justify-between mb-2">
-                            <div>
-                              <h3 className="font-semibold text-slate-900">{booking.client.fullName}</h3>
-                              <p className="text-sm text-slate-600">{booking.service.name}</p>
+                      {pendingBookings.map((booking) => {
+                        const isOwnBooking = booking.client.id === user?.id;
+                        return (
+                          <div key={booking.id} className="bg-slate-50 rounded-lg p-4">
+                            <div className="flex items-start justify-between mb-2">
+                              <div>
+                                <h3 className="font-semibold text-slate-900">{booking.client.fullName}</h3>
+                                <p className="text-sm text-slate-600">{booking.service.name}</p>
+                              </div>
+                              <span className="bg-yellow-100 text-yellow-700 text-xs px-2 py-1 rounded-full">
+                                Pending
+                              </span>
                             </div>
-                            <span className="bg-yellow-100 text-yellow-700 text-xs px-2 py-1 rounded-full">
-                              Pending
-                            </span>
+                            <p className="text-sm text-slate-500">
+                              {new Date(booking.startTime).toLocaleDateString()} at {new Date(booking.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </p>
+                            {!isOwnBooking ? (
+                              <div className="flex gap-2 mt-3">
+                                <button
+                                  onClick={() => handleBookingAction(booking.id, 'decline')}
+                                  className="flex-1 px-3 py-1.5 bg-red-100 text-red-700 rounded text-sm hover:bg-red-200 transition-colors"
+                                >
+                                  Decline
+                                </button>
+                                <button
+                                  onClick={() => handleBookingAction(booking.id, 'accept')}
+                                  className="flex-1 px-3 py-1.5 bg-green-100 text-green-700 rounded text-sm hover:bg-green-200 transition-colors"
+                                >
+                                  Accept
+                                </button>
+                              </div>
+                            ) : (
+                              <p className="text-xs text-slate-500 mt-3 italic">You cannot accept your own booking request</p>
+                            )}
                           </div>
-                          <p className="text-sm text-slate-500">
-                            {new Date(booking.startTime).toLocaleDateString()} at {new Date(booking.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </p>
-                          <div className="flex gap-2 mt-3">
-                            <button
-                              onClick={() => handleBookingAction(booking.id, 'decline')}
-                              className="flex-1 px-3 py-1.5 bg-red-100 text-red-700 rounded text-sm hover:bg-red-200 transition-colors"
-                            >
-                              Decline
-                            </button>
-                            <button
-                              onClick={() => handleBookingAction(booking.id, 'accept')}
-                              className="flex-1 px-3 py-1.5 bg-green-100 text-green-700 rounded text-sm hover:bg-green-200 transition-colors"
-                            >
-                              Accept
-                            </button>
-                          </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
                 </div>
