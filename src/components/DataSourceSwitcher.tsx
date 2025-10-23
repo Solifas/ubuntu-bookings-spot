@@ -22,12 +22,11 @@ const DataSourceSwitcher: React.FC = () => {
             window.location.reload();
         }, 300);
     };
-
     // Only show in development
-    if (import.meta.env.NODE_ENV === 'production') {
-        return null;
-    }
+    // if (import.meta.env.NODE_ENV === 'mock') {
+    // }
 
+    return null;
     return (
         <div className="fixed bottom-4 right-4 z-50">
             <div className="bg-white rounded-lg shadow-lg border border-slate-200 p-4 min-w-[200px]">

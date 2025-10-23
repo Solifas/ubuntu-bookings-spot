@@ -46,7 +46,7 @@ const UpdatedHomepage = () => {
             <Navigation />
 
             {/* Hero Section */}
-            <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-green-50 pt-16 pb-20">
+            <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-green-50 pt-10">
                 <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] -z-10"></div>
 
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -100,15 +100,15 @@ const UpdatedHomepage = () => {
             </section>
 
             {/* Search Results / Popular Services Section */}
-            <section className="py-20 bg-white">
+            <section className="py-5 bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-16">
                         <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
                             {isSearchActive ? 'Search Results' : 'Popular Services'}
                         </h2>
                         <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-                            {isSearchActive 
-                                ? `Found ${servicesData?.totalCount || 0} ${(servicesData?.totalCount || 0) === 1 ? 'result' : 'results'}` 
+                            {isSearchActive
+                                ? `Found ${servicesData?.totalCount || 0} ${(servicesData?.totalCount || 0) === 1 ? 'result' : 'results'}`
                                 : 'Discover top-rated service providers in your area. From beauty treatments to home repairs, find exactly what you need.'}
                         </p>
                         {isSearchActive && (
@@ -154,8 +154,8 @@ const UpdatedHomepage = () => {
                                                 <span className="text-xs font-medium text-slate-700">{service.rating}</span>
                                             </div>
                                             <span className={`text-xs px-1 py-0.5 rounded ${service.availability === 'Available'
-                                                    ? 'text-green-600 bg-green-100'
-                                                    : 'text-orange-600 bg-orange-100'
+                                                ? 'text-green-600 bg-green-100'
+                                                : 'text-orange-600 bg-orange-100'
                                                 }`}>
                                                 {service.availability}
                                             </span>
@@ -166,12 +166,12 @@ const UpdatedHomepage = () => {
                                             <span className="truncate">{service.location}</span>
                                         </div>
 
-                        <button
-                            onClick={() => navigate(`/book/${service.businessId || service.id}`)}
-                            className="w-full bg-gradient-to-r from-blue-500 to-green-500 text-white py-1.5 md:py-2 rounded text-xs md:text-sm font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0"
-                        >
-                            Book Now
-                        </button>
+                                        <button
+                                            onClick={() => navigate(`/book/${service.businessId || service.id}`)}
+                                            className="w-full bg-gradient-to-r from-blue-500 to-green-500 text-white py-1.5 md:py-2 rounded text-xs md:text-sm font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0"
+                                        >
+                                            Book Now
+                                        </button>
                                     </div>
                                 </div>
                             ))

@@ -49,7 +49,7 @@ export const useFormattedDashboardStats = (providerId: string, isClient?: boolea
         },
         {
             title: 'Revenue (Month)',
-            value: `R${stats?.monthlyRevenue?.toLocaleString()}`,
+            value: `R  ${stats?.monthlyRevenue?.toLocaleString() ?? 0}`,
             icon: 'TrendingUp',
             color: 'bg-orange-500'
         }

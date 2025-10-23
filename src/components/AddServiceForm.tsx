@@ -63,7 +63,7 @@ const AddServiceForm = ({ open, onOpenChange, onAddService }: AddServiceFormProp
     };
 
     onAddService(newService);
-    
+
     toast({
       title: "Service Added",
       description: `${data.name} has been added to your services.`,
@@ -84,7 +84,7 @@ const AddServiceForm = ({ open, onOpenChange, onAddService }: AddServiceFormProp
         <DialogHeader>
           <DialogTitle>Add New Service</DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">Service Name</Label>
@@ -104,7 +104,7 @@ const AddServiceForm = ({ open, onOpenChange, onAddService }: AddServiceFormProp
               <Input
                 id="duration"
                 type="number"
-                {...register('duration', { 
+                {...register('duration', {
                   required: 'Duration is required',
                   min: { value: 1, message: 'Duration must be at least 1 minute' }
                 })}
@@ -116,12 +116,12 @@ const AddServiceForm = ({ open, onOpenChange, onAddService }: AddServiceFormProp
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="price">Price ($)</Label>
+              <Label htmlFor="price">Price (R)</Label>
               <Input
                 id="price"
                 type="number"
                 step="0.01"
-                {...register('price', { 
+                {...register('price', {
                   required: 'Price is required',
                   min: { value: 0, message: 'Price must be positive' }
                 })}

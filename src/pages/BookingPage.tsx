@@ -65,7 +65,7 @@ const BookingPage = () => {
           setBusinessName(filteredServices[0]?.type || 'Service Provider');
         } else {
           console.log(`🌐 BookingPage: Fetching services for provider ${providerId}`);
-          
+
           // Use public search endpoint to get all services, then filter by businessId
           const response = await DataSourceAdapter.searchServices({ page: 1, pageSize: 100 });
 
@@ -153,7 +153,7 @@ const BookingPage = () => {
     } catch (error) {
       toast({
         title: "Booking failed",
-        description: "There was an error creating your booking. Please try again.",
+        description: `There was an error creating your booking. ${error.message} `,
         variant: "destructive",
       });
     }
@@ -172,7 +172,7 @@ const BookingPage = () => {
             <ArrowLeft className="h-4 w-4" />
             <span className="text-sm font-medium">Back to Home</span>
           </button>
-          
+
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center space-x-3 sm:space-x-4 w-full sm:w-auto">
               <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-400 to-green-400 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Calendar, Users, Clock, TrendingUp, Check, X, Settings, CalendarDays, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import Navigation from '../components/Navigation';
@@ -44,6 +44,13 @@ const Dashboard = () => {
     undefined,
     user?.type === 'client'
   );
+
+  const showDeclineButton = useMemo(() => {
+    // For clients, show decline button only for pending bookings
+    if (user?.type === 'client') {
+      return true;
+    }
+  }, [user]);
 
   // For clients, get their own bookings
   const { data: clientBookings = [], isLoading: loadingClientBookings, error: errorClientBookings } = useClientBookings(
@@ -232,18 +239,22 @@ const Dashboard = () => {
                             {new Date(booking.startTime).toLocaleDateString()} at {new Date(booking.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </p>
                           <div className="flex gap-2 mt-3">
-                            <button
-                              onClick={() => handleBookingAction(booking.id, 'decline')}
-                              className="flex-1 px-3 py-1.5 bg-red-100 text-red-700 rounded text-sm hover:bg-red-200 transition-colors"
-                            >
-                              Decline
-                            </button>
-                            <button
-                              onClick={() => handleBookingAction(booking.id, 'accept')}
-                              className="flex-1 px-3 py-1.5 bg-green-100 text-green-700 rounded text-sm hover:bg-green-200 transition-colors"
-                            >
-                              Accept
-                            </button>
+                            {booking.startTime < new Date(new Date().getTime() - 4 * 60 * 60 * 1000).toISOString() ? null :
+                              <button
+                                onClick={() => handleBookingAction(booking.id, 'decline')}
+                                className="flex-1 px-3 py-1.5 bg-red-100 text-red-700 rounded text-sm hover:bg-red-200 transition-colors"
+                              >
+                                Decline
+                              </button>
+                            }
+                            {user?.type !== 'client' &&
+                              <button
+                                onClick={() => handleBookingAction(booking.id, 'accept')}
+                                className="flex-1 px-3 py-1.5 bg-green-100 text-green-700 rounded text-sm hover:bg-green-200 transition-colors"
+                              >
+                                Accept
+                              </button>
+                            }
                           </div>
                         </div>
                       ))}
