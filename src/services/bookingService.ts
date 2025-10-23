@@ -70,10 +70,11 @@ export const getProviderBookings = async (
     providerId: string,
     status?: BookingStatus,
     startDate?: string,
-    endDate?: string
+    endDate?: string,
+    isClient?: boolean
 ): Promise<BookingWithDetails[]> => {
     try {
-        const response = await DataSourceAdapter.getProviderBookings(providerId, status, startDate, endDate);
+        const response = await DataSourceAdapter.getProviderBookings(providerId, status, startDate, endDate, isClient);
 
         if (response.error) {
             throw new Error(response.error);

@@ -46,11 +46,11 @@ const BusinessInsights = () => {
 
       setLoading(true);
       setError(null);
-
+      const isClientType = user.type === 'provider' ? false : true;
       try {
         const [statsResponse, bookingsResponse] = await Promise.all([
           DataSourceAdapter.getDashboardStats(user.id),
-          DataSourceAdapter.getProviderBookings(user.id),
+          DataSourceAdapter.getProviderBookings(user.id, undefined, undefined, undefined, isClientType),
         ]);
 
         if (statsResponse.error) {

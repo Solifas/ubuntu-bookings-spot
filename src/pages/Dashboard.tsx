@@ -17,17 +17,23 @@ import { BookingStatus } from '../types/api';
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const { user } = useAuth();
-  const providerId = user?.id || 'prov1';
+  const providerId = user?.id;
 
   // Replace mock data with real API calls
   const { data: pendingBookings = [], isLoading: loadingPending, error: errorPending } = useProviderBookings(
     providerId,
-    BookingStatus.PENDING
+    BookingStatus.PENDING,
+    undefined,
+    undefined,
+    user?.type === 'client'
   );
 
   const { data: confirmedBookings = [], isLoading: loadingConfirmed, error: errorConfirmed } = useProviderBookings(
     providerId,
-    BookingStatus.CONFIRMED
+    BookingStatus.CONFIRMED,
+    undefined,
+    undefined,
+    user?.type === 'client'
   );
 
   // Fetch all bookings when Requests tab is active
@@ -35,7 +41,8 @@ const Dashboard = () => {
     providerId,
     undefined, // No status filter - gets all bookings
     undefined,
-    undefined
+    undefined,
+    user?.type === 'client'
   );
 
   // For clients, get their own bookings
@@ -43,7 +50,7 @@ const Dashboard = () => {
     user?.type === 'client' ? (user?.id || '') : ''
   );
 
-  const { formattedStats, isLoading: loadingStats, error: errorStats } = useFormattedDashboardStats(providerId);
+  const { formattedStats, isLoading: loadingStats, error: errorStats } = useFormattedDashboardStats(providerId, user?.type === 'client');
 
   const updateBookingStatus = useUpdateBookingStatus();
 
@@ -250,7 +257,7 @@ const Dashboard = () => {
                 <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-100 p-4 sm:p-6">
                   <div className="flex items-center justify-between mb-4 sm:mb-6">
                     <h2 className="text-lg sm:text-xl font-bold text-slate-900">Confirmed Bookings</h2>
-                    <button 
+                    <button
                       onClick={() => setActiveTab('calendar')}
                       className="text-blue-600 font-medium hover:text-blue-700 transition-colors text-sm sm:text-base"
                     >
@@ -360,12 +367,11 @@ const Dashboard = () => {
                                   <p className="text-slate-600 text-xs sm:text-sm">{booking.business.city}</p>
                                 </div>
                                 <div className="ml-auto">
-                                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                    booking.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${booking.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
                                     booking.status === 'confirmed' ? 'bg-green-100 text-green-700' :
-                                    booking.status === 'cancelled' ? 'bg-red-100 text-red-700' :
-                                    'bg-blue-100 text-blue-700'
-                                  }`}>
+                                      booking.status === 'cancelled' ? 'bg-red-100 text-red-700' :
+                                        'bg-blue-100 text-blue-700'
+                                    }`}>
                                     {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
                                   </span>
                                 </div>
@@ -454,12 +460,11 @@ const Dashboard = () => {
                                 </div>
                                 <div>
                                   <p className="text-slate-500 font-medium">Status</p>
-                                  <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                                    booking.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                  <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${booking.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
                                     booking.status === 'confirmed' ? 'bg-green-100 text-green-700' :
-                                    booking.status === 'cancelled' ? 'bg-red-100 text-red-700' :
-                                    'bg-blue-100 text-blue-700'
-                                  }`}>
+                                      booking.status === 'cancelled' ? 'bg-red-100 text-red-700' :
+                                        'bg-blue-100 text-blue-700'
+                                    }`}>
                                     {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
                                   </span>
                                 </div>

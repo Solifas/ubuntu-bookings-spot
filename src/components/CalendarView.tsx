@@ -15,10 +15,11 @@ const CalendarView = () => {
 
   // Get all bookings for the provider
   const { data: allBookings = [], isLoading } = useProviderBookings(
-    user?.id || 'prov1', // Fallback to default provider for demo
+    user?.id, // Fallback to default provider for demo
     undefined, // No status filter - get all bookings
     undefined, // No start date filter
     undefined  // No end date filter
+    , user?.type === 'client'
   );
 
   // Filter bookings for the selected date based on createdAt
@@ -30,16 +31,16 @@ const CalendarView = () => {
 
   const getStatusColor = (status: BookingStatus | string) => {
     switch (status) {
-      case BookingStatus.CONFIRMED: 
+      case BookingStatus.CONFIRMED:
       case 'CONFIRMED':
         return 'bg-green-100 text-green-800';
-      case BookingStatus.PENDING: 
+      case BookingStatus.PENDING:
       case 'PENDING':
         return 'bg-yellow-100 text-yellow-800';
-      case BookingStatus.COMPLETED: 
+      case BookingStatus.COMPLETED:
       case 'COMPLETED':
         return 'bg-blue-100 text-blue-800';
-      case BookingStatus.CANCELLED: 
+      case BookingStatus.CANCELLED:
       case 'CANCELLED':
         return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';

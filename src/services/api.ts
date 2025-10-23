@@ -257,8 +257,12 @@ class ApiClient {
     }
 
     // Dashboard endpoints
-    async getDashboardStats(providerId: string): Promise<ApiResponse<DashboardStats>> {
+    async getProviderDashboardStats(providerId: string): Promise<ApiResponse<DashboardStats>> {
         return this.request<DashboardStats>(`/dashboard/provider/${providerId}/stats`);
+    }
+
+    async getClientDashboardStats(clientId: string): Promise<ApiResponse<DashboardStats>> {
+        return this.request<DashboardStats>(`/dashboard/client/${clientId}/stats`);
     }
 
     // Enhanced booking endpoints
@@ -266,7 +270,8 @@ class ApiClient {
         providerId: string,
         status?: BookingStatus,
         startDate?: string,
-        endDate?: string
+        endDate?: string,
+        isClient?: boolean
     ): Promise<ApiResponse<BookingWithDetails[]>> {
         const params = new URLSearchParams();
         if (status) params.append('status', status);
@@ -274,9 +279,10 @@ class ApiClient {
         if (endDate) params.append('endDate', endDate);
 
         const queryString = params.toString();
+        const userType = isClient ? 'client' : 'provider';
         const endpoint = queryString
-            ? `/bookings/provider/${providerId}?${queryString}`
-            : `/bookings/provider/${providerId}`;
+            ? `/bookings/${userType}/${providerId}?${queryString}`
+            : `/bookings/${userType}/${providerId}`;
 
         return this.request<BookingWithDetails[]>(endpoint);
     }

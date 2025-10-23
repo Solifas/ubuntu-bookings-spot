@@ -16,12 +16,18 @@ const UpdatedDashboard = () => {
     // Replace mock data with real API calls
     const { data: pendingBookings = [], isLoading: loadingPending } = useProviderBookings(
         user?.id || '',
-        BookingStatus.PENDING
+        BookingStatus.PENDING,
+        undefined,
+        undefined,
+        user?.type === 'client'
     );
 
     const { data: confirmedBookings = [], isLoading: loadingConfirmed } = useProviderBookings(
         user?.id || '',
-        BookingStatus.CONFIRMED
+        BookingStatus.CONFIRMED,
+        undefined,
+        undefined,
+        user?.type === 'client'
     );
 
     const { formattedStats, isLoading: loadingStats } = useFormattedDashboardStats(user?.id || '');

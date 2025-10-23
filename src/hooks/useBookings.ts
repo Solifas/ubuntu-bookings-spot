@@ -33,11 +33,12 @@ export const useProviderBookings = (
     providerId: string,
     status?: BookingStatus,
     startDate?: string,
-    endDate?: string
+    endDate?: string,
+    isClient?: boolean
 ) => {
     return useQuery({
         queryKey: bookingKeys.provider(providerId, status),
-        queryFn: () => getProviderBookings(providerId, status, startDate, endDate),
+        queryFn: () => getProviderBookings(providerId, status, startDate, endDate, isClient),
         enabled: !!providerId,
         staleTime: 2 * 60 * 1000, // 2 minutes
     });

@@ -15,7 +15,8 @@ import {
     CreateServiceCommand,
     UpdateServiceCommand,
     CreateBookingCommand,
-    Booking
+    Booking,
+    UserType
 } from '../types/api';
 
 // Generic response wrapper to match API client structure
@@ -202,12 +203,13 @@ export class DataSourceAdapter {
         providerId: string,
         status?: BookingStatus,
         startDate?: string,
-        endDate?: string
+        endDate?: string,
+        isClient?: boolean
     ): Promise<DataSourceResponse<BookingWithDetails[]>> {
         try {
             if (isApiMode()) {
                 console.log('🌐 Using API for getProviderBookings');
-                return await apiClient.getProviderBookings(providerId, status, startDate, endDate);
+                return await apiClient.getProviderBookings(providerId, status, startDate, endDate, isClient);
             } else {
                 console.log('🎭 Using Mock data for getProviderBookings');
                 const data = await MockDataService.getProviderBookings(providerId, status, startDate, endDate);
@@ -280,11 +282,14 @@ export class DataSourceAdapter {
     }
 
     // Dashboard
-    static async getDashboardStats(providerId: string): Promise<DataSourceResponse<DashboardStats>> {
+    static async getDashboardStats(providerId: string, isClient?: boolean): Promise<DataSourceResponse<DashboardStats>> {
         try {
             if (isApiMode()) {
                 console.log('🌐 Using API for getDashboardStats');
-                return await apiClient.getDashboardStats(providerId);
+                if (isClient) {
+                    return await apiClient.getClientDashboardStats(providerId);
+                }
+                return await apiClient.getProviderDashboardStats(providerId);
             } else {
                 console.log('🎭 Using Mock data for getDashboardStats');
                 const data = await MockDataService.getDashboardStats(providerId);
