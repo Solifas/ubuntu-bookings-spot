@@ -1,10 +1,10 @@
 
-# BookSpot - Business Requirements Specification
+# HirePros - Business Requirements Specification
 
 ## 1. Executive Summary
 
 ### 1.1 Project Overview
-BookSpot is a web-based service booking platform that connects local service providers with clients seeking their services. The platform facilitates service discovery, appointment booking, and business management for service-based businesses.
+HirePros is a web-based service booking platform that connects local service providers with clients seeking their services. The platform facilitates service discovery, appointment booking, and business management for service-based businesses.
 
 ### 1.2 Business Objectives
 - Enable service providers to reach more clients through online presence

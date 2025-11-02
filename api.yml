@@ -1,11 +1,11 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "BookSpot API",
+    "title": "HirePros API",
     "description": "A comprehensive booking system API for service providers and clients",
     "contact": {
-      "name": "BookSpot Support",
-      "email": "support@bookspot.com"
+      "name": "HirePros Support",
+      "email": "support@hirepros.com"
     },
     "license": {
       "name": "MIT License",

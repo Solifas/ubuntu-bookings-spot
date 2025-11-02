@@ -1,8 +1,8 @@
-
 import React, { useState } from 'react';
 import { Calendar, Menu, X, Settings, Home, LogIn, LogOut, User } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import logo from '../assets/hirepros-logo.png';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,10 +23,8 @@ const Navigation = () => {
           <div className="flex justify-between h-14 sm:h-16">
             <div className="flex items-center">
               <Link to="/" className="flex items-center space-x-2">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-400 to-green-400 rounded-full flex items-center justify-center">
-                  <Calendar className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
-                </div>
-                <span className="text-lg sm:text-xl font-bold text-slate-800">BookSpot</span>
+                <img src={logo} alt="HirePros Logo" className="w-8 h-8 sm:w-10 sm:h-10" />
+                <span className="text-lg sm:text-xl font-bold text-slate-800">HirePros</span>
               </Link>
             </div>
 

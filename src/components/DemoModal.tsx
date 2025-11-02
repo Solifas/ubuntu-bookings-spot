@@ -43,8 +43,8 @@ const DemoModal = ({ isOpen, onClose }: DemoModalProps) => {
               <Play className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-slate-900">BookSpot Demo</h2>
-              <p className="text-slate-600">See how BookSpot transforms your business</p>
+              <h2 className="text-2xl font-bold text-slate-900">HirePros Demo</h2>
+              <p className="text-slate-600">See how HirePros transforms your business</p>
             </div>
           </div>
           <button
@@ -65,7 +65,7 @@ const DemoModal = ({ isOpen, onClose }: DemoModalProps) => {
               Interactive Demo Coming Soon!
             </h3>
             <p className="text-lg text-slate-600 mb-6">
-              Experience how BookSpot revolutionizes appointment booking for service providers
+              Experience how HirePros revolutionizes appointment booking for service providers
             </p>
             <div className="bg-white rounded-lg p-4 text-sm text-slate-500">
               🎥 Watch a 3-minute walkthrough of all features<br/>
