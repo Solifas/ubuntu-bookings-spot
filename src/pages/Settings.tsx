@@ -23,7 +23,7 @@ const Settings = () => {
   const [businessData, setBusinessData] = useState<Business | null>(null);
   const [businessLoading, setBusinessLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  
+
   // Form state for business/location
   const [formData, setFormData] = useState({
     businessName: '',
@@ -71,7 +71,7 @@ const Settings = () => {
           } else {
             console.log('🌐 Settings: Fetching business data for user:', user.id);
             const response = await DataSourceAdapter.getBusiness(user.id);
-            
+
             if (response.error) {
               throw new Error(response.error);
             }
@@ -171,7 +171,7 @@ const Settings = () => {
         toast.success('Settings saved successfully (Mock mode)');
       } else {
         console.log('🌐 Settings: Saving business data via API');
-        
+
         // Update business info
         const updateData = {
           businessName: formData.businessName,
@@ -179,11 +179,12 @@ const Settings = () => {
           email: formData.email,
           description: formData.description,
           address: formData.streetAddress,
-          city: formData.city
+          city: formData.city,
+          id: user.id
         };
 
         const response = await DataSourceAdapter.updateBusiness(user.id, updateData);
-        
+
         if (response.error) {
           throw new Error(response.error);
         }
@@ -253,7 +254,7 @@ const Settings = () => {
                       <Badge variant="outline">Mock Mode</Badge>
                     )}
                   </div>
-                  
+
                   {businessLoading ? (
                     <div className="flex items-center justify-center py-12">
                       <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
@@ -433,7 +434,7 @@ const Settings = () => {
                       <Badge variant="outline">Mock Mode</Badge>
                     )}
                   </div>
-                  
+
                   {businessLoading ? (
                     <div className="flex items-center justify-center py-12">
                       <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
@@ -461,7 +462,7 @@ const Settings = () => {
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-slate-700 mb-2">Province</label>
-                        <select 
+                        <select
                           className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           value={formData.province}
                           onChange={(e) => handleInputChange('province', e.target.value)}
@@ -557,14 +558,14 @@ const Settings = () => {
               )}
 
               <div className="mt-8 flex justify-end space-x-4">
-                <button 
+                <button
                   className="px-6 py-3 text-slate-700 border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors"
                   onClick={() => window.location.reload()}
                   disabled={isSaving}
                 >
                   Cancel
                 </button>
-                <button 
+                <button
                   className="px-6 py-3 bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-xl font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   onClick={handleSaveChanges}
                   disabled={isSaving || businessLoading}
