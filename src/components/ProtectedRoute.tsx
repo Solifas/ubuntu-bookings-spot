@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 interface ProtectedRouteProps {
@@ -9,12 +9,15 @@ interface ProtectedRouteProps {
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { isLoggedIn, loading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (!loading && !isLoggedIn) {
+      // Force redirect to homepage and update URL
+      window.history.replaceState({}, '', '/');
       navigate('/', { replace: true });
     }
-  }, [isLoggedIn, loading, navigate]);
+  }, [isLoggedIn, loading, navigate, location]);
 
   if (loading) {
     return (
