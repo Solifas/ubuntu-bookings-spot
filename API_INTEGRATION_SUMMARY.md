@@ -1,4 +1,4 @@
-# BookSpot API Integration Summary
+# HirePros API Integration Summary
 
 ## ✅ What I've Fixed
 

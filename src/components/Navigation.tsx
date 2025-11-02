@@ -26,7 +26,7 @@ const Navigation = () => {
                 <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-400 to-green-400 rounded-full flex items-center justify-center">
                   <Calendar className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
                 </div>
-                <span className="text-lg sm:text-xl font-bold text-slate-800">BookSpot</span>
+                <span className="text-lg sm:text-xl font-bold text-slate-800">HirePros</span>
               </Link>
             </div>
 

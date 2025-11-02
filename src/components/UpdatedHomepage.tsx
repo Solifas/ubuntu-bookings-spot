@@ -196,7 +196,7 @@ const UpdatedHomepage = () => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-16">
                         <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-                            Why Choose BookSpot?
+                            Why Choose HirePros?
                         </h2>
                         <p className="text-xl text-slate-600 max-w-2xl mx-auto">
                             Designed for clients and service providers who want a seamless booking experience anywhere in the world.
@@ -257,10 +257,10 @@ const UpdatedHomepage = () => {
                             <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-green-400 rounded-full flex items-center justify-center">
                                 <Calendar className="h-5 w-5 text-white" />
                             </div>
-                            <span className="text-xl font-bold">BookSpot</span>
+                            <span className="text-xl font-bold">HirePros</span>
                         </div>
                         <div className="text-slate-400">
-                            © 2024 BookSpot. Connecting service providers and clients worldwide.
+                            © 2024 HirePros. Connecting service providers and clients worldwide.
                         </div>
                     </div>
                 </div>

@@ -1,10 +1,10 @@
 
-# BookSpot - Technical Specification
+# HirePros - Technical Specification
 
 ## 1. System Architecture
 
 ### 1.1 High-Level Architecture
-BookSpot follows a modern web application architecture with the following components:
+HirePros follows a modern web application architecture with the following components:
 
 - **Frontend**: React-based single-page application (SPA)
 - **Backend**: Supabase (PostgreSQL database with built-in API)

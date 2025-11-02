@@ -75,11 +75,11 @@ const Register = () => {
             <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-green-400 rounded-full flex items-center justify-center">
               <Calendar className="h-7 w-7 text-white" />
             </div>
-            <span className="text-2xl font-bold text-slate-800">BookSpot</span>
+            <span className="text-2xl font-bold text-slate-800">HirePros</span>
           </div>
 
           <h1 className="text-3xl font-bold text-slate-900 mb-2">Create Account</h1>
-          <p className="text-slate-600">Join thousands of users on BookSpot</p>
+          <p className="text-slate-600">Join thousands of users on HirePros</p>
         </div>
 
         {/* Registration Form */}

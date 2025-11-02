@@ -1,7 +1,7 @@
 
-# BookSpot Documentation
+# HirePros Documentation
 
-Welcome to the BookSpot application documentation. This folder contains comprehensive documentation for the service booking platform that connects service providers with clients.
+Welcome to the HirePros application documentation. This folder contains comprehensive documentation for the service booking platform that connects service providers with clients.
 
 ## Documentation Structure
 
@@ -10,7 +10,7 @@ Welcome to the BookSpot application documentation. This folder contains comprehe
 
 ## Quick Overview
 
-BookSpot is a comprehensive service booking platform designed to streamline the process of finding, booking, and managing appointments with local service providers. The platform serves two primary user types:
+HirePros is a comprehensive service booking platform designed to streamline the process of finding, booking, and managing appointments with local service providers. The platform serves two primary user types:
 
 - **Service Providers**: Professionals offering services (barbers, tutors, trainers, etc.)
 - **Clients**: Individuals seeking to book services

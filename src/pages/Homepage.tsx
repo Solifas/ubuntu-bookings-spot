@@ -497,7 +497,7 @@ const Homepage = () => {
               <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-green-400 rounded-full flex items-center justify-center">
                 <Calendar className="h-5 w-5 text-white" />
               </div>
-              <span className="text-xl font-bold">BookSpot</span>
+              <span className="text-xl font-bold">HirePros</span>
             </div>
             <div className="flex flex-col md:flex-row items-center gap-4">
               <div className="flex items-center space-x-2 text-slate-400">
@@ -509,7 +509,7 @@ const Homepage = () => {
                 <span className="text-sm">4.9/5 from 500+ businesses worldwide</span>
               </div>
               <div className="text-slate-400">
-                © 2024 BookSpot. Connecting service providers and clients worldwide.
+                © 2024 HirePros. Connecting service providers and clients worldwide.
               </div>
             </div>
           </div>
