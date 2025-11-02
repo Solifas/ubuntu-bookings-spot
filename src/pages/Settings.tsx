@@ -163,6 +163,24 @@ const Settings = () => {
   const handleSaveChanges = async () => {
     if (!user || user.type !== 'provider') return;
 
+    // Validate required fields
+    if (!formData.streetAddress || formData.streetAddress.trim().length < 5 || formData.streetAddress.trim().length > 200) {
+      toast.error('Business address is required and must be between 5 and 200 characters');
+      return;
+    }
+
+    if (!formData.city || formData.city.trim().length < 2 || formData.city.trim().length > 50) {
+      toast.error('City is required and must be between 2 and 50 characters');
+      return;
+    }
+
+    // Validate city contains only valid characters (letters, spaces, hyphens)
+    const cityRegex = /^[a-zA-Z\s\-]+$/;
+    if (!cityRegex.test(formData.city.trim())) {
+      toast.error('City contains invalid characters. Use only letters, spaces, and hyphens');
+      return;
+    }
+
     setIsSaving(true);
     try {
       if (isMockMode()) {
@@ -178,8 +196,8 @@ const Settings = () => {
           phone: formData.phone,
           email: formData.email,
           description: formData.description,
-          address: formData.streetAddress,
-          city: formData.city,
+          address: formData.streetAddress.trim(),
+          city: formData.city.trim(),
           id: user.id
         };
 
