@@ -7,6 +7,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { QueryProvider } from "./providers/QueryProvider";
 import DataSourceSwitcher from "./components/DataSourceSwitcher";
 import DataSourceDebug from "./components/DataSourceDebug";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import BookingPage from "./pages/BookingPage";
@@ -26,13 +27,13 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/book/:providerId" element={<BookingPage />} />
-            <Route path="/settings" element={<Settings />} />
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/book/:providerId" element={<ProtectedRoute><BookingPage /></ProtectedRoute>} />
+            <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route path="/search" element={<Search />} />
-            <Route path="/services" element={<Services />} />
+            <Route path="/services" element={<ProtectedRoute><Services /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
