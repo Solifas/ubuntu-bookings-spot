@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -29,6 +30,7 @@ interface NewBookingModalProps {
 }
 
 const NewBookingModal = ({ children }: NewBookingModalProps) => {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date>();
   const [clientName, setClientName] = useState('');
@@ -37,7 +39,15 @@ const NewBookingModal = ({ children }: NewBookingModalProps) => {
   const [selectedService, setSelectedService] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { user } = useAuth();
+  const { user, isLoggedIn } = useAuth();
+
+  const handleOpenChange = (newOpen: boolean) => {
+    if (newOpen && !isLoggedIn) {
+      navigate('/login');
+      return;
+    }
+    setOpen(newOpen);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,7 +94,7 @@ const NewBookingModal = ({ children }: NewBookingModalProps) => {
   const selectedServiceDetails = services.find(s => s.id === selectedService);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         {children || (
           <Button className="w-full bg-gradient-to-r from-blue-500 to-green-500 text-white p-3 sm:p-4 rounded-lg sm:rounded-xl font-medium hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl text-sm sm:text-base">

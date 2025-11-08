@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Star, MapPin, Clock, Phone } from 'lucide-react';
 import type { Service } from '../data/servicesData';
 import BookingModal from './BookingModal';
 import { toast } from '@/components/ui/use-toast';
+import { useAuth } from '../contexts/AuthContext';
 
 interface SearchResultsProps {
   services: Service[];
@@ -20,12 +22,18 @@ interface BookingDetails {
 }
 
 const SearchResults = ({ services, isVisible, onClose }: SearchResultsProps) => {
+  const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
 
   if (!isVisible) return null;
 
   const handleBookNow = (service: Service) => {
+    if (!isLoggedIn) {
+      navigate('/login');
+      return;
+    }
     setSelectedService(service);
     setShowBookingModal(true);
   };
