@@ -2,8 +2,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { SearchService } from '../services/searchService';
 import { BusinessService } from '../services/businessService';
-import { ServiceSearchParams, Service, CreateServiceCommand, UpdateServiceCommand } from '../types/api';
-import { Service as FrontendService } from '../data/servicesData';
+import { ServiceSearchParams, CreateServiceCommand, UpdateServiceCommand } from '../types/api';
 
 // Query keys for consistent caching
 export const serviceKeys = {

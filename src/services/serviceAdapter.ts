@@ -40,7 +40,7 @@ export const adaptApiServiceToFrontend = (
         phone: businessInfo?.phone ?? '+27 XX XXX XXXX',
         email: businessInfo?.email ?? 'contact@provider.co.za',
         tags,
-        businessId: apiService?.businessId,
+        businessId: apiService?.businessId
     };
 };
 
@@ -87,7 +87,8 @@ export const adaptFrontendServiceToApi = (
         durationMinutes: 60,
         imageUrl: frontendService.image !== '/placeholder.svg' ? frontendService.image : undefined,
         tags: frontendService.tags,
-        isActive: frontendService.availability === 'Available'
+        isActive: frontendService.availability === 'Available',
+        providerName: frontendService.providerName
     };
 };
 

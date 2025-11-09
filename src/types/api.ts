@@ -66,6 +66,7 @@ export interface Service {
     tags?: string[];
     isActive: boolean;
     createdAt: string;
+    providerName?: string;
 }
 
 export interface CreateServiceCommand {
