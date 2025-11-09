@@ -10,6 +10,7 @@ type BusinessDetails = {
     email?: string;
     rating?: number;
     reviewCount?: number;
+    providerName?: string;
 };
 
 const slugify = (value: string) => value.toLowerCase().replace(/\s+/g, '-');
@@ -40,7 +41,8 @@ export const adaptApiServiceToFrontend = (
         phone: businessInfo?.phone ?? '+27 XX XXX XXXX',
         email: businessInfo?.email ?? 'contact@provider.co.za',
         tags,
-        businessId: apiService?.businessId
+        businessId: apiService?.businessId,
+        providerName: apiService?.providerName ?? businessInfo?.providerName ?? businessInfo?.name ?? 'Service Provider'
     };
 };
 
@@ -61,6 +63,7 @@ export const adaptServiceWithBusinessToFrontend = (
         email: business.email,
         rating: business.rating,
         reviewCount: business.reviewCount,
+        providerName: business.providerName
     } : undefined);
 };
 
@@ -77,6 +80,7 @@ export const adaptFrontendServiceToApi = (
     imageUrl?: string;
     tags?: string[];
     isActive: boolean;
+    providerName?: string;
 } => {
     return {
         businessId,
