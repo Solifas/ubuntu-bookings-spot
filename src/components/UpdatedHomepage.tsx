@@ -138,7 +138,7 @@ const UpdatedHomepage = () => {
                             services.map((service) => (
                                 <div key={service.id} className="bg-white rounded-lg md:rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden group hover:scale-102">
                                     <div className="w-full h-20 md:h-32 bg-gradient-to-br from-blue-400 to-green-400 flex items-center justify-center">
-                                        <span className="text-white font-medium text-xs md:text-sm">{service.type}</span>
+                                        <span className="text-white font-medium text-xs md:text-sm">{service.providerName}</span>
                                     </div>
                                     <div className="p-2 md:p-4">
                                         <div className="flex items-start justify-between mb-1">

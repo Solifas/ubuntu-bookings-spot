@@ -15,6 +15,7 @@ export interface Service {
   tags: string[];
   businessId?: string;
   providerId?: string;
+  providerName?: string;
 }
 
 export interface ServiceProvider {
@@ -170,21 +171,21 @@ export const mockServices: Service[] = [
 
 export const getServicesByType = (type: string): Service[] => {
   if (!type) return mockServices;
-  return mockServices.filter(service => 
+  return mockServices.filter(service =>
     service.type.toLowerCase().includes(type.toLowerCase())
   );
 };
 
 export const getServicesByLocation = (location: string): Service[] => {
   if (!location) return mockServices;
-  return mockServices.filter(service => 
+  return mockServices.filter(service =>
     service.location.toLowerCase().includes(location.toLowerCase())
   );
 };
 
 export const searchServices = (query: string, location: string): Service[] => {
   let filteredServices = mockServices;
-  
+
   if (query) {
     filteredServices = filteredServices.filter(service =>
       service.type.toLowerCase().includes(query.toLowerCase()) ||
@@ -193,12 +194,12 @@ export const searchServices = (query: string, location: string): Service[] => {
       service.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()))
     );
   }
-  
+
   if (location) {
     filteredServices = filteredServices.filter(service =>
       service.location.toLowerCase().includes(location.toLowerCase())
     );
   }
-  
+
   return filteredServices;
 };

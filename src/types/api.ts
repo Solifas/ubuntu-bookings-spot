@@ -99,6 +99,7 @@ export interface Booking {
     serviceId: string;
     clientId: string;
     providerId: string;
+    providerName?: string;
     startTime: string;
     endTime: string;
     status: string;
@@ -121,6 +122,7 @@ export interface UpdateBookingCommand {
 export interface Business {
     id: string;
     providerId: string;
+    providerName?: string;
     businessName: string;
     description?: string;
     city: string;
