@@ -305,7 +305,7 @@ const Dashboard = () => {
                       {confirmedBookings.slice(0, 5).map((booking) => (
                         <BookingCard
                           key={booking.id}
-                          clientName={booking.client.fullName}
+                          clientName={user?.type === 'client' ? booking.business.businessName : booking.client.fullName}
                           service={booking.service.name}
                           date={new Date(booking.startTime).toLocaleDateString()}
                           time={new Date(booking.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
