@@ -29,7 +29,7 @@ export const adaptApiServiceToFrontend = (
     return {
         id,
         name,
-        type: apiService?.category ?? businessInfo?.name ?? 'Service Provider',
+        type: businessInfo?.name ?? apiService?.category ?? 'Service Provider',
         description: apiService?.description ?? (durationValue ? `${name} - ${durationValue} minutes` : `${name} service`),
         price: `R${Math.max(0, priceValue).toFixed(0)}`,
         rating: businessInfo?.rating ?? 4.5,
