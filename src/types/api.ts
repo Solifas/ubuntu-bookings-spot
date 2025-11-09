@@ -225,6 +225,7 @@ export interface ServiceWithBusiness extends Service {
         email?: string;
         rating?: number;
         reviewCount?: number;
+        providerName?: string;
     };
 }
 
