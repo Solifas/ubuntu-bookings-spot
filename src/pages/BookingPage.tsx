@@ -69,7 +69,7 @@ const BookingPage = () => {
           // Filter mock services by businessId
           const filteredServices = mockServices.filter(s => s.businessId === providerId);
           setServices(filteredServices);
-          setBusinessName(filteredServices[0]?.type || 'Service Provider');
+          setBusinessName(filteredServices[0]?.providerName || 'Service Provider');
         } else {
           console.log(`🌐 BookingPage: Fetching services for provider ${providerId}`);
 
