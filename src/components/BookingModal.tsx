@@ -101,6 +101,11 @@ const BookingModal = ({ service, isVisible, onClose, onBookingConfirm }: Booking
               <span className="font-medium text-xl text-slate-900">{service.price}</span>
               <span>{service.location}</span>
             </div>
+            {service.type && (
+              <div className="mt-2 text-sm text-slate-600">
+                <span className="font-medium">Provider:</span> {service.type}
+              </div>
+            )}
           </div>
 
           {currentStep === 1 && (
