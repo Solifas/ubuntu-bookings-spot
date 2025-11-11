@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Calendar, Clock, MapPin, User, Star, LogIn, Loader2, ArrowLeft } from 'lucide-react';
+import { Calendar, Clock, MapPin, User, Star, LogIn, Loader2, ArrowLeft, Phone, Mail } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import AuthModal from '../components/AuthModal';
 import { DataSourceAdapter } from '../services/dataSourceAdapter';
@@ -19,6 +19,12 @@ interface LocalService {
   description: string;
   businessId?: string;
   type?: string;
+  providerName?: string;
+}
+
+interface ProviderContact {
+  email?: string;
+  phone?: string;
 }
 
 const BookingPage = () => {
@@ -34,6 +40,7 @@ const BookingPage = () => {
   const [services, setServices] = useState<LocalService[]>([]);
   const [servicesLoading, setServicesLoading] = useState(true);
   const [businessName, setBusinessName] = useState('Service Provider');
+  const [providerContact, setProviderContact] = useState<ProviderContact>({});
 
   const createBookingMutation = useCreateBooking();
 
@@ -84,6 +91,10 @@ const BookingPage = () => {
             const businessResponse = await DataSourceAdapter.getBusiness(providerId);
             if (businessResponse.data) {
               setBusinessName(businessResponse.data.businessName);
+              setProviderContact({
+                email: businessResponse.data.email,
+                phone: businessResponse.data.phone
+              });
             }
           }
 
@@ -93,7 +104,8 @@ const BookingPage = () => {
             name: service.name,
             duration: `${service.durationMinutes} min`,
             price: `R${service.price}`,
-            description: service.description || 'Professional service'
+            description: service.description || 'Professional service',
+            providerName: service.providerName
           }));
 
           setServices(apiServices);
@@ -404,8 +416,41 @@ const BookingPage = () => {
                       {services.find(s => s.id === selectedService)?.price}
                     </span>
                   </div>
+                  {services.find(s => s.id === selectedService)?.providerName && (
+                    <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
+                      <span className="text-slate-600 text-sm">Provider:</span>
+                      <span className="font-medium text-slate-900 text-sm">
+                        {services.find(s => s.id === selectedService)?.providerName}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
+
+              {/* Provider Contact Information */}
+              {(providerContact.email || providerContact.phone) && (
+                <div className="bg-blue-50 rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8 border border-blue-100">
+                  <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-3 sm:mb-4">Provider Contact</h3>
+                  <div className="space-y-2">
+                    {providerContact.phone && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <Phone className="h-4 w-4 text-blue-600" />
+                        <a href={`tel:${providerContact.phone}`} className="text-slate-700 hover:text-blue-600 transition-colors">
+                          {providerContact.phone}
+                        </a>
+                      </div>
+                    )}
+                    {providerContact.email && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <Mail className="h-4 w-4 text-blue-600" />
+                        <a href={`mailto:${providerContact.email}`} className="text-slate-700 hover:text-blue-600 transition-colors">
+                          {providerContact.email}
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
 
               <div className="flex flex-col sm:flex-row justify-between gap-3">
                 <button
