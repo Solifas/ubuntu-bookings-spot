@@ -191,11 +191,11 @@ const BookingPage = () => {
                 <User className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
               </div>
               <div className="min-w-0 flex-1">
-                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 truncate">{businessName}</h1>
+                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 truncate">{services[0]?.providerName}</h1>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 text-slate-600 mt-1 gap-1 sm:gap-0">
                   <div className="flex items-center space-x-1">
                     <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                    <span className="text-xs sm:text-sm truncate">{services[0]?.providerName}</span>
+                    <span className="text-xs sm:text-sm truncate">I need to add location</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-yellow-400 text-yellow-400 flex-shrink-0" />
