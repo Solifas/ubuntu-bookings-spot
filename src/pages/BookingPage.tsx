@@ -90,7 +90,7 @@ const BookingPage = () => {
           if (businessServices.length > 0) {
             const businessResponse = await DataSourceAdapter.getBusiness(providerId);
             if (businessResponse.data) {
-              setBusinessName(businessResponse.data.businessName);
+              setBusinessName(businessResponse.data.address);
               setProviderContact({
                 email: businessResponse.data.email,
                 phone: businessResponse.data.phone
@@ -195,7 +195,7 @@ const BookingPage = () => {
                 <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 text-slate-600 mt-1 gap-1 sm:gap-0">
                   <div className="flex items-center space-x-1">
                     <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                    <span className="text-xs sm:text-sm truncate">Sandton City, Johannesburg</span>
+                    <span className="text-xs sm:text-sm truncate">{services[0]?.providerName}</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-yellow-400 text-yellow-400 flex-shrink-0" />
