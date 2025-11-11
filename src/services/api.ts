@@ -134,13 +134,33 @@ class ApiClient {
         return this.request<Client[]>('/clients');
     }
 
-    // Services endpoints
+    // Services endpoints with provider information
     async getServices(): Promise<ApiResponse<Service[]>> {
-        return this.request<Service[]>('/services');
+        const response = await this.request<Service[]>('/services');
+        
+        // Ensure each service includes provider name from the API
+        if (response.data) {
+            response.data = response.data.map(service => ({
+                ...service,
+                providerName: service.providerName || 'Service Provider'
+            }));
+        }
+        
+        return response;
     }
 
     async getService(id: string): Promise<ApiResponse<Service>> {
-        return this.request<Service>(`/services/${id}`);
+        const response = await this.request<Service>(`/services/${id}`);
+        
+        // Ensure service includes provider name from the API
+        if (response.data) {
+            response.data = {
+                ...response.data,
+                providerName: response.data.providerName || 'Service Provider'
+            };
+        }
+        
+        return response;
     }
 
     async createService(data: CreateServiceCommand): Promise<ApiResponse<Service>> {
@@ -175,7 +195,21 @@ class ApiClient {
         const queryString = searchParams.toString();
         const endpoint = queryString ? `/services/search?${queryString}` : '/services/search';
 
-        return this.request<ServiceSearchResponse>(endpoint);
+        const response = await this.request<ServiceSearchResponse>(endpoint);
+        
+        // Ensure each service in search results includes provider name
+        if (response.data?.services) {
+            response.data.services = response.data.services.map(service => ({
+                ...service,
+                business: {
+                    ...service.business,
+                    providerName: service.business.providerName || service.providerName || 'Service Provider'
+                },
+                providerName: service.business?.providerName || service.providerName || 'Service Provider'
+            }));
+        }
+        
+        return response;
     }
 
     // Bookings endpoints
@@ -223,7 +257,17 @@ class ApiClient {
     }
 
     async getBusinessServices(businessId: string): Promise<ApiResponse<Service[]>> {
-        return this.request<Service[]>(`/businesses/${businessId}/services`);
+        const response = await this.request<Service[]>(`/businesses/${businessId}/services`);
+        
+        // Ensure each service includes provider name from the API
+        if (response.data) {
+            response.data = response.data.map(service => ({
+                ...service,
+                providerName: service.providerName || 'Service Provider'
+            }));
+        }
+        
+        return response;
     }
 
     // Business Hours endpoints
