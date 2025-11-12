@@ -199,25 +199,24 @@ const Homepage = () => {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
           <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-3xl md:text-5xl font-bold text-slate-900 mb-6 leading-tight">
+            <h1 className="text-2xl md:text-4xl font-bold text-slate-900 mb-4 leading-tight">
               Find & Book Local Services
               <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent"> Anywhere</span>
             </h1>
-            <p className="text-xl md:text-2xl text-slate-600 mb-8 leading-relaxed">
+            <p className="text-base md:text-lg text-slate-600 mb-6 leading-relaxed">
               Discover and book appointments with trusted service providers near you.
-              From barbers to tutors, find the perfect professional for your needs.
             </p>
 
             {/* Search Section */}
-            <div className="bg-white rounded-2xl shadow-xl p-6 mb-8 max-w-4xl mx-auto">
-              <div className="flex gap-4">
+            <div className="bg-white rounded-2xl shadow-xl p-4 mb-4 max-w-4xl mx-auto">
+              <div className="flex gap-3">
                 {/* Unified Search */}
                 <div className="flex-1">
                   <UnifiedSearch
                     onSearch={handleSearch}
-                    placeholder="Search for services or enter 'Service, Location' (e.g., 'Barber, Johannesburg')"
+                    placeholder="Search for services or enter 'Service, Location'"
                     className="w-full"
                     onInputChange={setCurrentSearchInput}
                     currentValue={currentSearchInput}
@@ -244,7 +243,7 @@ const Homepage = () => {
                     
                     handleSearch(serviceQuery, locationQuery);
                   }}
-                  className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 whitespace-nowrap"
+                  className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-6 py-3 rounded-xl text-base font-semibold hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 whitespace-nowrap"
                 >
                   Search
                 </button>
@@ -347,12 +346,12 @@ const Homepage = () => {
       {!showSearchResults && (
         <section className="py-4 bg-gradient-to-b from-blue-50 to-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-3">
                 Popular Services
               </h2>
-              <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-                Discover top-rated service providers in your area. From beauty treatments to home repairs, find exactly what you need.
+              <p className="text-base text-slate-600 max-w-2xl mx-auto">
+                Discover top-rated service providers in your area
               </p>
             </div>
 
