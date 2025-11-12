@@ -305,7 +305,7 @@ const Settings = () => {
                         <input
                           type="tel"
                           className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          value={formData.phone}
+                          value={user?.contactNumber || formData.phone}
                           onChange={(e) => handleInputChange('phone', e.target.value)}
                         />
                       </div>
@@ -314,7 +314,7 @@ const Settings = () => {
                         <input
                           type="email"
                           className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          value={formData.email}
+                          value={user.email || formData.email}
                           onChange={(e) => handleInputChange('email', e.target.value)}
                         />
                       </div>

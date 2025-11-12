@@ -199,7 +199,7 @@ const BookingPage = () => {
                   </div>
                   <div className="flex items-center space-x-1">
                     <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-yellow-400 text-yellow-400 flex-shrink-0" />
-                    <span className="font-medium text-xs sm:text-sm">4.9 (127 reviews)</span>
+                    <span className="font-medium text-xs sm:text-sm">Add an api to get the rating</span>
                   </div>
                 </div>
               </div>
