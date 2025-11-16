@@ -199,19 +199,19 @@ const Homepage = () => {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-6">
           <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-2xl md:text-4xl font-bold text-slate-900 mb-4 leading-tight">
+            <h1 className="text-xl md:text-3xl font-bold text-slate-900 mb-3 leading-tight">
               Find & Book Local Services
               <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent"> Anywhere</span>
             </h1>
-            <p className="text-base md:text-lg text-slate-600 mb-6 leading-relaxed">
+            <p className="text-sm md:text-base text-slate-600 mb-4 leading-relaxed">
               Discover and book appointments with trusted service providers near you.
             </p>
 
             {/* Search Section */}
-            <div className="bg-white rounded-2xl shadow-xl p-4 mb-4 max-w-4xl mx-auto">
-              <div className="flex gap-3">
+            <div className="bg-white rounded-2xl shadow-xl p-3 mb-3 max-w-4xl mx-auto">
+              <div className="flex gap-2">
                 {/* Unified Search */}
                 <div className="flex-1">
                   <UnifiedSearch
@@ -243,7 +243,7 @@ const Homepage = () => {
                     
                     handleSearch(serviceQuery, locationQuery);
                   }}
-                  className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-6 py-3 rounded-xl text-base font-semibold hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 whitespace-nowrap"
+                  className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 whitespace-nowrap"
                 >
                   Search
                 </button>
@@ -263,19 +263,19 @@ const Homepage = () => {
 
       {/* Search Results Section */}
       {showSearchResults && (
-        <section id="search-results-section" className="py-4 bg-gradient-to-b from-blue-50 to-white">
+        <section id="search-results-section" className="py-3 bg-gradient-to-b from-blue-50 to-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+            <div className="text-center mb-4">
+              <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">
                 Search Results
                 {searchQuery && (
-                  <span className="block text-xl text-slate-600 mt-2">
+                  <span className="block text-lg text-slate-600 mt-1">
                     for "{searchQuery}" {selectedLocation && `in ${selectedLocation}`}
                   </span>
                 )}
               </h2>
-              <div className="flex justify-center items-center gap-4 mb-4">
-                <p className="text-lg text-slate-600">
+              <div className="flex justify-center items-center gap-4 mb-2">
+                <p className="text-base text-slate-600">
                   Found {searchResults.length} services
                 </p>
                 <button
@@ -287,7 +287,7 @@ const Homepage = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-3">
               {searchResults.length === 0 ? (
                 <div className="col-span-full text-center py-12">
                   <p className="text-slate-600 text-lg mb-4">No services found matching your search.</p>
@@ -344,18 +344,18 @@ const Homepage = () => {
 
       {/* Popular Services Section */}
       {!showSearchResults && (
-        <section className="py-4 bg-gradient-to-b from-blue-50 to-white">
+        <section className="py-3 bg-gradient-to-b from-blue-50 to-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-6">
-              <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-3">
+            <div className="text-center mb-4">
+              <h2 className="text-xl md:text-2xl font-bold text-slate-900 mb-2">
                 Popular Services
               </h2>
-              <p className="text-base text-slate-600 max-w-2xl mx-auto">
+              <p className="text-sm text-slate-600 max-w-2xl mx-auto">
                 Discover top-rated service providers in your area
               </p>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-3">
               {isPopularLoading ? (
                 Array.from({ length: 8 }).map((_, index) => (
                   <div key={index} className="bg-slate-200 animate-pulse rounded-lg md:rounded-xl h-32 md:h-48"></div>
@@ -409,18 +409,18 @@ const Homepage = () => {
       )}
 
       {/* Action Buttons Section */}
-      <section className="py-8 bg-gradient-to-b from-blue-50 to-white">
+      <section className="py-4 bg-gradient-to-b from-blue-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
             <button
               onClick={handleJoinAsProvider}
-              className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+              className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-6 py-3 rounded-full text-base font-semibold hover:from-blue-600 hover:to-green-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               Join as Service Provider
             </button>
             <button
               onClick={handleWatchDemo}
-              className="text-slate-700 px-8 py-4 rounded-full text-lg font-semibold hover:bg-slate-100 transition-all duration-200 border-2 border-slate-200 hover:border-slate-300"
+              className="text-slate-700 px-6 py-3 rounded-full text-base font-semibold hover:bg-slate-100 transition-all duration-200 border-2 border-slate-200 hover:border-slate-300"
             >
               Watch Demo
             </button>
@@ -430,13 +430,13 @@ const Homepage = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 md:py-24 bg-white">
+      <section className="py-8 md:py-12 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-3">
               Everything You Need to Find & Book Services
             </h2>
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+            <p className="text-base text-slate-600 max-w-2xl mx-auto">
               Designed for clients and service providers who want a seamless booking experience anywhere in the world.
             </p>
           </div>
@@ -450,13 +450,13 @@ const Homepage = () => {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-16 md:py-24 bg-gradient-to-b from-slate-50 to-white">
+      <section className="py-8 md:py-12 bg-gradient-to-b from-slate-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-3">
               Simple, Transparent Pricing
             </h2>
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+            <p className="text-base text-slate-600 max-w-2xl mx-auto">
               Choose the perfect plan for your business. All plans include our core features with no hidden fees.
             </p>
           </div>
@@ -470,26 +470,26 @@ const Homepage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 md:py-24 bg-gradient-to-r from-blue-600 to-green-600">
+      <section className="py-8 md:py-12 bg-gradient-to-r from-blue-600 to-green-600">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
             Ready to Transform Your Business?
           </h2>
-          <p className="text-xl text-blue-100 mb-8">
+          <p className="text-base text-blue-100 mb-6">
             Join thousands of service providers worldwide who've already made the switch to smarter booking.
           </p>
           <button
             onClick={handleJoinAsProvider}
-            className="bg-white text-blue-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-slate-100 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+            className="bg-white text-blue-600 px-6 py-3 rounded-full text-base font-semibold hover:bg-slate-100 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
           >
             Start Your Free Trial Today
           </button>
-          <p className="text-blue-200 mt-4">No credit card required • 14-day free trial • Cancel anytime</p>
+          <p className="text-blue-200 mt-3 text-sm">No credit card required • 14-day free trial • Cancel anytime</p>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-white py-12">
+      <footer className="bg-slate-900 text-white py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
