@@ -16,6 +16,7 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Search from "./pages/Search";
 import Services from "./pages/Services";
+import ServiceDetail from "./pages/ServiceDetail";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/search" element={<Search />} />
+            <Route path="/service/:serviceId" element={<ServiceDetail />} />
             <Route path="/services" element={<ProtectedRoute><Services /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
