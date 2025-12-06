@@ -1,6 +1,7 @@
 import { MapPin, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import type { Service } from '../data/servicesData';
+import { useAuth } from '../contexts/AuthContext';
 
 interface ServiceCardProps {
   service: Service;
@@ -13,9 +14,14 @@ const truncateDescription = (description: string, maxLength: number = 100): stri
 
 const ServiceCard = ({ service }: ServiceCardProps) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const handleCardClick = () => {
-    navigate('/book');
+    if (!user) {
+      navigate('/login');
+    } else {
+      navigate(`/book/${service.businessId || service.id}`);
+    }
   };
 
   return (
