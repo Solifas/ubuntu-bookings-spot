@@ -15,7 +15,7 @@ const ServiceCard = ({ service }: ServiceCardProps) => {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
-    navigate(`/service/${service.id}`);
+    navigate('/book');
   };
 
   return (
