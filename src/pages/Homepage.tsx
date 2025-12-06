@@ -6,6 +6,7 @@ import FeatureCard from '../components/FeatureCard';
 import PricingCard from '../components/PricingCard';
 import UnifiedSearch from '../components/UnifiedSearch';
 import SearchResults from '../components/SearchResults';
+import ServiceCard from '../components/ServiceCard';
 import DemoModal from '../components/DemoModal';
 import type { Service as FrontendService } from '../data/servicesData';
 import { SearchService } from '../services/searchService';
@@ -300,41 +301,7 @@ const Homepage = () => {
                 </div>
               ) : (
                 searchResults.map((service) => (
-                  <div key={service.id} className="bg-white rounded-lg md:rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden group hover:scale-102">
-                    <div className="w-full h-20 md:h-32 bg-gradient-to-br from-blue-400 to-green-400 flex items-center justify-center">
-                      <span className="text-white font-medium text-xs md:text-sm">{service.type}</span>
-                    </div>
-                    <div className="p-2 md:p-4">
-                      <div className="flex items-start justify-between mb-1">
-                        <h3 className="font-medium text-slate-900 text-xs md:text-sm leading-tight flex-1 pr-1">
-                          {service.name}
-                        </h3>
-                        <span className="text-blue-600 font-bold text-xs md:text-sm">{service.price}</span>
-                      </div>
-
-                      <div className="flex items-center justify-between mb-1">
-                        <div className="flex items-center space-x-1">
-                          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                          <span className="text-xs font-medium text-slate-700">{service.rating}</span>
-                        </div>
-                        <span className="text-xs text-green-600 bg-green-100 px-1 py-0.5 rounded">
-                          Available
-                        </span>
-                      </div>
-
-                      <div className="flex items-center text-slate-500 text-xs mb-2">
-                        <MapPin className="h-3 w-3 mr-1" />
-                        <span className="truncate">{service.location}</span>
-                      </div>
-
-                      <button
-                        onClick={() => navigate('/book')}
-                        className="w-full bg-gradient-to-r from-blue-500 to-green-500 text-white py-1 md:py-1.5 px-2 rounded-md font-medium text-xs hover:from-blue-600 hover:to-green-600 transition-all duration-200"
-                      >
-                        Book Now
-                      </button>
-                    </div>
-                  </div>
+                  <ServiceCard key={service.id} service={service} />
                 ))
               )}
             </div>
@@ -366,41 +333,7 @@ const Homepage = () => {
                 </div>
               ) : (
                 displayedServices.map((service) => (
-                  <div key={service.id} className="bg-white rounded-lg md:rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden group hover:scale-102">
-                    <div className="w-full h-20 md:h-32 bg-gradient-to-br from-blue-400 to-green-400 flex items-center justify-center">
-                      <span className="text-white font-medium text-xs md:text-sm">{service.type}</span>
-                    </div>
-                    <div className="p-2 md:p-4">
-                      <div className="flex items-start justify-between mb-1">
-                        <h3 className="font-medium text-slate-900 text-xs md:text-sm leading-tight flex-1 pr-1">
-                          {service.name}
-                        </h3>
-                        <span className="text-blue-600 font-bold text-xs md:text-sm">{service.price}</span>
-                      </div>
-
-                      <div className="flex items-center justify-between mb-1">
-                        <div className="flex items-center space-x-1">
-                          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                          <span className="text-xs font-medium text-slate-700">{service.rating}</span>
-                        </div>
-                        <span className="text-xs text-green-600 bg-green-100 px-1 py-0.5 rounded">
-                          Available
-                        </span>
-                      </div>
-
-                      <div className="flex items-center text-slate-500 text-xs mb-2">
-                        <MapPin className="h-3 w-3 mr-1" />
-                        <span className="truncate">{service.location}</span>
-                      </div>
-
-                      <button
-                        onClick={() => navigate('/book')}
-                        className="w-full bg-gradient-to-r from-blue-500 to-green-500 text-white py-1 md:py-1.5 px-2 rounded-md font-medium text-xs hover:from-blue-600 hover:to-green-600 transition-all duration-200"
-                      >
-                        Book Now
-                      </button>
-                    </div>
-                  </div>
+                  <ServiceCard key={service.id} service={service} />
                 ))
               )}
             </div>
