@@ -426,7 +426,8 @@ export class DataSourceAdapter {
                     startTime: data.startTime,
                     endTime: data.endTime,
                     status: BookingStatus.PENDING,
-                    createdAt: new Date().toISOString()
+                    createdAt: new Date().toISOString(),
+                    providerName: data.providerName
                 };
                 return { data: newBooking, status: 201 };
             }

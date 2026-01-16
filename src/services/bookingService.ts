@@ -9,6 +9,7 @@ export interface BookingDetails {
     clientName: string;
     clientPhone: string;
     clientEmail: string;
+    providerName?: string;
 }
 
 export const createBooking = async (bookingDetails: BookingDetails): Promise<Booking> => {
@@ -24,7 +25,8 @@ export const createBooking = async (bookingDetails: BookingDetails): Promise<Boo
     const createBookingCommand: CreateBookingCommand = {
         serviceId: bookingDetails.serviceId,
         startTime: startTime.toISOString(),
-        endTime: endTime.toISOString()
+        endTime: endTime.toISOString(),
+        providerName: bookingDetails.providerName
     };
 
     const response = await DataSourceAdapter.createBooking(createBookingCommand);

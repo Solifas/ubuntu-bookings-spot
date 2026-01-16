@@ -230,7 +230,7 @@ const Dashboard = () => {
                           <div key={booking.id} className="bg-slate-50 rounded-lg p-4">
                             <div className="flex items-start justify-between mb-2">
                               <div>
-                                <h3 className="font-semibold text-slate-900">{booking.client.fullName}</h3>
+                                <h3 className="font-semibold text-slate-900">{booking.providerName}</h3>
                                 <p className="text-sm text-slate-600">{booking.service.name}</p>
                               </div>
                               <span className="bg-yellow-100 text-yellow-700 text-xs px-2 py-1 rounded-full">

@@ -29,7 +29,7 @@ import {
     CityInfo
 } from '../types/api';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+const API_BASE_URL = 'http://localhost:5000';
 
 interface ApiResponse<T> {
     data?: T;
@@ -151,7 +151,7 @@ class ApiClient {
     // Services endpoints with provider information
     async getServices(): Promise<ApiResponse<Service[]>> {
         const response = await this.request<Service[]>('/services');
-        
+
         // Ensure each service includes provider name from the API
         if (response.data) {
             response.data = response.data.map(service => ({
@@ -159,13 +159,13 @@ class ApiClient {
                 providerName: service.providerName || 'Service Provider'
             }));
         }
-        
+
         return response;
     }
 
     async getService(id: string): Promise<ApiResponse<Service>> {
         const response = await this.request<Service>(`/services/${id}`);
-        
+
         // Ensure service includes provider name from the API
         if (response.data) {
             response.data = {
@@ -173,7 +173,7 @@ class ApiClient {
                 providerName: response.data.providerName || 'Service Provider'
             };
         }
-        
+
         return response;
     }
 
@@ -210,7 +210,7 @@ class ApiClient {
         const endpoint = queryString ? `/services/search?${queryString}` : '/services/search';
 
         const response = await this.request<ServiceSearchResponse>(endpoint);
-        
+
         // Ensure each service in search results includes provider name
         if (response.data?.services) {
             response.data.services = response.data.services.map(service => ({
@@ -222,7 +222,7 @@ class ApiClient {
                 providerName: service.business?.providerName || service.providerName || 'Service Provider'
             }));
         }
-        
+
         return response;
     }
 
@@ -272,7 +272,7 @@ class ApiClient {
 
     async getBusinessServices(businessId: string): Promise<ApiResponse<Service[]>> {
         const response = await this.request<Service[]>(`/businesses/${businessId}/services`);
-        
+
         // Ensure each service includes provider name from the API
         if (response.data) {
             response.data = response.data.map(service => ({
@@ -280,7 +280,7 @@ class ApiClient {
                 providerName: service.providerName || 'Service Provider'
             }));
         }
-        
+
         return response;
     }
 

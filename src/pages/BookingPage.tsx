@@ -41,6 +41,7 @@ const BookingPage = () => {
   const [servicesLoading, setServicesLoading] = useState(true);
   const [businessName, setBusinessName] = useState('Service Provider');
   const [providerContact, setProviderContact] = useState<ProviderContact>({});
+  const selectedServiceProviderName = services.find(s => s.id === selectedService)?.providerName;
 
   const createBookingMutation = useCreateBooking();
 
@@ -151,6 +152,7 @@ const BookingPage = () => {
         clientName: user.name || '',
         clientPhone: user.contactNumber || '',
         clientEmail: user.email || '',
+        providerName: selectedServiceProviderName || '',
       });
 
       toast({
@@ -416,11 +418,11 @@ const BookingPage = () => {
                       {services.find(s => s.id === selectedService)?.price}
                     </span>
                   </div>
-                  {services.find(s => s.id === selectedService)?.providerName && (
+                  {selectedServiceProviderName && (
                     <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
                       <span className="text-slate-600 text-sm">Provider:</span>
                       <span className="font-medium text-slate-900 text-sm">
-                        {services.find(s => s.id === selectedService)?.providerName}
+                        {selectedServiceProviderName}
                       </span>
                     </div>
                   )}

@@ -111,6 +111,7 @@ export interface CreateBookingCommand {
     serviceId: string;
     startTime: string;
     endTime: string;
+    providerName?: string;
 }
 
 export interface UpdateBookingCommand {
@@ -118,6 +119,7 @@ export interface UpdateBookingCommand {
     startTime?: string;
     endTime?: string;
     status?: string;
+    providerName?: string;
 }
 
 export interface Business {
