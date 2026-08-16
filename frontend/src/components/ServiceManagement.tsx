@@ -36,6 +36,41 @@ const mapApiServiceToLocal = (service: Service): LocalService => ({
   tags: service.tags,
 });
 
+const MOCK_SERVICES: LocalService[] = [
+  {
+    id: '1',
+    name: 'Classic Haircut',
+    duration: 30,
+    price: 35,
+    description: 'Professional men\'s haircut with styling',
+    active: true
+  },
+  {
+    id: '2',
+    name: 'Beard Trim & Shape',
+    duration: 20,
+    price: 25,
+    description: 'Beard trimming and shaping service',
+    active: true
+  },
+  {
+    id: '3',
+    name: 'Cut & Beard Combo',
+    duration: 45,
+    price: 55,
+    description: 'Complete haircut and beard service',
+    active: true
+  },
+  {
+    id: '4',
+    name: 'Hair Styling',
+    duration: 25,
+    price: 30,
+    description: 'Hair styling and finishing',
+    active: false
+  }
+];
+
 const ServiceManagement = () => {
   const { user, isLoggedIn } = useAuth();
   const [isAddFormOpen, setIsAddFormOpen] = useState(false);
@@ -44,42 +79,6 @@ const ServiceManagement = () => {
   const [services, setServices] = useState<LocalService[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // Mock services - only shown in mock mode
-  const mockServices: LocalService[] = [
-    {
-      id: '1',
-      name: 'Classic Haircut',
-      duration: 30,
-      price: 35,
-      description: 'Professional men\'s haircut with styling',
-      active: true
-    },
-    {
-      id: '2',
-      name: 'Beard Trim & Shape',
-      duration: 20,
-      price: 25,
-      description: 'Beard trimming and shaping service',
-      active: true
-    },
-    {
-      id: '3',
-      name: 'Cut & Beard Combo',
-      duration: 45,
-      price: 55,
-      description: 'Complete haircut and beard service',
-      active: true
-    },
-    {
-      id: '4',
-      name: 'Hair Styling',
-      duration: 25,
-      price: 30,
-      description: 'Hair styling and finishing',
-      active: false
-    }
-  ];
 
   // Load services based on data source mode
   useEffect(() => {
@@ -91,7 +90,7 @@ const ServiceManagement = () => {
         if (isMockMode()) {
           // In mock mode, use the hardcoded services
           console.log('🎭 ServiceManagement: Using mock services');
-          setServices(mockServices);
+          setServices(MOCK_SERVICES);
         } else {
           // In API mode, fetch from the backend
           if (!isLoggedIn || !user) {
@@ -120,7 +119,7 @@ const ServiceManagement = () => {
 
         // Fallback to empty array in API mode, mock services in mock mode
         if (isMockMode()) {
-          setServices(mockServices);
+          setServices(MOCK_SERVICES);
         } else {
           setServices([]);
         }

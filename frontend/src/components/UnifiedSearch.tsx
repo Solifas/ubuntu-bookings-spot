@@ -75,7 +75,7 @@ const UnifiedSearch = ({
 
   // Sync with external current value
   useEffect(() => {
-    if (currentValue !== undefined && currentValue !== inputValue) {
+    if (currentValue !== undefined) {
       setInputValue(currentValue);
     }
   }, [currentValue]);

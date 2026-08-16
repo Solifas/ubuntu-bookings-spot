@@ -25,5 +25,15 @@ export default tseslint.config(
       ],
       "@typescript-eslint/no-unused-vars": "off",
     },
+  },
+  {
+    files: [
+      "src/components/ui/**/*.{ts,tsx}",
+      "src/contexts/AuthContext.tsx",
+    ],
+    rules: {
+      // These modules intentionally co-locate component variants and hooks.
+      "react-refresh/only-export-components": "off",
+    },
   }
 );

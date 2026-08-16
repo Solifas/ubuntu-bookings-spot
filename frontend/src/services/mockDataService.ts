@@ -10,6 +10,7 @@ import {
     ServiceSearchResponse,
     ServiceSearchParams,
     ServiceDto,
+    CreateServiceCommand,
     BookingStatus,
     UserType
 } from '../types/api';
@@ -921,7 +922,7 @@ export class MockDataService {
         };
     }
 
-    static async getProviderDashboard(providerId: string): Promise<any> {
+    static async getProviderDashboard(providerId: string): Promise<DashboardStats> {
         await simulateDelay();
         simulateError();
 
@@ -972,7 +973,7 @@ export class MockDataService {
     }
 
     // Create/Update operations (simplified for mock)
-    static async createService(data: any): Promise<Service> {
+    static async createService(data: CreateServiceCommand): Promise<Service> {
         await simulateDelay();
         simulateError();
 

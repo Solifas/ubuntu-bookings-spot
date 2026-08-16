@@ -6,13 +6,14 @@ import Navigation from '../components/Navigation';
 import BookingModal from '../components/BookingModal';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import type { Service } from '../data/servicesData';
 
 const Search = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
   const location = searchParams.get('location') || '';
   const category = searchParams.get('category') || '';
-  const [selectedService, setSelectedService] = useState<any | null>(null);
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
 
   const { data, isLoading, error } = useSearchServices({
     name: query || undefined,

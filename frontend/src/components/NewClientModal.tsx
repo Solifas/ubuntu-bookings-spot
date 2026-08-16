@@ -5,9 +5,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
+import type { Client } from '@/types/api';
 
 interface NewClientModalProps {
-  onClientAdded?: (client: any) => void;
+  onClientAdded?: (client: Client) => void;
   children?: React.ReactNode;
 }
 
@@ -49,9 +50,9 @@ const NewClientModal = ({ onClientAdded, children }: NewClientModalProps) => {
       
       const newClient = {
         id: `client-${Date.now()}`,
-        name: clientName,
+        fullName: clientName,
         email: clientEmail,
-        phone: clientPhone,
+        contactNumber: clientPhone || undefined,
         totalBookings: 0,
         lastVisit: new Date().toISOString().split('T')[0]
       };
